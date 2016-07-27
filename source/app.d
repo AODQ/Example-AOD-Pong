@@ -1,5 +1,6 @@
 import derelict.opengl3.gl3;
 import derelict.sdl2.sdl;
+
 import render;
 
 void main () {
@@ -22,18 +23,14 @@ void main () {
   bool running = true;
 
   while ( running ) {
-
     SDL_Event event;
-
     while ( SDL_PollEvent(&event) ) {
       if ( event.type == SDL_QUIT ) running = false;
     }
-
     SDL_PumpEvents();
 
-    Render_Screen_Cec(window);
+    Render_Screen(window);
   }
-
 
   SDL_DestroyWindow(window);
   SDL_Quit();
