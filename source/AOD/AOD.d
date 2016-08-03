@@ -69,15 +69,13 @@ void End() {
 
 AOD.Object[int] obj_list;
 
-import core.sync.mutex;
-
 
 int Add(AOD.Object o,int layer) {
   static uint id_counter = 0;
   if ( Engine.realm != null && o && layer >= 0 ) {
     Engine.realm.__Add(o, layer);
     o.Set_ID(id_counter++);
-    obj_list[o.Ret_ID(), o);
+    /* obj_list[o.Ret_ID(), o); */
     return o.Ret_ID();
   } else {
     if ( o == null )
