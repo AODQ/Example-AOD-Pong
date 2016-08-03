@@ -59,7 +59,7 @@ void Change_MSDT(Uint32 x) {
 
 void Reset() {
   if ( Engine.realm != null )
-    Engine.realm->Reset();
+    Engine.realm.Reset();
 }
 void End() {
   Engine.realm = null;
@@ -71,10 +71,8 @@ AOD.Object[int] obj_list;
 
 import core.sync.mutex;
 
-private auto add_obj_mutex = new Mutex;
 
 int Add(AOD.Object o,int layer) {
-  add_obj_mutex.lock();
   static uint id_counter = 0;
   if ( Engine.realm != null && o && layer >= 0 ) {
     Engine.realm.__Add(o, layer);
@@ -88,29 +86,20 @@ int Add(AOD.Object o,int layer) {
       Console.Debug_Output("Error: Negative layer not allowed");
     return -1;
   }
-  add_obj_mutex.unlock();
 }
 
-private auto add_text_mutex = new Mutex;
-
 void Add(AOD.Text t) {
-  add_text_mutex.lock();
   if ( Engine.realm != null && t != null )
     Engine.realm.__Add(t);
   else {
     if ( t == null )
       Console.Debug_Output("Error: Adding null text to realm");
   }
-  add_text_mutex.unlock();
 }
 
-private auto rem_mutex = new Mutex;
-
 void Remove(AOD.Object o) {
-  rem_mutex.lock();
   if ( Engine.realm != null )
     Engine.realm.__Remove(o);
-  rem_mutex.unlock();
 }
 
 void Remove(Text* t) {
