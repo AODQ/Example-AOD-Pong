@@ -40,8 +40,8 @@ void Initialize(int window_width, int window_height, uint _fps,
   Camera.Set_Size(Vector(cast(float)window_width, cast(float)window_height));
 }
 
-void Initialize_Console(bool debug, SDL_Keycode key, string cons) {
-  if ( debug )
+void Initialize_Console(bool debg, SDL_Keycode key, string cons) {
+  if ( dbug )
     Console.console_type = Console.TYPE_DEBUG_IN;
   else
     Console.console_type = Console.TYPE_DEBUG_OUT;
@@ -333,23 +333,3 @@ void Run() {
 
 float R_MS()         { return cast(float)Engine.ms_dt; }
 float To_MS(float x) { return (x*Engine.ms_dt)/1000;   }
-
-void D_Output(string out) {
-  /*std::ofstream fil("DEBUG.txt", std::ios::app);
-  fil << out << '\n';
-  fil.close();*/
-  to_console ~= out;
-}
-
-private auto output_lock = new Mutex();
-
-void Output(string out) {
-  output_lock.lock();
-  D_Output(out);
-  output_lock.unlock();
-}
-
-void Debug_Output(string out) {
-  if ( Console.console_type == Console.TYPE_DEBUG_IN )
-      D_Output(out);
-}
