@@ -29,7 +29,7 @@ static:
       (channels > 2 ? "surround" : (channels > 1) ? "stereo" : "mono") ~
       "(" ~ (format&0x1000 ? "BE" : "LE") ~ ")");
     Output("1024 bytes of audio buffer");
-    Output(to!string(t) + " channels allocated");
+    Output(to!string(t) ~ " channels allocated");
 
     Mix_Init(MIX_INIT_OGG);
     Mix_ChannelFinished(&Stop_Sound);
@@ -41,7 +41,7 @@ static class Sounds {
   Mix_Chunk* Load_Sound(string str) {
     Mix_Chunk* sample = Mix_LoadWAV(str.ptr);
     if ( sample is null ) {
-      Debug_Output("Error loading " ~ str ~ ": " ~ Mix_GetError());
+      Debug_Output("Error loading " ~ str ~ ": " ~ to!string(Mix_GetError()));
       return null;
     }
     return sample;
@@ -66,7 +66,7 @@ static class Sounds {
   Mix_Music* Load_Music(string str) {
     Mix_Music* sample = Mix_LoadMUS(str.ptr);
     if ( sample is null ) {
-      Debug_Output("Error loading " ~ str  ~ ": " ~ Mix_GetError());
+      Debug_Output("Error loading " ~ str  ~ ": " ~ to!string(Mix_GetError()));
       return null;
     }
     return sample;
@@ -79,6 +79,9 @@ static class Sounds {
   bool Play_Music(Mix_Music* mix, int vol, int rep) {
     int a = Mix_PlayMusic(mix, rep);
     Mix_VolumeMusic(vol);
+    if ( a == -1 )
+      Debug_Output("Could not play music: " ~ to!string(Mix_GetError()));
+    return a;
   }
   
   void Stop_Music() { Mix_HaltMusic(); }

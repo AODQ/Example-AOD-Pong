@@ -6,6 +6,7 @@ import AOD.vector;
 import AOD.console;
 
 import derelict.opengl3.gl3;
+import derelict.opengl3.gl;
 import derelict.sdl2.sdl;
 import derelict.freetype.ft;
 
@@ -28,7 +29,7 @@ static class TextEng {
         Debug_Output("font " ~ file ~ ": not found\n");
         return;
       }
-      int comp = FT_New_Face(FTLib, file, 0, face);
+      int comp = FT_New_Face(FTLib, file.ptr, 0, &face);
       if ( comp ) {
         Debug_Output("Could not load font " ~ file ~ ": " ~
           R_FT_Error_String(comp) ~ '\n');
@@ -39,7 +40,7 @@ static class TextEng {
           R_FT_Error_String(comp));
       }
 
-      glGenTextures( 128, char_texture );
+      glGenTextures( 128, cast(uint*)char_texture );
       char_lists = glGenLists(128);
 
       for ( int i = 0; i != 128; ++ i ) {

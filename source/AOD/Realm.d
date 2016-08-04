@@ -186,7 +186,8 @@ public:
         glScalef (lz.R_Img_Size().x, lz.R_Img_Size().y, 1);
 
         import std.conv : to;
-        glVertexPointer	 (2, GL_FLOAT, 0, Entity.Vertices);
+        const(void)* vertices = Entity.Vertices;
+        glVertexPointer	 (2, GL_FLOAT, 0, vertices);
         glTexCoordPointer(2, GL_FLOAT, 0, lz.R_UV_Array());
         glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_BYTE, index);
         glLoadIdentity();
