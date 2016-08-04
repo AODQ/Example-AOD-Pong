@@ -14,7 +14,8 @@ import std.string;
 import std.typecons : tuple;
 
 static class TextEng {
-  static Font[Font_Type] fonts;
+  static:
+  Font[Font_Type] fonts;
 
   struct Font_Type {
     string name;
