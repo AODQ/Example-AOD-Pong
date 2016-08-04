@@ -2,9 +2,9 @@ module AOD.realm;
 
 import derelict.opengl3.gl3;
 import derelict.sdl2.sdl;
-import derelict.il.il;
-import derelict.il.ilu;
-import derelict.il.ilut;
+import derelict.devil.il;
+import derelict.devil.ilu;
+import derelict.devil.ilut;
 import derelict.freetype.ft;
 import AOD.AOD;
 import AOD.entity;
