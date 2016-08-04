@@ -8,9 +8,9 @@ import AOD.camera;
 import Console = AOD.console;
 import AOD.input;
 import AOD.entity : Entity;
-static import AOD.realm;
+import AOD.realm;
 import AOD.sounds;
-static import AOD.text;
+import AOD.text;
 import AOD.vector;
 import AOD.utility;
 
@@ -18,7 +18,7 @@ static class Engine {
   SDL_Window* screen = null;
   GLuint[] images;
 
-  AOD.Realm realm = null;
+  Realm realm = null;
 
   uint ms_dt = 0;
 
@@ -86,7 +86,7 @@ int Add(AOD.Entity o,int layer) {
   }
 }
 
-void Add(AOD.Text t) {
+void Add(Text t) {
   if ( Engine.realm != null && t != null )
     Engine.realm.__Add(t);
   else {

@@ -126,7 +126,8 @@ public:
     return I - (N*2.f * I) * N;
   }
 
-  import AOD.Matrix;
+  import AOD.matrix;
+
   static Vector Transform(const ref Matrix mat, const ref Vector vec) {
     Vector v;
     v.x = vec.x * mat.a + vec.y * mat.c + mat.tx;
