@@ -1,4 +1,4 @@
-module AOD.Console;
+module AOD.console;
 
 immutable(int) TYPE_NONE, /// No console
                TYPE_DEBUG_IN, /// AOD generated messages left in
