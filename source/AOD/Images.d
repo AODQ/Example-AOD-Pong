@@ -1,6 +1,7 @@
 module AOD.Image;
 import derelict.opengl3.gl3;
 import derelict.sdl2.sdl;
+import AOD.Console;
 
 // contains information of image
 struct SheetContainer {
@@ -56,14 +57,14 @@ SheetContainer Load_Image(const char* fil) {
 
     if ( !ilConvertImage(IL_RGBA, IL_UNSIGNED_BYTE) ) {
       auto t = iluErrorString(ilGetError());
-      AOD_Engine::Debug_Output(t);
+      Debug_Output(t);
       return 0;
     }
     glBindTexture(GL_TEXTURE_2D, 0);
     glGenTextures(1, &GL_ID);
     glBindTexture(GL_TEXTURE_2D, GL_ID);
     if ( !glIsTexture(GL_ID) ) {
-      AOD::Output("Error generating GL texture");
+      Output("Error generating GL texture");
       return SheetContainer();
     }
     // set texture clamping method
@@ -82,8 +83,9 @@ SheetContainer Load_Image(const char* fil) {
                ilGetInteger(IL_IMAGE_FORMAT), GL_UNSIGNED_BYTE, ilGetData());
   } else {
     auto t = ilGetError();
-    AOD_Engine::Debug_Output("Error loading " + std::string(fil) + ": " +
-      iluErrorString(t) + "(" + std::to_string(ilGetError()) + ')');
+    import std.conv : to;
+    AOD_Engine::Debug_Output("Error loading " ~ string(fil) ~ ": " ~
+      iluErrorString(t) ~ "(" ~ std.to!string(ilGetError()) + ")");
     return 0;
   }
   ilDeleteImages(1, &IL_ID);

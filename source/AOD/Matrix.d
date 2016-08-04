@@ -35,7 +35,7 @@ public:
     ty = y;
   }
 
-  void Set_Translation(const ref AOD::Vector vec) {
+  void Set_Translation(const ref Vector vec) {
     tx = vec.x;
     ty = vec.y;
   }

@@ -1,3 +1,5 @@
+module AOD.Object;
+
 import derelict.opengl3.gl3;
 import derelict.sdl2.sdl;
 
@@ -7,7 +9,6 @@ import AOD.Realm;
 import AOD.Matrix;
 import AOD.Vector;
 
-module AOD.Object;
 class Object {
 private:
   void Refresh_Transform() {
