@@ -25,8 +25,8 @@ public:
   this(int window_width, int window_height,
        immutable(char)* window_name, immutable(char)* icon = "") {
     Debug_Output("Initializing SDL");
-    DerelictGL3.load();
-    DerelictSDL2.load(SharedLibVersion(2, 0, 2));
+    DerelictGL3.load(/*SharedLibVersion(2, 1, 0)*/);
+    DerelictSDL2.load(/*SharedLibVersion(2, 0, 2)*/);
     DerelictIL.load();
     DerelictILU.load();
     DerelictILUT.load();
@@ -39,7 +39,6 @@ public:
                                                   window_width, window_height,
                                                   SDL_WINDOW_OPENGL |
                                                   SDL_WINDOW_SHOWN);
-    DerelictGL3.reload();
     import std.conv : to;
 		if ( SDL_GL_SetAttribute( SDL_GL_CONTEXT_MAJOR_VERSION, 2 ) == -1 )
 			Output("Error CONTEXT_MAJOR: " ~ to!string(SDL_GetError()));
@@ -52,6 +51,9 @@ public:
 			Output("Error DOUBLEBUFFER: " ~ to!string(SDL_GetError()));
 		if ( SDL_GL_SetAttribute(SDL_GL_ALPHA_SIZE, 8) == -1 )
 			Output("Error ALPHA_SIZE: " ~ to!string(SDL_GetError()));
+
+    DerelictGL3.reload();
+
 		glShadeModel(GL_SMOOTH);
 		glEnable(GL_TEXTURE_2D);
 		glEnable(GL_BLEND);
