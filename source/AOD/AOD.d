@@ -33,7 +33,7 @@ void Initialize(int window_width, int window_height, uint _fps,
   if ( Engine.realm is null ) {
     if ( window_name == "" )
       window_name = "Art of Dwarficorn";
-    Engine.realm = new Realm(window_width, window_height, window_name, icon);
+    Engine.realm = new realm.Realm(window_width, window_height, window_name, icon);
     Engine.ms_dt = _fps;
   }
   Camera.Set_Position(Vector(0, 0));
