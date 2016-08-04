@@ -450,7 +450,7 @@ static void Order_Vertices(ref Vector[] verts) {
   }
   centx /= verts.length;
   centy /= verts.length;
-  verts = []
+  verts = [];
 
   foreach ( i; va ) {
     i.first = std::atan2f(i.second.y - centy, i.second.x - centx);
@@ -460,7 +460,7 @@ static void Order_Vertices(ref Vector[] verts) {
   }
   
   import std.algorithm;
-  sort!((x, y) => (x.dist < y.dist))(va);
+  sort!((x, y) => return x.dist < y.dist)(va);
   // put back in vector
   foreach ( i; va )
     verts.push_back ( i.second );
