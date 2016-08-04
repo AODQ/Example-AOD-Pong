@@ -31,7 +31,7 @@ static class ConsEng {
     input_sig   = new Text(0, 100, ">>");
     input_sig.Set_Visible(0);
     cursor = new Object;
-    cursor.Set_Image_Size(AOD::Vector(1, 10));
+    cursor.Set_Image_Size(Vector(1, 10));
     cursor.Set_Visible(0);
     cursor.Set_Position(13, 96);
     background = new Object;
@@ -82,7 +82,7 @@ static class ConsEng {
     }
     // push back new texts
     foreach ( i; to_console ) {
-      auto txt = new AOD::Text(-20,-20,i);
+      auto txt = new Text(-20,-20,i);
       console_text = txt ~ console_text;
     }
     to_console = [];
