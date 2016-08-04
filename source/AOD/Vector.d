@@ -13,7 +13,10 @@ public:
     return this;
   }
   ref Vector opBinary(string op)(Vector rhs)   if ( op == "+" ) {
-    return new Vector(x + rhs.x, y + rhs.y);
+    return Vector(x + rhs.x, y + rhs.y);
+  }
+  ref Vector opBinary(string op)(int rhs)      if ( op == "+" ) {
+    return Vector(x + rhs, y + rhs);
   }
   ref Vector opOpAssign(string op)(Vector rhs) if ( op == "+" ) {
     x += rhs.x;
@@ -26,7 +29,10 @@ public:
     return this;
   }
   ref Vector opBinary(string op)(Vector rhs)   if ( op == "-" ) {
-    return new Vector(x - rhs.x, y - rhs.y);
+    return Vector(x - rhs.x, y - rhs.y);
+  }
+  ref Vector opBinary(string op)(int rhs)      if ( op == "-" ) {
+    return Vector(x - rhs, y - rhs);
   }
   ref Vector opOpAssign(string op)(Vector rhs) if ( op == "-" ) {
     x -= rhs.x;
@@ -39,7 +45,10 @@ public:
     return this;
   }
   ref Vector opBinary(string op)(Vector rhs)   if ( op == "*" ) {
-    return new Vector(x * rhs.x, y * rhs.y);
+    return Vector(x * rhs.x, y * rhs.y);
+  }
+  ref Vector opBinary(string op)(int rhs)      if ( op == "*" ) {
+    return Vector(x * rhs, y * rhs);
   }
   ref Vector opOpAssign(string op)(Vector rhs) if ( op == "*" ) {
     x *= rhs.x;
@@ -52,7 +61,10 @@ public:
     return this;
   }
   ref Vector opBinary(string op)(Vector rhs)   if ( op == "/" ) {
-    return new Vector(x / rhs.x, y / rhs.y);
+    return Vector(x / rhs.x, y / rhs.y);
+  }
+  ref Vector opBinary(string op)(int rhs)      if ( op == "/" ) {
+    return Vector(x / rhs, y / rhs);
   }
   ref Vector opOpAssign(string op)(Vector rhs) if ( op == "/" ) {
     x /= rhs.x;

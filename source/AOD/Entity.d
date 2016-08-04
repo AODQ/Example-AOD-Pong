@@ -304,10 +304,10 @@ public:
   this(Vector size = Vector(0, 0)) {
     super();
     type = Type.AABB;
-    Set_Vertices([Vector(-size.x/2.f, -size.y/2.f),
-                  Vector(-size.x/2.f,  size.y/2.f),
-                  Vector( size.x/2.f,  size.y/2.f),
-                  Vector( size.x/2.f, -size.y/2.f)]);
+    Set_Vertices([Vector(-size.x/2.0, -size.y/2.0),
+                  Vector(-size.x/2.0,  size.y/2.0),
+                  Vector( size.x/2.0,  size.y/2.0),
+                  Vector( size.x/2.0, -size.y/2.0)]);
   }
   this(Vector size = Vector( 0,0 ), Vector pos = Vector( 0,0 )) {
     this(size);
@@ -354,8 +354,8 @@ private Vector Get_Axis(Vector[] vertices, int i) {
   return axis;
 }
 
-private Vector Project_Poly(Vector axis, Vector[] poly,
-                            ref float min, ref float max) {
+private Project_Poly(ref Vector axis, ref Vector[] poly,
+                     ref float min, ref float max) {
   min = axis.Dot_Product(poly[0]);
   max = min;
 
@@ -393,7 +393,7 @@ private Collision_Info PolyPolyColl(PolyEnt polyA, PolyEnt polyB,
                              (vA?i: i - vertsA.length));
     // project polygons onto axis
     float minA, minB, maxA, maxB;
-    Project_Poly(axis, VertsA, minA, maxA);
+    Project_Poly(axis, vertsA, minA, maxA);
     Project_Poly(axis, vertsB, minB, maxB);
 
     // check for a gap between the two distances
@@ -412,12 +412,12 @@ private Collision_Info PolyPolyColl(PolyEnt polyA, PolyEnt polyB,
     if ( !ci.will_collide && !ci.will_collide) break;
 
     // check if this is minimum translation
-    dist = abs(dist);
+    dist = dist > 0 ? dist : -dist;
     if ( dist < min_dist ) {
       min_dist = dist;
       trans_vec = axis;
       ci.projection = axis;
-      auto d = (polyA.R_Position() - polyB.R_Position());
+      auto d = polyA.R_Position() - polyB.R_Position();
       if ( d.Dot_Product( trans_vec ) < 0 )
         trans_vec *= -1;
     }
@@ -464,7 +464,7 @@ static void Order_Vertices(ref Vector[] verts) {
   sort!((x, y) => x.dist < y.dist)(va);
   // put back in vector
   foreach ( i; va )
-    verts.push_back ( i.second );
+    verts ~= i.vert;
 
   /*// double check that it is in sorted CCW order
   int count = 0;
