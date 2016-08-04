@@ -1,6 +1,7 @@
 module AOD.realm;
 
 import derelict.opengl3.gl3;
+import derelict.opengl3.gl;
 import derelict.sdl2.sdl;
 import derelict.devil.il;
 import derelict.devil.ilu;
@@ -38,6 +39,7 @@ public:
                                                   window_width, window_height,
                                                   SDL_WINDOW_OPENGL |
                                                   SDL_WINDOW_SHOWN);
+    DerelictGL3.reload();
     import std.conv : to;
 		if ( SDL_GL_SetAttribute( SDL_GL_CONTEXT_MAJOR_VERSION, 2 ) == -1 )
 			Output("Error CONTEXT_MAJOR: " ~ to!string(SDL_GetError()));
@@ -125,7 +127,7 @@ public:
 
     // remove objects
     foreach ( rem_it; 0 .. objs_to_rem.length ) {
-      int layer_it = objs_to_rem[rem_it].layer;
+      int layer_it = objs_to_rem[rem_it].R_Layer();
       foreach ( obj_it; 0 .. objects[layer_it].length ) {
         if ( objects[layer_it][obj_it] is objs_to_rem[rem_it] ) {
           objects[layer_it][obj_it] = null;
@@ -146,8 +148,8 @@ public:
     /* glEnableClientState(GL_TEXTURE_COORD_ARRAY); */
     glEnable(GL_TEXTURE_2D);
 
-    float off_x = Camera.position.x - Camera.size.x/2,
-          off_y = Camera.position.y - Camera.size.y/2;
+    float off_x = Camera.R_Origin_Offset().x,
+          off_y = Camera.R_Origin_Offset().y;
 
     static GLubyte[6] index = [ 0,1,2, 1,2,3 ];
 
@@ -163,9 +165,9 @@ public:
         position.y -= off_y;
       }
       if ((position.x + size.x/2 < 0 ||
-           position.x - size.x/2 > Camera.size.x ) ||
+           position.x - size.x/2 > Camera.R_Size().x ) ||
           (position.y + size.y/2 < 0 ||
-           position.y - size.y/2 > Camera.size.y) )
+           position.y - size.y/2 > Camera.R_Size().y) )
         continue;
 
       glPushMatrix();

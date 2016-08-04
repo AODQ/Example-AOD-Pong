@@ -26,3 +26,4 @@ void Set_Size(float x, float y) {
 
 Vector R_Size()     { return size;     }
 Vector R_Position() { return position; }
+Vector R_Origin_Offset() { return position - (size/2.0); }
