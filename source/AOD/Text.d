@@ -25,6 +25,11 @@ class TextEng {
     struct Font_Type {
       string name;
       int size;
+      int opCmp(string op)(Font_Type rhs) {
+        import std.algorithm;
+        auto res = cmp(name, rhs.name);
+        return res == 0 ? size - rhs.size : res;
+      }
     };
 
     static Font[Font_Type] fonts;
