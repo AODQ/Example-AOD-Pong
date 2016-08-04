@@ -80,7 +80,7 @@ public:
       objs_to_rem.clear();
       bg_red	 = 0;
       bg_blue	= 0;
-      bg_green = 0;;
+      bg_green = 0;
     }
 	}
 
@@ -96,7 +96,7 @@ public:
   void __Remove(Entity o) {
     objs_to_rem.push_back(o);
   }
-  void __Remove(Text t) 
+  void __Remove(Text t) {
     foreach ( i; 0 .. text.length ) {
       if ( text[i] == t ) {
         text = [0 .. i] ~ [i+1 .. $];

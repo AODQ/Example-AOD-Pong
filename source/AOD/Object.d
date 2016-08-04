@@ -257,7 +257,7 @@ public:
       super(Type.Polygon);
       vertices = [];
     }
-    PolyEnt(Vector[] vertices, Vector off = Vector( 0, 0 )) {
+    this(Vector[] vertices, Vector off = Vector( 0, 0 )) {
       super(Type.Polygon);
       vertices = vert;
       Set_Position(off);
@@ -301,7 +301,7 @@ public:
     }
   };
 
-  class AABBEnt : public PolyEnt {
+  class AABBEnt : PolyEnt {
   public:
     this(Vector size = Vector(0, 0)) {
       super();
@@ -311,7 +311,7 @@ public:
                     { size.x/2.f,  size.y/2.f},
                     { size.x/2.f, -size.y/2.f}});
     }
-    AABBEnt(Vector size = Vector( 0,0 ), Vector pos = Vector( 0,0 )) {
+    this(Vector size = Vector( 0,0 ), Vector pos = Vector( 0,0 )) {
       this(size);
       position = pos;
     }
@@ -319,10 +319,10 @@ public:
     // ---- utility ----
 
     // Returns information on current collision with an AABB
-    Collision_Info Collide(AABBEnt* aabb, AOD::Vector velocity) {
+    Collision_Info Collide(AABBEnt* aabb, Vector velocity) {
       return Collision_Info();
     }
-    Collision_Info Collide(PolyEnt* poly, AOD::Vector velocity) {
+    Collision_Info Collide(PolyEnt* poly, Vector velocity) {
       return Collision_Info();
     }
   };
