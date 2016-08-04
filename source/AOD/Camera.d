@@ -11,7 +11,7 @@ void Set_Position(Vector pos) {
 }
 
 void Set_Position(float x, float y) {
-  position = new Vector(x, y);
+  position = Vector(x, y);
 }
 
 void Set_Size(Vector siz) {
@@ -21,7 +21,7 @@ void Set_Size(Vector siz) {
 
 void Set_Size(float x, float y) {
   if ( x <= 0 || y <= 0 ) return;
-  Camera.size = new AODUtil.Vector(x, y);
+  Camera.size = Vector(x, y);
 }
 
 Vector R_Size()     { return size;     }

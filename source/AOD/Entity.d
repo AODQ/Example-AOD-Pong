@@ -237,7 +237,7 @@ public:
   Type R_Type()     { return type;   }
   Matrix R_Matrix() { return matrix; }
   // ---- utility ----
-  abstract void Update();
+  void Update() {};
   Collision_Info Collision(Entity* o) {
     return Collision_Info();
   }

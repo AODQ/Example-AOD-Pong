@@ -4,11 +4,12 @@ immutable(int) TYPE_NONE       = 0, /// No console
                TYPE_DEBUG_IN   = 1, /// AOD generated messages left in
                TYPE_DEBUG_OUT  = 2; /// AOD generated messaged left out
 
-static import AOD.AOD;
+import AOD.AOD;
 import AOD.text;
 import AOD.entity;
 import AOD.input;
 import AOD.clientvars;
+import AOD.vector;
 import derelict.opengl3.gl3;
 import derelict.sdl2.sdl;
 import std.string;
@@ -32,11 +33,11 @@ static:
     input_after = new Text(10, 100, "");
     input_sig   = new Text(0, 100, ">>");
     input_sig.Set_Visible(0);
-    cursor = new Entity;
+    cursor = new Entity();
     cursor.Set_Image_Size(Vector(1, 10));
     cursor.Set_Visible(0);
     cursor.Set_Position(13, 96);
-    background = new Entity;
+    background = new Entity();
     background.Set_Image_Size(Vector(AOD.ClientVars.screen_width, 103));
     background.Set_Visible(0);
     background.Set_Position(AOD.ClientVars.screen_width/2, 103/2);

@@ -126,9 +126,9 @@ void Run() {
 
   // so I can set up keys and not have to rely that update is ran first
   SDL_PumpEvents();
-  Mouseeng.Refresh_Input();
+  MouseEng.Refresh_Input();
   SDL_PumpEvents();
-  Mouseeng.Refresh_Input();
+  MouseEng.Refresh_Input();
 
   while ( SDL_PollEvent(&_event) ) {
     switch ( _event.type ) {
@@ -302,7 +302,7 @@ void Run() {
         /*                     std::to_string(int(20000/_FPS)) + " FPS"); */
       }
 
-      Refresh();
+      /* Refresh(); */
       Engine.realm.Render(); // render the screen
     }
 
