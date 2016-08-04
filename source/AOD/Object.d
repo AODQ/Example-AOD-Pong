@@ -385,10 +385,10 @@ private Collision_Info PolyPolyColl(PolyEnt polyA, PolyEnt polyB,
   // -- variable definitions --
   // the minimum distance needed to translate out of collision
   float min_dist = float.max;
-  Vector trans_vec ( 0, 0 );
+  Vector trans_vec;
 
-  Vector[] vertsA = polyA->R_Transformed_Vertices(),
-           vertsB = polyB->R_Transformed_Vertices();
+  Vector[] vertsA = polyA.R_Transformed_Vertices(),
+           vertsB = polyB.R_Transformed_Vertices();
 
   Collision_Info ci = Collision_Info();
   ci.will_collide = true;
@@ -397,8 +397,8 @@ private Collision_Info PolyPolyColl(PolyEnt polyA, PolyEnt polyB,
   for ( int i = 0; i != vertsA.length + vertsB.length; ++ i ) {
     bool vA = (i<vertsA.length);
     // get the axis from the edge (we have to build the edge from vertices tho)
-    auto& axis = Get_Axis((vA?vertsA:vertsB),
-                          (vA?i: i - vertsA.length));
+    auto ref axis = Get_Axis((vA?vertsA:vertsB),
+                             (vA?i: i - vertsA.length));
     // project polygons onto axis
     float minA, minB, maxA, maxB;
     Project_Poly(axis, vertsA, minA, maxA);

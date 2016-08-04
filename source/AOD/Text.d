@@ -30,7 +30,7 @@ static class TextEng {
       }
       int comp = FT_New_Face(FTLib, file, 0, &face);
       if ( comp ) {
-        Debug_Output("Could not load font " ~ file + ": " ~
+        Debug_Output("Could not load font " ~ file ~ ": " ~
           R_FT_Error_String(comp) ~ '\n');
         return;
       }
@@ -52,19 +52,19 @@ static class TextEng {
         if ( FT_Render_Glyph(face.glyph,
                             FT_Render_Mode_.FT_RENDER_MODE_NORMAL ) ) {
           Debug_Output("Failed to render char index "
-                                    ~ to!string(i~ ~ " for font " + file);
+                                    ~ to!string(i ~ " for font " + file);
           continue;
         }
 
         FT_Glyph glyph;
         if ( FT_Get_Glyph ( face.glyph, &glyph ) ) {
-          Debug_Output( "Get Glyph failed at index " +
-                                      to!string(i) + " for font " + file);
+          Debug_Output( "Get Glyph failed at index " ~
+                                      to!string(i) ~ " for font " + file);
           continue;
         }
         if ( FT_Glyph_To_Bitmap( &glyph, ft_render_mode_normal, 0, 1) ) {
-          Debug_Output( "Glyph to bitmap failed at char index " +
-                                    to!string(i) + " for font " + file);
+          Debug_Output( "Glyph to bitmap failed at char index " ~
+                                    to!string(i) ~ " for font " ~ file);
           continue;
         }
         FT_BitmapGlyph bitmap_glyph = cast(FT_BitmapGlyph)glyph;

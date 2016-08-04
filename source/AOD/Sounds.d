@@ -74,4 +74,5 @@ static class Sounds {
   
   void Stop_Music() { Mix_HaltMusic(); }
   bool Music_State() { return Mix_PlayingMusic(); }
-} 
+}
+
