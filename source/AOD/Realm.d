@@ -1,3 +1,5 @@
+module AOD.Realm;
+
 import derelict.opengl3.gl3;
 import derelict.sdl2.sdl;
 import AOD.AOD;
@@ -5,13 +7,11 @@ import AOD.Entity;
 import AOD.Text;
 import AOD.Console;
 
-module AOD.Realm;
-
 class Realm {
-  AOD.Entity[][] objects;
-  AOD.Text[] text;
+  Entity[][] objects;
+  Text[] text;
 
-  AOD::Entity[] objs_to_rem;
+  Entity[] objs_to_rem;
 
   GLfloat bg_red, bg_blue, bg_green;
 public:

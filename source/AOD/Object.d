@@ -90,7 +90,7 @@ public:
     assert(index <= 0);
   } body {
     if ( index <= 0 ) {
-      AOD_Engine::Debug_Output("Error, image texture not found");
+      Debug_Output("Error, image texture not found");
       return;
     }
 
@@ -177,13 +177,13 @@ public:
     right.y = _UV[5];
   }
   void Flip_X() {
-    Set_UVs( AOD::Vector(  _UV[ 4], _UV[ 3] ),
-              AOD::Vector( _UV[ 0], _UV[ 1] ), false );
+    Set_UVs( Vector(  _UV[ 4], _UV[ 3] ),
+             Vector(  _UV[ 0], _UV[ 1] ), false );
     flipped_x ^= 1;
   }
   void Flip_Y() {
-    Set_UVs( AOD::Vector(  _UV[ 0], _UV[ 1] ),
-              AOD::Vector( _UV[ 4], _UV[ 3] ), false );
+    Set_UVs( Vector(  _UV[ 0], _UV[ 1] ),
+             Vector(  _UV[ 4], _UV[ 3] ), false );
     flipped_y ^= 1;
   }
 
@@ -216,7 +216,7 @@ public:
     static_pos = s;
   }
 
-  void Set_Origin(const ref AOD::Vector v) {
+  void Set_Origin(const ref Vector v) {
     rotate_origin = v;
   }
   // will reset origin to image_size/2
@@ -243,7 +243,7 @@ public:
     return Collision_Info();
   }
 
-  static const float Vertices[8];
+  static immutable(float)[8] Vertices;
 };
 
   // -------------- POLY OBJ --------------------------------------------------
