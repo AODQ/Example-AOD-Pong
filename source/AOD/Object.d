@@ -65,7 +65,7 @@ public:
     Refresh_Transform();
   }
   void Set_ID(int id) { ID = id; }
-  int Ret_ID() const { return ID; }
+  int Ret_ID() { return ID; }
   void Set_Position(float x, float y) {
     position = Vector(x, y);
     Refresh_Transform();
