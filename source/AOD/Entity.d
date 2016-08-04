@@ -280,7 +280,7 @@ public:
       vertices_transform = [];
 
       foreach ( i; vertices )
-        vertices_transform ~= Vector.Transform(R_Matrix(), i));
+        vertices_transform ~= Vector.Transform(R_Matrix(), i);
     }
     
     return vertices_transform;
