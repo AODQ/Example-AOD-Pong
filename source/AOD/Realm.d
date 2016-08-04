@@ -175,18 +175,19 @@ public:
         if ( lz.R_Is_Coloured() )
           glColor4f(lz.R_Red(), lz.R_Green(), lz.R_Blue(), lz.R_Alpha());
         glBindTexture(GL_TEXTURE_2D, lz.R_Sprite_Texture());
-        ref auto origin = lz.R_Origin();
+        auto origin = lz.R_Origin();
         int fx = lz.R_Flipped_X() ? - 1 :  1 ,
             fy = lz.R_Flipped_Y() ?   1 :- 1 ;
         glTranslatef(position.x + origin.x*fx,
                      position.y + origin.y*fy, 0);
-        glRotatef((lz.R_Rotation()*180.f)/3.14159f, 0, 0, 1);
+        glRotatef((lz.R_Rotation()*180.0)/3.14159f, 0, 0, 1);
         glTranslatef(-origin.x*fx,
                      -origin.y*fy, 0);
         glScalef (lz.R_Img_Size().x, lz.R_Img_Size().y, 1);
 
-        glVertexPointer	(2, GL_FLOAT, 0, AOD.Entity.Vertices);
-        glTexCoordPointer(2, GL_FLOAT, 0, lz.R_UV_Array());
+        import std.conv : to;
+        glVertexPointer	 (2, GL_FLOAT, 0, to!void*(Entity.Vertices));
+        glTexCoordPointer(2, GL_FLOAT, 0, to!void*(lz.R_UV_Array());
         glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_BYTE, index);
         glLoadIdentity();
       glPopAttrib();

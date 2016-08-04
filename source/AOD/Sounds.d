@@ -24,12 +24,12 @@ static:
     Mix_QuerySpec(&rate, &format, &channels);
 
     Output("Audio specs:");
-    Output(std.to!string(rate) ~ " Hz");
-    Output(std.to!string(format&0xFF) ~ " bitrate " ~
+    Output(to!string(rate) ~ " Hz");
+    Output(to!string(format&0xFF) ~ " bitrate " ~
       (channels > 2 ? "surround" : (channels > 1) ? "stereo" : "mono") ~
       "(" ~ (format&0x1000 ? "BE" : "LE") ~ ")");
     Output("1024 bytes of audio buffer");
-    Output(std.to!string(t) + " channels allocated");
+    Output(to!string(t) + " channels allocated");
 
     Mix_Init(MIX_INIT_OGG);
     Mix_ChannelFinished(&Stop_Sound);
@@ -41,7 +41,7 @@ static class Sounds {
   Mix_Chunk* Load_Sound(string str) {
     Mix_Chunk* sample = Mix_LoadWAV(str.ptr);
     if ( sample is null ) {
-      Debug_Output("Error loading " ~ str + ": " ~ Mix_GetError());
+      Debug_Output("Error loading " ~ str ~ ": " ~ Mix_GetError());
       return null;
     }
     return sample;
@@ -55,17 +55,17 @@ static class Sounds {
     if ( a < 0 )
       return -1;
     else {
-      Mix_Volume(a, volume);
+      Mix_Volume(a, vol);
       SoundEng.channel_playing[a] = 1;
     }
     return a;
   }
-  bool Channel_State(int x) { return SoundEng.channel_playing[x]; }
-  int R_Max_Channels() { return SoundEng.Max_Channels; }
+  bool Channel_State(int x) { return cast(bool)SoundEng.channel_playing[x]; }
+  int R_Max_Channels() { return SoundEng.Max_channels; }
 
   Mix_Music* Load_Music(string str) {
     Mix_Music* sample = Mix_LoadMUS(str.ptr);
-    if ( sample <= 0 ) {
+    if ( sample is null ) {
       Debug_Output("Error loading " ~ str  ~ ": " ~ Mix_GetError());
       return null;
     }
@@ -82,6 +82,6 @@ static class Sounds {
   }
   
   void Stop_Music() { Mix_HaltMusic(); }
-  bool Music_State() { return Mix_PlayingMusic(); }
+  bool Music_State() { return cast(bool)Mix_PlayingMusic(); }
 }
 
