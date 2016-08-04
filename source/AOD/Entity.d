@@ -315,10 +315,10 @@ public:
   // ---- utility ----
 
   // Returns information on current collision with an AABB
-  Collision_Info Collide(AABBEnt aabb, Vector velocity) {
+  override Collision_Info Collide(AABBEnt aabb, Vector velocity) {
     return Collision_Info();
   }
-  Collision_Info Collide(PolyEnt poly, Vector velocity) {
+  override Collision_Info Collide(PolyEnt poly, Vector velocity) {
     return Collision_Info();
   }
 };
@@ -387,8 +387,7 @@ private Collision_Info PolyPolyColl(PolyEnt polyA, PolyEnt polyB,
   for ( int i = 0; i != vertsA.length + vertsB.length; ++ i ) {
     bool vA = (i<vertsA.length);
     // get the axis from the edge (we have to build the edge from vertices tho)
-    auto ref axis = Get_Axis((vA?vertsA:vertsB),
-                             (vA?i: i - vertsA.length));
+    auto axis = Get_Axis((vA?vertsA:vertsB), (vA?i: i - vertsA.length));
     // project polygons onto axis
     float minA, minB, maxA, maxB;
     Project_Poly(axis, vertsA, minA, maxA);

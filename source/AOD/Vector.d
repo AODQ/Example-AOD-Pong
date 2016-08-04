@@ -7,71 +7,71 @@ public:
   this(int   _x, int   _y ) { x = cast(float)_x; y = cast(float)_y; }
   this(Vector v) { x = v.x; y = v.y; }
 
-  ref Vector opAssign(Vector rhs) {
+  Vector opAssign(Vector rhs) {
     x = rhs.x;
     y = rhs.y;
     return this;
   }
-  ref Vector opBinary(string op)(Vector rhs)   if ( op == "+" ) {
+  Vector opBinary(string op)(Vector rhs)   if ( op == "+" ) {
     return Vector(x + rhs.x, y + rhs.y);
   }
-  ref Vector opBinary(string op)(int rhs)      if ( op == "+" ) {
+  Vector opBinary(string op)(int rhs)      if ( op == "+" ) {
     return Vector(x + rhs, y + rhs);
   }
-  ref Vector opOpAssign(string op)(Vector rhs) if ( op == "+" ) {
+  Vector opOpAssign(string op)(Vector rhs) if ( op == "+" ) {
     x += rhs.x;
     y += rhs.y;
     return this;
   }
-  ref Vector opOpAssign(string op)(int rhs)    if ( op == "+" ) {
+  Vector opOpAssign(string op)(int rhs)    if ( op == "+" ) {
     x += rhs;
     y += rhs;
     return this;
   }
-  ref Vector opBinary(string op)(Vector rhs)   if ( op == "-" ) {
+  Vector opBinary(string op)(Vector rhs)   if ( op == "-" ) {
     return Vector(x - rhs.x, y - rhs.y);
   }
-  ref Vector opBinary(string op)(int rhs)      if ( op == "-" ) {
+  Vector opBinary(string op)(int rhs)      if ( op == "-" ) {
     return Vector(x - rhs, y - rhs);
   }
-  ref Vector opOpAssign(string op)(Vector rhs) if ( op == "-" ) {
+  Vector opOpAssign(string op)(Vector rhs) if ( op == "-" ) {
     x -= rhs.x;
     y -= rhs.y;
     return this;
   }
-  ref Vector opOpAssign(string op)(int rhs)    if ( op == "-" ) {
+  Vector opOpAssign(string op)(int rhs)    if ( op == "-" ) {
     x -= rhs;
     y -= rhs;
     return this;
   }
-  ref Vector opBinary(string op)(Vector rhs)   if ( op == "*" ) {
+  Vector opBinary(string op)(Vector rhs)   if ( op == "*" ) {
     return Vector(x * rhs.x, y * rhs.y);
   }
-  ref Vector opBinary(string op)(int rhs)      if ( op == "*" ) {
+  Vector opBinary(string op)(int rhs)      if ( op == "*" ) {
     return Vector(x * rhs, y * rhs);
   }
-  ref Vector opOpAssign(string op)(Vector rhs) if ( op == "*" ) {
+  Vector opOpAssign(string op)(Vector rhs) if ( op == "*" ) {
     x *= rhs.x;
     y *= rhs.y;
     return this;
   }
-  ref Vector opOpAssign(string op)(int rhs)    if ( op == "*" ) {
+  Vector opOpAssign(string op)(int rhs)    if ( op == "*" ) {
     x *= rhs;
     y *= rhs;
     return this;
   }
-  ref Vector opBinary(string op)(Vector rhs)   if ( op == "/" ) {
+  Vector opBinary(string op)(Vector rhs)   if ( op == "/" ) {
     return Vector(x / rhs.x, y / rhs.y);
   }
-  ref Vector opBinary(string op)(int rhs)      if ( op == "/" ) {
+  Vector opBinary(string op)(int rhs)      if ( op == "/" ) {
     return Vector(x / rhs, y / rhs);
   }
-  ref Vector opOpAssign(string op)(Vector rhs) if ( op == "/" ) {
+  Vector opOpAssign(string op)(Vector rhs) if ( op == "/" ) {
     x /= rhs.x;
     y /= rhs.y;
     return this;
   }
-  ref Vector opOpAssign(string op)(int rhs)    if ( op == "/" ) {
+  Vector opOpAssign(string op)(int rhs)    if ( op == "/" ) {
     x /= rhs;
     y /= rhs;
     return this;
@@ -140,7 +140,7 @@ public:
 
   import AOD.matrix;
 
-  static Vector Transform(const ref Matrix mat, const ref Vector vec) {
+  static Vector Transform(Matrix mat, Vector vec) {
     Vector v;
     v.x = vec.x * mat.a + vec.y * mat.c + mat.tx;
     v.y = vec.x * mat.b + vec.y * mat.d + mat.ty;
