@@ -81,7 +81,7 @@ static class Sounds {
     Mix_VolumeMusic(vol);
     if ( a == -1 )
       Debug_Output("Could not play music: " ~ to!string(Mix_GetError()));
-    return a;
+    return cast(bool)a;
   }
   
   void Stop_Music() { Mix_HaltMusic(); }

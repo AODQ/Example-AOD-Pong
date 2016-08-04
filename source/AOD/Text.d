@@ -22,6 +22,13 @@ static class TextEng {
   public:
     static FT_Library FTLib;
 
+    struct Font_Type {
+      string name;
+      int size;
+    };
+
+    Font[Font_Type] fonts = [];
+
     this(string file, int siz) {
       import File = std.file;
       import std.conv : to;
@@ -51,7 +58,7 @@ static class TextEng {
           continue;
         }
         if ( FT_Render_Glyph(face.glyph,
-                            FT_Render_Mode_.FT_RENDER_MODE_NORMAL ) ) {
+                            FT_Render_Mode.FT_RENDER_MODE_NORMAL ) ) {
           Debug_Output("Failed to render char index "
                                     ~ to!string(i) ~ " for font " ~ file);
           continue;
@@ -63,11 +70,11 @@ static class TextEng {
                                       to!string(i) ~ " for font " ~ file);
           continue;
         }
-        if ( FT_Glyph_To_Bitmap( &glyph, ft_render_mode_normal, 0, 1) ) {
-          Debug_Output( "Glyph to bitmap failed at char index " ~
-                                    to!string(i) ~ " for font " ~ file);
-          continue;
-        }
+        /* if ( FT_Glyph_To_Bitmap( &glyph, ft_render_mode_normal, 0, 1) ) { */
+        /*   Debug_Output( "Glyph to bitmap failed at char index " ~ */
+        /*                             to!string(i) ~ " for font " ~ file); */
+        /*   continue; */
+        /* } */
         FT_BitmapGlyph bitmap_glyph = cast(FT_BitmapGlyph)glyph;
 
         FT_Bitmap map = bitmap_glyph.bitmap;
@@ -98,7 +105,7 @@ static class TextEng {
         glEnable(GL_BLEND);
         glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
         glTexImage2D( GL_TEXTURE_2D, 0, GL_RGBA, w, h, 0,
-                      GL_LUMINANCE_ALPHA, GL_UNSIGNED_BYTE, data );
+                      GL_LUMINANCE_ALPHA, GL_UNSIGNED_BYTE, data.ptr );
 
         data = [];
         glNewList(char_lists + i, GL_COMPILE );
@@ -111,10 +118,10 @@ static class TextEng {
                   y = cast(float)map.rows /cast(float)h;
             int rows = -cast(int)map.rows;
             glBegin( GL_QUADS );
-              glTexCoord2f( 0.f, y   ); glVertex2f( 0.f,       d );
+              glTexCoord2f( 0.0, y   ); glVertex2f( 0.0,       d );
               glTexCoord2f( x  , y   ); glVertex2f( map.width, d );
-              glTexCoord2f( x  , 0.f ); glVertex2f( map.width, rows + d );
-              glTexCoord2f( 0.f, 0.f ); glVertex2f( 0.f,       rows + d );
+              glTexCoord2f( x  , 0.0 ); glVertex2f( map.width, rows + d );
+              glTexCoord2f( 0.0, 0.0 ); glVertex2f( 0.0,       rows + d );
             glEnd();
 
           glPopMatrix();
@@ -126,7 +133,7 @@ static class TextEng {
       FT_Done_Face(face);
     }
     ~this() {
-      glDeleteTextures(128, char_texture); 
+      glDeleteTextures(128, char_texture.ptr); 
     }
 
     FT_Face R_Face()           { return face;            }
@@ -144,20 +151,13 @@ static class TextEng {
     }
 
     static Font Load_Font(string fil, int siz) {
-      auto font_pair = Font_Type(fil, siz);
+      Font_Type font_pair = Font_Type(fil, siz);
       if ( fonts.get(font_pair, null) == null ) {
         fonts[font_pair] = new Font(str, pt_size);
       }
       return fonts[font_pair];
     }
   }
-
-  struct Font_Type {
-    string name;
-    int size;
-  };
-
-  Font[Font_Type] fonts;
 }
 
 class Text {
@@ -195,18 +195,18 @@ class Text {
   }
 public:
   this(int pos_x, int pos_y, string str_) {
-    position = new Vector(pos_x, pos_y);
+    position = Vector(pos_x, pos_y);
     Redefault(str_);
   }
 
   this(Vector pos, string str_) {
-    position = new Vector(pos);
+    position = Vector(pos);
     Redefault(str_);
   }
 
   void Set_Position(Vector v)          { position = v;                   }
   void Set_Position(float x, float y)  { position.x = x; position.y = y; }
-  void Set_String(string str)          { string = str;                   }
+  void Set_String(string str_)         { str = str_;                   }
   void Set_Colour(int r, int g, int b) {                                 }
   void Set_Visible(bool t)             { visible = t;                    }
   void Set_To_Default() {

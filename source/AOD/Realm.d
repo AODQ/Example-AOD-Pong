@@ -186,10 +186,9 @@ public:
         glScalef (lz.R_Img_Size().x, lz.R_Img_Size().y, 1);
 
         import std.conv : to;
-        const(void)* vertices = Entity.Vertices.ptr;
-        glVertexPointer	 (2, GL_FLOAT, 0, vertices);
+        glVertexPointer	 (2, GL_FLOAT, 0, Entity.Vertices.ptr);
         glTexCoordPointer(2, GL_FLOAT, 0, lz.R_UV_Array().ptr);
-        glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_BYTE, index);
+        glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_BYTE, index.ptr);
         glLoadIdentity();
       glPopAttrib();
       glPopMatrix();
