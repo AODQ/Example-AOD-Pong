@@ -13,7 +13,7 @@ import derelict.freetype.ft;
 import std.string;
 import std.typecons : tuple;
 
-class TextEng {
+static class TextEng {
   static Font[Font_Type] fonts;
 
   struct Font_Type {
