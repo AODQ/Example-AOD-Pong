@@ -14,6 +14,18 @@ import std.string;
 import std.typecons : tuple;
 
 class TextEng {
+  static Font[Font_Type] fonts;
+
+  struct Font_Type {
+    string name;
+    int size;
+    int opCmp(string op)(Font_Type rhs) {
+      import std.algorithm;
+      auto res = cmp(name, rhs.name);
+      return res == 0 ? size - rhs.size : res;
+    }
+  };
+
   class Font {
     FT_Face face;
     GLuint[128] char_texture;
@@ -21,18 +33,6 @@ class TextEng {
     int width;
   public:
     static FT_Library FTLib;
-
-    struct Font_Type {
-      string name;
-      int size;
-      int opCmp(string op)(Font_Type rhs) {
-        import std.algorithm;
-        auto res = cmp(name, rhs.name);
-        return res == 0 ? size - rhs.size : res;
-      }
-    };
-
-    static Font[Font_Type] fonts;
 
     this(string file, int siz) {
       import File = std.file;
@@ -184,7 +184,7 @@ class Text {
       pt_size = default_pt_size;
       font    = default_font;
     }
-    ft_font = TextEng.Font.fonts[TextEng.Font.Font_Type(font, pt_size)];
+    ft_font = TextEng.fonts[TextEng.Font_Type(font, pt_size)];
   }
 
   void Redefault(string str_) {
