@@ -15,22 +15,22 @@ import AOD.vector;
 import AOD.utility;
 
 static class Engine {
-  SDL_Window* screen = null;
-  GLuint[] images;
+  static SDL_Window* screen = null;
+  static GLuint[] images;
 
-  Realm realm = null;
+  static Realm realm = null;
 
-  uint ms_dt = 0;
+  static uint ms_dt = 0;
 
-  bool started = 0;
-  int start_ticks = 0;
-  Text fps_display;
-  float[20] fps = [ 0 ];
+  static bool started = 0;
+  static int start_ticks = 0;
+  static Text fps_display;
+  static float[20] fps = [ 0 ];
 }
 
 void Initialize(int window_width, int window_height, uint _fps,
                 string window_name, string icon = "") {
-  if ( Engine.realm == null ) {
+  if ( Engine.realm is null ) {
     if ( window_name == "" )
       window_name = "Art of Dwarficorn";
     Engine.realm = new AOD.Realm(window_width, window_height, window_name, icon);
