@@ -1,4 +1,4 @@
-module AOD.sounds;
+module AOD.sound;
 import derelict.opengl3.gl3;
 import derelict.sdl2.mixer;
 
@@ -6,7 +6,7 @@ import AOD.console : Output, Debug_Output;
 import std.string;
 import std.conv : to;
 
-static class SoundEngine {
+static class SoundEng {
   int sound_size, music_size;
   immutable(int) Max_channels = 64;
   int[] channel_playing;
@@ -55,12 +55,12 @@ static class Sounds {
       return -1;
     else {
       Mix_Volume(a, volume);
-      SoundEngine.channel_playing[a] = 1;
+      SoundEng.channel_playing[a] = 1;
     }
     return a;
   }
-  bool Channel_State(int x) { return SoundEngine.channel_playing[x]; }
-  int R_Max_Channels() { return SoundEngine.Max_Channels; }
+  bool Channel_State(int x) { return SoundEng.channel_playing[x]; }
+  int R_Max_Channels() { return SoundEng.Max_Channels; }
 
   Mix_Music* Load_Music(string str) {
     Mix_Music* sample = Mix_LoadMUS(str.ptr);

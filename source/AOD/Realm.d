@@ -10,6 +10,7 @@ import AOD.AOD;
 import AOD.entity;
 import AOD.text;
 import AOD.console;
+import AOD.sound;
 
 class Realm {
   Entity[][] objects;
@@ -77,9 +78,9 @@ public:
 		/* glMatrixMode(GL_MODELVIEW); */
     { // others
       Debug_Output("Initializing Sounds Core");
-      SoundEngine.Set_Up();
+      SoundEng.Set_Up();
       Debug_Output("Initializing Font Core");
-      TextEngine.Font.Init();
+      TextEng.Font.Init();
       objs_to_rem.clear();
       bg_red	 = 0;
       bg_blue	= 0;
@@ -137,8 +138,6 @@ public:
   }
 
   void Render() {
-    import CV = AOD.Client_Vars;
-
     glClear(GL_COLOR_BUFFER_BIT| GL_DEPTH_BUFFER_BIT);
     glClearColor(bg_red,bg_green,bg_blue,0);
     
