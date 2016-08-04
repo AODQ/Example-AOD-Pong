@@ -11,6 +11,7 @@ import AOD.entity;
 import AOD.text;
 import AOD.console;
 import AOD.sound;
+import Camera = AOD.Camera;
 
 class Realm {
   Entity[][] objects;
@@ -81,7 +82,7 @@ public:
       SoundEng.Set_Up();
       Debug_Output("Initializing Font Core");
       TextEng.Font.Init();
-      objs_to_rem.clear();
+      objs_to_rem = [];
       bg_red	 = 0;
       bg_blue	= 0;
       bg_green = 0;
@@ -94,11 +95,11 @@ public:
     objects[l] ~= o;
   }
   void __Add(Text t) {
-    text.push_back(t);
+    text ~= t;
   }
 
   void __Remove(Entity o) {
-    objs_to_rem.push_back(o);
+    objs_to_rem ~= o;
   }
   void __Remove(Text t) {
     foreach ( i; 0 .. text.length ) {
@@ -134,15 +135,15 @@ public:
         }
       }
     }
-    objs_to_rem.clear();
+    objs_to_rem = [];
   }
 
   void Render() {
     glClear(GL_COLOR_BUFFER_BIT| GL_DEPTH_BUFFER_BIT);
     glClearColor(bg_red,bg_green,bg_blue,0);
     
-    glEnableClientState(GL_VERTEX_ARRAY);
-    glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+    /* glEnableClientState(GL_VERTEX_ARRAY); */
+    /* glEnableClientState(GL_TEXTURE_COORD_ARRAY); */
     glEnable(GL_TEXTURE_2D);
 
     float off_x = Camera.position.x - Camera.size.x/2,

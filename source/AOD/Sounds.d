@@ -6,7 +6,8 @@ import AOD.console : Output, Debug_Output;
 import std.string;
 import std.conv : to;
 
-static class SoundEng {
+class SoundEng {
+static:
   int sound_size, music_size;
   immutable(int) Max_channels = 64;
   int[] channel_playing;
