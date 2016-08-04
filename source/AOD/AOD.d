@@ -14,18 +14,19 @@ import AOD.text;
 import AOD.vector;
 import AOD.utility;
 
-static class Engine {
-  static SDL_Window* screen = null;
-  static GLuint[] images;
+class Engine {
+static:
+  SDL_Window* screen = null;
+  GLuint[] images;
 
-  static Realm realm = null;
+  Realm realm = null;
 
-  static uint ms_dt = 0;
+  uint ms_dt = 0;
 
-  static bool started = 0;
-  static int start_ticks = 0;
-  static Text fps_display;
-  static float[20] fps = [ 0 ];
+  bool started = 0;
+  int start_ticks = 0;
+  Text fps_display;
+  float[20] fps = [ 0 ];
 }
 
 void Initialize(int window_width, int window_height, uint _fps,
@@ -58,7 +59,7 @@ void Change_MSDT(Uint32 x) {
 }
 
 void Reset() {
-  if ( Engine.realm != null )
+  if ( Engine.realm !is null )
     Engine.realm.Reset();
 }
 void End() {
@@ -70,10 +71,10 @@ void End() {
 Entity[int] obj_list;
 
 
-int Add(Entity o,int layer) {
+int Add(Entity o) {
   static uint id_counter = 0;
   if ( Engine.realm != null && o && layer >= 0 ) {
-    Engine.realm.__Add(o, layer);
+    Engine.realm.__Add(o);
     o.Set_ID(id_counter++);
     /* obj_list[o.Ret_ID(), o); */
     return o.Ret_ID();
@@ -96,22 +97,22 @@ void Add(Text t) {
 }
 
 void Remove(Entity o) {
-  if ( Engine.realm != null )
+  if ( Engine.realm !is null )
     Engine.realm.__Remove(o);
 }
 
-void Remove(Text* t) {
-  if ( Engine.realm != null )
+void Remove(Text t) {
+  if ( Engine.realm !is null )
     Engine.realm.__Remove(t);
 }
 
 void Set_BG_Colour(GLfloat r, GLfloat g, GLfloat b) {
-  if ( Engine.realm == null ) return;
+  if ( Engine.realm is null ) return;
   Engine.realm.Set_BG_Colours(r, g, b);
 }
 
 void Run() {
-  if ( Engine.realm == null ) return;
+  if ( Engine.realm is null ) return;
   float prev_dt        = 0, // DT from previous frame
         curr_dt        = 0, // DT for beginning of current frame
         elapsed_dt     = 0, // DT elapsed between previous frame and this frame

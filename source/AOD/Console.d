@@ -13,7 +13,8 @@ import derelict.opengl3.gl3;
 import derelict.sdl2.sdl;
 import std.string;
 
-static class ConsEng {
+class ConsEng {
+static:
   int console_type = 0;
   GLuint console_image = 0;
   Text console_text;
