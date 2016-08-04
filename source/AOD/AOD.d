@@ -8,9 +8,9 @@ import AOD.Camera;
 import Console = AOD.Console;
 import AOD.Input;
 import AOD.Entity : Entity;
-import Realm   = AOD.Realm;
+static import AOD.Realm : Realm;
 import AOD.Sounds;
-import AOD.Text;
+static import AOD.Text;
 import AOD.Vector;
 import AOD.Utility;
 
@@ -18,7 +18,7 @@ static class Engine {
   SDL_Window* screen = null;
   GLuint[] images;
 
-  Realm realm = null;
+  AOD.Realm realm = null;
 
   uint ms_dt = 0;
 
@@ -29,11 +29,11 @@ static class Engine {
 }
 
 void Initialize(int window_width, int window_height, uint _fps,
-                char[] window_name, char[] icon = "") {
+                string window_name, string icon = "") {
   if ( Engine.realm == null ) {
     if ( window_name == "" )
       window_name = "Art of Dwarficorn";
-    Engine.realm = new Realm(window_width, window_height, window_name, icon);
+    Engine.realm = new AOD.Realm(window_width, window_height, window_name, icon);
     Engine.ms_dt = _fps;
   }
   Camera.Set_Position(Vector(0, 0));
