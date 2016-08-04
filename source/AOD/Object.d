@@ -246,114 +246,112 @@ public:
   static immutable(float)[8] Vertices;
 };
 
-  // -------------- POLY OBJ --------------------------------------------------
+// -------------- POLY OBJ --------------------------------------------------
 
-  class PolyEnt : Entity {
-  protected:
-    Vector[] vertices, vertices_transform;
-    void Build_Transform() {}
-  public:
-    this() {
-      super(Type.Polygon);
-      vertices = [];
-    }
-    this(Vector[] vertices, Vector off = Vector( 0, 0 )) {
-      super(Type.Polygon);
-      vertices = vert;
-      Set_Position(off);
-    }
+class PolyEnt : Entity {
+protected:
+  Vector[] vertices, vertices_transform;
+  void Build_Transform() {}
+public:
+  this() {
+    super(Type.Polygon);
+    vertices = [];
+  }
+  this(Vector[] vertices, Vector off = Vector( 0, 0 )) {
+    super(Type.Polygon);
+    vertices = vert;
+    Set_Position(off);
+  }
 
-    // ---- ret/set ----
-    // will override previous vectors
-    void Set_Vertices(Vector[] , bool reorder = 1) {
-      vertices = vert;
-      if ( reorder ) {
-        Order_Vertices(vertices);
+  // ---- ret/set ----
+  // will override previous vectors
+  void Set_Vertices(Vector[] , bool reorder = 1) {
+    vertices = vert;
+    if ( reorder ) {
+      Order_Vertices(vertices);
+    }
+    Build_Transform();
+  }
+  Vector[] R_Vertices() {
+    return vertices;
+  }
+  Vector[] R_Transformed_Vertices(bool force = 0) {
+    // check if transform needs to be updated
+    if ( transformed || force ) {
+      transformed = 0;
+      vertices_transform.clear();
+
+      foreach ( i; vertices ) {
+        vertices_transform.push_back(
+          Vector.Transform(R_Matrix(), i));
       }
-      Build_Transform();
     }
-    Vector[] R_Vertices() {
-      return vertices;
-    }
-    Vector[] R_Transformed_Vertices(bool force = 0) {
-      // check if transform needs to be updated
-      if ( transformed || force ) {
-        transformed = 0;
-        vertices_transform.clear();
+    
+    return vertices_transform;
+  }
 
-        foreach ( i; vertices ) {
-          vertices_transform.push_back(
-            Vector.Transform(R_Matrix(), i));
-        }
-      }
-      
-      return vertices_transform;
-    }
+  // ---- utility ----
 
-    // ---- utility ----
+  // Returns information on current collision state with another poly
+  Collision_Info Collide(PolyEnt* poly, Vector velocity) {
+    return PolyPolyColl(this, poly, velocity);
+  }
+  Collision_Info Collide(AABBEnt* aabb, Vector velocity) {
+    return Collision_Info(); 
+  }
+};
 
-    // Returns information on current collision state with another poly
-    Collision_Info Collide(PolyEnt* poly, Vector velocity) {
-      return PolyPolyColl(this, poly, velocity);
-    }
-    Collision_Info Collide(AABBEnt* aabb, Vector velocity) {
-      return Collision_Info(); 
-    }
-  };
+class AABBEnt : PolyEnt {
+public:
+  this(Vector size = Vector(0, 0)) {
+    super();
+    type = Type.AABB;
+    Set_Vertices([Vector(-size.x/2.f, -size.y/2.f),
+                  Vector(-size.x/2.f,  size.y/2.f),
+                  Vector( size.x/2.f,  size.y/2.f),
+                  Vector( size.x/2.f, -size.y/2.f)]);
+  }
+  this(Vector size = Vector( 0,0 ), Vector pos = Vector( 0,0 )) {
+    this(size);
+    position = pos;
+  }
 
-  class AABBEnt : PolyEnt {
-  public:
-    this(Vector size = Vector(0, 0)) {
-      super();
-      type = Type.AABB;
-      Set_Vertices({{-size.x/2.f, -size.y/2.f},
-                    {-size.x/2.f,  size.y/2.f},
-                    { size.x/2.f,  size.y/2.f},
-                    { size.x/2.f, -size.y/2.f}});
-    }
-    this(Vector size = Vector( 0,0 ), Vector pos = Vector( 0,0 )) {
-      this(size);
-      position = pos;
-    }
+  // ---- utility ----
 
-    // ---- utility ----
+  // Returns information on current collision with an AABB
+  Collision_Info Collide(AABBEnt* aabb, Vector velocity) {
+    return Collision_Info();
+  }
+  Collision_Info Collide(PolyEnt* poly, Vector velocity) {
+    return Collision_Info();
+  }
+};
 
-    // Returns information on current collision with an AABB
-    Collision_Info Collide(AABBEnt* aabb, Vector velocity) {
-      return Collision_Info();
-    }
-    Collision_Info Collide(PolyEnt* poly, Vector velocity) {
-      return Collision_Info();
-    }
-  };
-
-  // Valuable information from a collision, "translation"
-  // could mean different things dependent on the collision type
-  struct Collision_Info {
-  public:
-    bool collision,
-         will_collide;
-    Vector translation,
-           projection, normal;
-    PolyEnt obj;
-    // collision will always be true in def constructor
-    this() {
-      collision = 1;
-      will_collide = 0;
-    }
-    this(this) { }
-    this(bool c) {
-      collision = c;
-      will_collide = 0;
-    }
-    this(ref Vector t, bool c, bool wc) {
-      collision = c;
-      will_collide = wc;
-      translation = t;
-    }
-  };
-}
-
+// Valuable information from a collision, "translation"
+// could mean different things dependent on the collision type
+struct Collision_Info {
+public:
+  bool collision,
+       will_collide;
+  Vector translation,
+         projection, normal;
+  PolyEnt obj;
+  // collision will always be true in def constructor
+  this() {
+    collision = 1;
+    will_collide = 0;
+  }
+  this(this) { }
+  this(bool c) {
+    collision = c;
+    will_collide = 0;
+  }
+  this(ref Vector t, bool c, bool wc) {
+    collision = c;
+    will_collide = wc;
+    translation = t;
+  }
+};
 
 // -------------------- collision code -----------------------------------------
 

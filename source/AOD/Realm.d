@@ -99,7 +99,7 @@ public:
   void __Remove(Text t) {
     foreach ( i; 0 .. text.length ) {
       if ( text[i] == t ) {
-        text = [0 .. i] ~ [i+1 .. $];
+        text = text[0 .. i] ~ text[i+1 .. $];
         return;
       }
     }
@@ -146,15 +146,15 @@ public:
     float off_x = Camera.position.x - Camera.size.x/2,
           off_y = Camera.position.y - Camera.size.y/2;
 
-    static GLubyte index[6] = { 0,1,2, 1,2,3 };
+    static GLubyte[6] index = [ 0,1,2, 1,2,3 ];
 
     // --- objects
 
     foreach ( az ; objects )
     foreach ( lz ; az ) {
       if ( !lz.R_Is_Visible() ) continue;
-      auto position = lz->R_Position(),
-           size		 = lz->R_Size();
+      auto position = lz.R_Position(),
+           size		  = lz.R_Size();
       if ( !lz.R_Is_Static_Pos() ) {
         position.x -= off_x;
         position.y -= off_y;
@@ -169,16 +169,16 @@ public:
       glPushAttrib(GL_CURRENT_BIT);
         if ( lz.R_Is_Coloured() )
           glColor4f(lz.R_Red(), lz.R_Green(), lz.R_Blue(), lz.R_Alpha());
-        glBindTexture(GL_TEXTURE_2D,lz->image);
-        auto& origin = lz->R_Origin();
-        int fx = lz.R_Flipped_X() ? -1 : 1,
-            fy = lz.R_Flipped_Y() ?	1 :-1;
+        glBindTexture(GL_TEXTURE_2D,lz.image);
+        auto& origin = lz.R_Origin();
+        int fx = lz.R_Flipped_X() ? - 1 :  1 ,
+            fy = lz.R_Flipped_Y() ?   1 :- 1 ;
         glTranslatef(position.x + origin.x*fx,
                      position.y + origin.y*fy, 0);
-        glRotatef((lz.rotation*180)/std::_Pi, 0, 0, 1);
+        glRotatef((lz.rotation*180.f)/3.14159f, 0, 0, 1);
         glTranslatef(-origin.x*fx,
                      -origin.y*fy, 0);
-        glScalef (lz.image_size.x, lz->image_size.y, 1);
+        glScalef (lz.image_size.x, lz.image_size.y, 1);
 
         glVertexPointer	(2, GL_FLOAT, 0, AOD.Entity.Vertices);
         glTexCoordPointer(2, GL_FLOAT, 0, lz._UV);
