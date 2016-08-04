@@ -277,12 +277,10 @@ public:
     // check if transform needs to be updated
     if ( transformed || force ) {
       transformed = 0;
-      vertices_transform.clear();
+      vertices_transform = [];
 
-      foreach ( i; vertices ) {
-        vertices_transform.push_back(
-          Vector.Transform(R_Matrix(), i));
-      }
+      foreach ( i; vertices )
+        vertices_transform ~= Vector.Transform(R_Matrix(), i));
     }
     
     return vertices_transform;
@@ -291,10 +289,10 @@ public:
   // ---- utility ----
 
   // Returns information on current collision state with another poly
-  Collision_Info Collide(PolyEnt* poly, Vector velocity) {
+  Collision_Info Collide(PolyEnt poly, Vector velocity) {
     return PolyPolyColl(this, poly, velocity);
   }
-  Collision_Info Collide(AABBEnt* aabb, Vector velocity) {
+  Collision_Info Collide(AABBEnt aabb, Vector velocity) {
     return Collision_Info(); 
   }
 };
@@ -354,7 +352,7 @@ private Vector Get_Axis(Vector[] vertices, int i) {
   return axis;
 }
 
-private Project_Poly(ref Vector axis, ref Vector[] poly,
+private void Project_Poly(ref Vector axis, ref Vector[] poly,
                      ref float min, ref float max) {
   min = axis.Dot_Product(poly[0]);
   max = min;

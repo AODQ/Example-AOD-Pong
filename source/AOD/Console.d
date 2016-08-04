@@ -91,7 +91,7 @@ static:
     to_console = [];
     // pop back old debugs
     while ( console_text.length > console_history ) {
-      AOD.Remove(console_text[console_text.length-1]);
+      Remove(console_text[console_text.length-1]);
       -- console_text.length;
     }
   }
