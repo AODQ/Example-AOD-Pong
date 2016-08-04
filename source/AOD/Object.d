@@ -367,7 +367,7 @@ private Vector Project_Poly(Vector axis, Vector[] poly,
   min = axis.Dot_Product(poly[0]);
   max = min;
 
-  foreach ( i ; 1 .. poly.length )
+  foreach ( i ; 1 .. poly.length ) {
     float t = poly[i].Dot_Product ( axis );
     if ( t < min ) min = t;
     if ( t > max ) max = t;

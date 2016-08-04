@@ -170,7 +170,7 @@ public:
         if ( lz.R_Is_Coloured() )
           glColor4f(lz.R_Red(), lz.R_Green(), lz.R_Blue(), lz.R_Alpha());
         glBindTexture(GL_TEXTURE_2D,lz.image);
-        auto& origin = lz.R_Origin();
+        ref auto origin = lz.R_Origin();
         int fx = lz.R_Flipped_X() ? - 1 :  1 ,
             fy = lz.R_Flipped_Y() ?   1 :- 1 ;
         glTranslatef(position.x + origin.x*fx,

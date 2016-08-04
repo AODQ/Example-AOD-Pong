@@ -15,17 +15,17 @@ static class SoundEngine {
 
   void Set_Up() {
     if ( Mix_OpenAudio( 44100, MIX_DEFAULT_FORMAT, 2, 4096) == -1 )
-      AOD.Output("Init Audio Error: " + (string)Mix_GetError());
+      AOD.Output("Init Audio Error: " ~ cast(string)Mix_GetError());
     int t = Mix_AllocateChannels(Max_channels);
     int rate, channels;
     ushort format;
     Mix_QuerySpec(&rate, &format, &channels);
 
     AOD.Output("Audio specs:");
-    AOD.Output(std.to!string(rate) + " Hz");
-    AOD.Output(std.to!string(format&0xFF) + " bitrate " +
-      (channels > 2 ? "surround" : (channels > 1) ? "stereo" : "mono") +
-      "(" + (format&0x1000 ? "BE" : "LE") + ")");
+    AOD.Output(std.to!string(rate) ~ " Hz");
+    AOD.Output(std.to!string(format&0xFF) ~ " bitrate " ~
+      (channels > 2 ? "surround" : (channels > 1) ? "stereo" : "mono") ~
+      "(" ~ (format&0x1000 ? "BE" : "LE") ~ ")");
     AOD.Output("1024 bytes of audio buffer");
     AOD.Output(std.to!string(t) + " channels allocated");
 
@@ -57,7 +57,7 @@ static class Sounds {
   Mix_Music* Load_Music(string str) {
     Mix_Music* sample = Mix_LoadMUS(str.ptr);
     if ( sample <= 0 ) {
-      AOD.Debug_Output("Error loading " + str  + ": " + Mix_GetError());
+      AOD.Debug_Output("Error loading " ~ str  ~ ": " ~ Mix_GetError());
       return null;
     }
     return sample;
@@ -70,9 +70,6 @@ static class Sounds {
   bool Play_Music(Mix_Music* mix, int vol, int rep) {
     int a = Mix_PlayMusic(mix, rep);
     Mix_VolumeMusic(vol);
-    if ( a == -1 ) {
-      AOD.Debug_Output("Could not play music: " + 
-    }
   }
   
   void Stop_Music() { Mix_HaltMusic(); }

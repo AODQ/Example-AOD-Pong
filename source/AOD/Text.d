@@ -15,7 +15,7 @@ import std.typecons : tuple;
 static class TextEng {
   class Font {
     FT_Face face;
-    GLuint char_texture[128];
+    GLuint[128] char_texture;
     GLuint char_lists;
     int width;
   public:
@@ -49,15 +49,15 @@ static class TextEng {
                                    ~ to!string(i) ~ " for font " ~ file);
           continue;
         }
-        if ( FT_Render_Glyph(face->glyph,
-                            FT_Render_Mode_::FT_RENDER_MODE_NORMAL ) ) {
+        if ( FT_Render_Glyph(face.glyph,
+                            FT_Render_Mode_.FT_RENDER_MODE_NORMAL ) ) {
           Debug_Output("Failed to render char index "
                                     ~ to!string(i~ ~ " for font " + file);
           continue;
         }
 
         FT_Glyph glyph;
-        if ( FT_Get_Glyph ( face->glyph, &glyph ) ) {
+        if ( FT_Get_Glyph ( face.glyph, &glyph ) ) {
           Debug_Output( "Get Glyph failed at index " +
                                       to!string(i) + " for font " + file);
           continue;
@@ -69,12 +69,12 @@ static class TextEng {
         }
         FT_BitmapGlyph bitmap_glyph = cast(FT_BitmapGlyph)glyph;
 
-        FT_Bitmap map = bitmap_glyph->bitmap;
+        FT_Bitmap map = bitmap_glyph.bitmap;
 
         //map.palette_mode = ILUT_PALETTE_MODE;
 
-        int d = (face->glyph->metrics.height -
-                 face->glyph->metrics.horiBearingY)>>6;
+        int d = (face.glyph.metrics.height -
+                 face.glyph.metrics.horiBearingY)>>6;
 
         int w = map.width*map.width,
             h = map.rows *map.rows;
@@ -105,7 +105,7 @@ static class TextEng {
           glBindTexture( GL_TEXTURE_2D, char_texture[i] );
           glPushMatrix();
 
-            glTranslatef(face->glyph->bitmap_left, 0, 0);
+            glTranslatef(face.glyph.bitmap_left, 0, 0);
             float x = cast(float)map.width/cast(float)w,
                   y = cast(float)map.rows /cast(float)h;
             int rows = -cast(int)map.rows;
@@ -117,7 +117,7 @@ static class TextEng {
             glEnd();
 
           glPopMatrix();
-          glTranslatef(face->glyph->advance.x>>6, 0, 0);
+          glTranslatef(face.glyph.advance.x>>6, 0, 0);
 
         glEndList();
       }
@@ -136,7 +136,7 @@ static class TextEng {
     static void Init() {
       auto comp = FT_Init_FreeType(&FTLib);
       if ( comp ) {
-        AOD_Engine::Debug_Output("Could not open FreeType Library: " ~
+        Debug_Output("Could not open FreeType Library: " ~
                                  R_FT_Error_String(comp));
         return;
       }
@@ -158,13 +158,13 @@ class Text {
   Vector position;
   string msg, font_name;
   int pt_size;
-  std::string font;
-  AOD_Engine::Font* ft_font;
+  TextEng.string font;
+  TextEng.Font* ft_font;
 
   bool uses_default_font;
   bool visible;
 
-  static std::string default_font;
+  static string default_font;
   static int default_pt_size;
 
   void Refresh_Message() {
@@ -239,7 +239,7 @@ public:
 }
 
 
-std::string R_FT_Error_String(int code) {
+string R_FT_Error_String(int code) {
   if ( 0x00 == code ) return "no error";
   if ( 0x01 == code ) return "cannot open resource";
   if ( 0x02 == code ) return "unknown file format";
