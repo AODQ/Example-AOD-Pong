@@ -93,7 +93,7 @@ public:
 
   import std.math;
 
-  float Distance(const ref Vector _vector) {
+  float Distance(Vector _vector) {
     return sqrt((x*x - _vector.x*_vector.x) + (y*y - _vector.y*_vector.y));
   }
 
@@ -101,7 +101,7 @@ public:
     return atan2(y, x);
   }
 
-  float Angle(const ref Vector _vector) {
+  float Angle(Vector _vector) {
     return atan2(_vector.y - y, _vector.x - x);
   }
 
@@ -109,13 +109,13 @@ public:
     return sqrt((x*x) + (y*y));
   }
 
-  float Dot_Product(const ref Vector _vector) {
+  float Dot_Product(Vector _vector) {
     return x * _vector.x + y * _vector.y;
   }
 
 
   // projects other vector onto this one
-  void Project(const ref Vector _vector) {
+  void Project(Vector _vector) {
     float dot_prod = Dot_Product(_vector);
     x = (dot_prod / (pow(_vector.x, 2 ) +
                      pow(_vector.y, 2 )) ) * _vector.x;
@@ -124,17 +124,17 @@ public:
   }
 
   // gives right hand normal of vector
-  void Right_Normal(const ref Vector vec) {
+  void Right_Normal(Vector vec) {
   x =  (vec.x - x);
   y = -(vec.y - y);
   }
   // gives left hand normal of vector
-  void Left_Normal(const ref Vector vec) {
+  void Left_Normal(Vector vec) {
   x = -(vec.x - x);
   y =  (vec.y - y);
   }
 
-  static Vector Reflect(const Vector I, const Vector N) {
+  static Vector Reflect(Vector I, Vector N) {
     return I - (N*2.0f * I) * N;
   }
 
