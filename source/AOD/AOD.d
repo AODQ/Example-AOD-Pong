@@ -25,7 +25,7 @@ static class Engine {
   bool started = 0;
   int start_ticks = 0;
   Text fps_display;
-  float[20] fps = { 0 };
+  float[20] fps = [ 0 ];
 }
 
 void Initialize(int window_width, int window_height, uint _fps,
