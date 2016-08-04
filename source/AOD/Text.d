@@ -13,7 +13,7 @@ import derelict.freetype.ft;
 import std.string;
 import std.typecons : tuple;
 
-static class TextEng {
+class TextEng {
   class Font {
     FT_Face face;
     GLuint[128] char_texture;
@@ -153,7 +153,7 @@ static class TextEng {
     static Font Load_Font(string fil, int siz) {
       Font_Type font_pair = Font_Type(fil, siz);
       if ( fonts[font_pair] is null ) {
-        fonts[font_pair] = new Font(str, pt_size);
+        fonts[font_pair] = new Font(fil, siz);
       }
       return fonts[font_pair];
     }
