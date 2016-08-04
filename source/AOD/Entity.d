@@ -430,22 +430,27 @@ private Collision_Info PolyPolyColl(PolyEnt polyA, PolyEnt polyB,
 }
 
 
+struct Vert_Pair {
+  float dist;
+  Vector vert;
+  this(float dist_, Vector vert_) {
+    dist = dist_;
+    vert = vert_;
+  }
+};
 
 static void Order_Vertices(ref Vector[] verts) {
-  struct Vert_Pair {
-    float dist;
-    Vector vert;
-  };
   // get centroid, same time preparing to calculate angle of verts
   float centx = 0, centy = 0;
-  std::vector<Vert_Pair> va;
+  Vert_Pair[] va;
   foreach ( i; verts ) {
     centx += i.x;
     centy += i.y;
-    va.push_back(Vert_Pair{0, i});
+    va ~= Vert_Pair(0, i);
   }
-  centx /= verts.size();
-  centy /= verts.size();
+  centx /= verts.length;
+  centy /= verts.length;
+  verts = []
 
   foreach ( i; va ) {
     i.first = std::atan2f(i.second.y - centy, i.second.x - centx);
@@ -453,15 +458,11 @@ static void Order_Vertices(ref Vector[] verts) {
     //                        << i.second.x << " - " << centx << ") = "
     //                        << i.first << '\n';
   }
-  std::sort( va.begin(), va.end(),
-    [](std::pair<float, AOD::Vector>& x,
-       std::pair<float, AOD::Vector>& y) {
-           //std::cout << x.first << " > " << y.first << '\n';
-      return x.first < y.first;
-    });
+  
+  import std.algorithm;
+  sort!((x, y) => (x.dist < y.dist))(va);
   // put back in vector
-  verts.clear();
-  for ( auto i : va )
+  foreach ( i; va )
     verts.push_back ( i.second );
 
   /*// double check that it is in sorted CCW order
