@@ -57,12 +57,12 @@ static class TextEng {
                                    ~ to!string(i) ~ " for font " ~ file);
           continue;
         }
-        if ( FT_Render_Glyph(face.glyph,
-                            FT_Render_Mode.FT_RENDER_MODE_NORMAL ) ) {
-          Debug_Output("Failed to render char index "
-                                    ~ to!string(i) ~ " for font " ~ file);
-          continue;
-        }
+        /* if ( FT_Render_Glyph(face.glyph, */
+        /*                     FT_Render_Mode.FT_RENDER_MODE_NORMAL ) ) { */
+        /*   Debug_Output("Failed to render char index " */
+        /*                             ~ to!string(i) ~ " for font " ~ file); */
+        /*   continue; */
+        /* } */
 
         FT_Glyph glyph;
         if ( FT_Get_Glyph ( face.glyph, &glyph ) ) {
@@ -152,7 +152,7 @@ static class TextEng {
 
     static Font Load_Font(string fil, int siz) {
       Font_Type font_pair = Font_Type(fil, siz);
-      if ( fonts.get(font_pair, null) == null ) {
+      if ( fonts[font_pair] is null ) {
         fonts[font_pair] = new Font(str, pt_size);
       }
       return fonts[font_pair];
