@@ -8,7 +8,7 @@ import Camera = AOD.camera;
 import Console = AOD.console;
 import AOD.input;
 import AOD.entity;
-import AOD.realm;
+static import AOD.realm;
 import AOD.sounds;
 import AOD.text;
 import AOD.vector;
@@ -19,7 +19,7 @@ static:
   SDL_Window* screen = null;
   GLuint[] images;
 
-  Realm realm = null;
+  AOD.realm.Realm realm = null;
 
   uint ms_dt = 0;
 
@@ -34,7 +34,8 @@ void Initialize(int window_width, int window_height, uint _fps,
   if ( Engine.realm is null ) {
     if ( window_name == "" )
       window_name = "Art of Dwarficorn";
-    Engine.realm = new Realm(window_width, window_height, window_name, icon);
+    Engine.realm = new AOD.realm.Realm(window_width, window_height,
+                                       window_name.ptr, icon.ptr);
     Engine.ms_dt = _fps;
   }
   Camera.Set_Position(Vector(0, 0));
@@ -43,9 +44,9 @@ void Initialize(int window_width, int window_height, uint _fps,
 
 void Initialize_Console(bool print_debug, SDL_Keycode key, string cons) {
   if ( print_debug )
-    Console.console_type = Console.TYPE_DEBUG_IN;
+    Console.ConsEng.console_type = Console.TYPE_DEBUG_IN;
   else
-    Console.console_type = Console.TYPE_DEBUG_OUT;
+    Console.ConsEng.console_type = Console.TYPE_DEBUG_OUT;
   Console.Debug_Output("Created new console");
   Console.key = key;
   Console.Construct();
