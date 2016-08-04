@@ -188,7 +188,7 @@ public:
         import std.conv : to;
         const(void)* vertices = Entity.Vertices.ptr;
         glVertexPointer	 (2, GL_FLOAT, 0, vertices);
-        glTexCoordPointer(2, GL_FLOAT, 0, lz.R_UV_Array());
+        glTexCoordPointer(2, GL_FLOAT, 0, lz.R_UV_Array().ptr);
         glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_BYTE, index);
         glLoadIdentity();
       glPopAttrib();
