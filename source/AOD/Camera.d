@@ -1,6 +1,6 @@
 module AOD.camera;
 
-import AOD.AOD;
+import AOD;
 import AOD.vector;
 
 private Vector position;

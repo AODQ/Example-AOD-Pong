@@ -7,7 +7,7 @@ import derelict.devil.il;
 import derelict.devil.ilu;
 import derelict.devil.ilut;
 import derelict.freetype.ft;
-import AOD.AOD;
+import AOD;
 import AOD.entity;
 import AOD.text;
 import AOD.console;
@@ -52,7 +52,7 @@ public:
 			Output("Error DOUBLEBUFFER: " ~ to!string(SDL_GetError()));
 		if ( SDL_GL_SetAttribute(SDL_GL_ALPHA_SIZE, 8) == -1 )
 			Output("Error ALPHA_SIZE: " ~ to!string(SDL_GetError()));
-		//glShadeModel(GL_SMOOTH);
+		glShadeModel(GL_SMOOTH);
 		glEnable(GL_TEXTURE_2D);
 		glEnable(GL_BLEND);
 		if ( icon != "" ) {
@@ -62,23 +62,23 @@ public:
 
 		glClearDepth(1.0f);
 		glPolygonMode(GL_FRONT, GL_FILL);
-		/* glShadeModel(GL_FLAT); */
-		/* glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_FASTEST); */
+		glShadeModel(GL_FLAT);
+		glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_FASTEST);
 		glDepthFunc(GL_LEQUAL);
 		glEnable(GL_DEPTH_TEST);
 		glEnable(GL_BLEND);
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-		/* glMatrixMode(GL_PROJECTION); */
+		glMatrixMode(GL_PROJECTION);
 		glEnable(GL_ALPHA);
 
-		/* glLoadIdentity(); */
+		glLoadIdentity();
 		
-		/* glOrtho(0, window_width, window_height, 0, 0, 1); */
+		glOrtho(0, window_width, window_height, 0, 0, 1);
 
 		//glMatrixMode(GL_MODELVIEW);
 		glDisable(GL_DEPTH_TEST);
-		/* glMatrixMode(GL_MODELVIEW); */
+		glMatrixMode(GL_MODELVIEW);
     { // others
       Debug_Output("Initializing Sounds Core");
       SoundEng.Set_Up();
@@ -144,8 +144,8 @@ public:
     glClear(GL_COLOR_BUFFER_BIT| GL_DEPTH_BUFFER_BIT);
     glClearColor(bg_red,bg_green,bg_blue,0);
     
-    /* glEnableClientState(GL_VERTEX_ARRAY); */
-    /* glEnableClientState(GL_TEXTURE_COORD_ARRAY); */
+    glEnableClientState(GL_VERTEX_ARRAY);
+    glEnableClientState(GL_TEXTURE_COORD_ARRAY);
     glEnable(GL_TEXTURE_2D);
 
     float off_x = Camera.R_Origin_Offset().x,

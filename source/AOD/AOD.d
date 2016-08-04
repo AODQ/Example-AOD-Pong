@@ -1,6 +1,7 @@
-module AOD.AOD;
+module AOD;
 
 import derelict.opengl3.gl3;
+import derelict.opengl3.gl;
 import derelict.sdl2.sdl;
 import std.string;
 
