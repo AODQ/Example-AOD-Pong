@@ -63,8 +63,8 @@ SheetContainer Load_Image(const char* fil) {
     if ( !ilConvertImage(IL_RGBA, IL_UNSIGNED_BYTE) ) {
       import std.conv : to;
       auto t = iluErrorString(ilGetError());
-      Debug_Output(std.to!string(t));
-      return 0;
+      Debug_Output(to!string(t));
+      return SheetContainer();
     }
     glBindTexture(GL_TEXTURE_2D, 0);
     glGenTextures(1, &GL_ID);
@@ -91,8 +91,8 @@ SheetContainer Load_Image(const char* fil) {
     auto t = ilGetError();
     import std.conv;
     Debug_Output("Error loading " ~ to!string(fil) ~ ": " ~
-      iluErrorString(t) ~ "(" ~ to!string(ilGetError()) + ")");
-    return 0;
+      to!string(iluErrorString(t)) ~ "(" ~ to!string(ilGetError()) + ")");
+    return SheetContainer();
   }
   ilDeleteImages(1, &IL_ID);
   return SheetContainer(GL_ID, width, height);
