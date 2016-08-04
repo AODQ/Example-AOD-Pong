@@ -1,6 +1,8 @@
 module AOD.Camera;
+
 import AOD.AOD;
 import AODUtil = AOD.Utility;
+import AOD.Vector;
 
 private AODUtil.Vector position;
 private AODUtil.Vector size;

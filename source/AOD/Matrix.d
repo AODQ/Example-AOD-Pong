@@ -8,11 +8,15 @@ public:
   float rot, prev_rot;
   Vector scale;
 
-  this(float _a = 1, float _b = 0, float _c = 0,
-       float _d = 1, float _tx = 0, float _ty = 0) {
+  this(float _a, float _b, float _c,
+       float _d, float _tx, float _ty) {
     a = _a; b = _b; c = _c; d = _d; tx = _tx; ty = _ty;
     rot = prev_rot = 0;
     scale = Vector( 1,1 ); 
+  }
+
+  static Matrix New() {
+    return Matrix(1, 0, 0, 1, 0, 0);
   }
 
   void Identity() {

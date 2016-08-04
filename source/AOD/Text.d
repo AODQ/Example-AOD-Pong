@@ -163,8 +163,8 @@ class Text {
   Vector position;
   string msg, font_name;
   int pt_size;
-  TextEng.string font;
-  TextEng.Font* ft_font;
+  string font;
+  TextEng.Font ft_font;
 
   bool uses_default_font;
   bool visible;

@@ -1,5 +1,8 @@
 module AOD.Utility;
 
+import derelict.opengl3.gl3;
+import derelict.sdl2.sdl;
+
 const(float) E         =  2.718282f,
              Log10E    =  0.4342945f,
              Log2E     =  1.442695f,

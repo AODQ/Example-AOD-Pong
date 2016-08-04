@@ -8,6 +8,7 @@ import AOD.Realm;
 
 import AOD.Matrix;
 import AOD.Vector;
+import AOD.Images;
 
 class Entity {
 private:
@@ -22,7 +23,6 @@ protected:
   int ID;
   float rotation,
         rotation_velocity;
-  Matrix matrix;
   Matrix matrix;
   Type type;
   Vector position,
@@ -53,6 +53,7 @@ public:
     type = _type;
     alpha = 1;
     Set_UVs(Vector(0,0), Vector(1,1));
+    matrix = Matrix.New();
     position = Vector(0,0);
     rotation = 0;
     rotation_velocity = 0;
@@ -401,7 +402,7 @@ private Collision_Info PolyPolyColl(PolyEnt polyA, PolyEnt polyB,
                              (vA?i: i - vertsA.length));
     // project polygons onto axis
     float minA, minB, maxA, maxB;
-    Project_Poly(axis, vertsA, minA, maxA);
+    Project_Poly(axis, VertsA, minA, maxA);
     Project_Poly(axis, vertsB, minB, maxB);
 
     // check for a gap between the two distances

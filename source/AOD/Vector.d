@@ -3,7 +3,6 @@ module AOD.Vector;
 struct Vector {
 public:
   float x, y;
-  this() { x = y = 0; }
   this(float _x, float _y ) { x = _x; y = _y; }
   this(int   _x, int   _y ) { x = cast(float)_x; y = cast(float)_y; }
   this(Vector v) { x = v.x; y = v.y; }
