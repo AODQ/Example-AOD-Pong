@@ -176,6 +176,7 @@ public:
     right.x = _UV[4];
     right.y = _UV[5];
   }
+  auto R_UV_Array() { return _UV; }
   void Flip_X() {
     Set_UVs( Vector(  _UV[ 4], _UV[ 3] ),
              Vector(  _UV[ 0], _UV[ 1] ), false );

@@ -11,36 +11,36 @@ static:
   int sound_size, music_size;
   immutable(int) Max_channels = 64;
   int[] channel_playing;
-  void Stop_Sound(int channel) {
+  extern(C) void Stop_Sound(int channel) {
     channel_playing[channel] = 0;
   }
 
   void Set_Up() {
     if ( Mix_OpenAudio( 44100, MIX_DEFAULT_FORMAT, 2, 4096) == -1 )
-      AOD.Output("Init Audio Error: " ~ cast(string)Mix_GetError());
+      Output("Init Audio Error: " ~ to!string(Mix_GetError()));
     int t = Mix_AllocateChannels(Max_channels);
     int rate, channels;
     ushort format;
     Mix_QuerySpec(&rate, &format, &channels);
 
-    AOD.Output("Audio specs:");
-    AOD.Output(std.to!string(rate) ~ " Hz");
-    AOD.Output(std.to!string(format&0xFF) ~ " bitrate " ~
+    Output("Audio specs:");
+    Output(std.to!string(rate) ~ " Hz");
+    Output(std.to!string(format&0xFF) ~ " bitrate " ~
       (channels > 2 ? "surround" : (channels > 1) ? "stereo" : "mono") ~
       "(" ~ (format&0x1000 ? "BE" : "LE") ~ ")");
-    AOD.Output("1024 bytes of audio buffer");
-    AOD.Output(std.to!string(t) + " channels allocated");
+    Output("1024 bytes of audio buffer");
+    Output(std.to!string(t) + " channels allocated");
 
     Mix_Init(MIX_INIT_OGG);
-    Mix_ChannelFinished(Stop_Sound);
+    Mix_ChannelFinished(&Stop_Sound);
   }
 }
 
 
 static class Sounds {
   Mix_Chunk* Load_Sound(string str) {
-    Mix_Chunk* sample = Mix_LoadWAV(str.c_str());
-    if ( sample <= 0 ) {
+    Mix_Chunk* sample = Mix_LoadWAV(str.ptr);
+    if ( sample is null ) {
       Debug_Output("Error loading " ~ str + ": " ~ Mix_GetError());
       return null;
     }
@@ -66,7 +66,7 @@ static class Sounds {
   Mix_Music* Load_Music(string str) {
     Mix_Music* sample = Mix_LoadMUS(str.ptr);
     if ( sample <= 0 ) {
-      AOD.Debug_Output("Error loading " ~ str  ~ ": " ~ Mix_GetError());
+      Debug_Output("Error loading " ~ str  ~ ": " ~ Mix_GetError());
       return null;
     }
     return sample;
