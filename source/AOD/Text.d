@@ -156,13 +156,13 @@ class TextEng {
     }
   }
 }
-private Font Load_Font(string fil, int siz) {
-  Font_Type font_pair = Font_Type(fil, siz);
-  if ( fonts[font_pair] is null ) {
-    auto x = new Font(fil, siz);
-    fonts[font_pair] = x;
+private TextEng.Font Load_Font(string fil, int siz) {
+  TextEng.Font_Type font_pair = TextEng.Font_Type(fil, siz);
+  if ( TextEng.fonts[font_pair] is null ) {
+    auto x = new TextEng.Font(fil, siz);
+    TextEng.fonts[font_pair] = x;
   }
-  return fonts[font_pair];
+  return TextEng.fonts[font_pair];
 }
 
 class Text {
