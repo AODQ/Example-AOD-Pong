@@ -15,7 +15,7 @@ public:
   Vector opBinary(string op)(Vector rhs)   if ( op == "+" ) {
     return Vector(x + rhs.x, y + rhs.y);
   }
-  Vector opBinary(string op)(int rhs)      if ( op == "+" ) {
+  Vector opBinary(string op)(float rhs)      if ( op == "+" ) {
     return Vector(x + rhs, y + rhs);
   }
   Vector opOpAssign(string op)(Vector rhs) if ( op == "+" ) {
@@ -23,7 +23,7 @@ public:
     y += rhs.y;
     return this;
   }
-  Vector opOpAssign(string op)(int rhs)    if ( op == "+" ) {
+  Vector opOpAssign(string op)(float rhs)    if ( op == "+" ) {
     x += rhs;
     y += rhs;
     return this;
@@ -31,7 +31,7 @@ public:
   Vector opBinary(string op)(Vector rhs)   if ( op == "-" ) {
     return Vector(x - rhs.x, y - rhs.y);
   }
-  Vector opBinary(string op)(int rhs)      if ( op == "-" ) {
+  Vector opBinary(string op)(float rhs)      if ( op == "-" ) {
     return Vector(x - rhs, y - rhs);
   }
   Vector opOpAssign(string op)(Vector rhs) if ( op == "-" ) {
@@ -39,7 +39,7 @@ public:
     y -= rhs.y;
     return this;
   }
-  Vector opOpAssign(string op)(int rhs)    if ( op == "-" ) {
+  Vector opOpAssign(string op)(float rhs)    if ( op == "-" ) {
     x -= rhs;
     y -= rhs;
     return this;
@@ -47,7 +47,7 @@ public:
   Vector opBinary(string op)(Vector rhs)   if ( op == "*" ) {
     return Vector(x * rhs.x, y * rhs.y);
   }
-  Vector opBinary(string op)(int rhs)      if ( op == "*" ) {
+  Vector opBinary(string op)(float rhs)      if ( op == "*" ) {
     return Vector(x * rhs, y * rhs);
   }
   Vector opOpAssign(string op)(Vector rhs) if ( op == "*" ) {
@@ -55,7 +55,7 @@ public:
     y *= rhs.y;
     return this;
   }
-  Vector opOpAssign(string op)(int rhs)    if ( op == "*" ) {
+  Vector opOpAssign(string op)(float rhs)    if ( op == "*" ) {
     x *= rhs;
     y *= rhs;
     return this;
@@ -63,7 +63,7 @@ public:
   Vector opBinary(string op)(Vector rhs)   if ( op == "/" ) {
     return Vector(x / rhs.x, y / rhs.y);
   }
-  Vector opBinary(string op)(int rhs)      if ( op == "/" ) {
+  Vector opBinary(string op)(float rhs)      if ( op == "/" ) {
     return Vector(x / rhs, y / rhs);
   }
   Vector opOpAssign(string op)(Vector rhs) if ( op == "/" ) {
@@ -71,7 +71,7 @@ public:
     y /= rhs.y;
     return this;
   }
-  Vector opOpAssign(string op)(int rhs)    if ( op == "/" ) {
+  Vector opOpAssign(string op)(float rhs)    if ( op == "/" ) {
     x /= rhs;
     y /= rhs;
     return this;

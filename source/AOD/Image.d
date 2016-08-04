@@ -61,8 +61,9 @@ SheetContainer Load_Image(const char* fil) {
       iluFlipImage();
 
     if ( !ilConvertImage(IL_RGBA, IL_UNSIGNED_BYTE) ) {
+      import std.conv : to;
       auto t = iluErrorString(ilGetError());
-      Debug_Output(t);
+      Debug_Output(std.to!string(t));
       return 0;
     }
     glBindTexture(GL_TEXTURE_2D, 0);
@@ -73,8 +74,8 @@ SheetContainer Load_Image(const char* fil) {
       return SheetContainer();
     }
     // set texture clamping method
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
+    /* glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP); */
+    /* glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP); */
 
     // set texture interpolation method
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
@@ -88,9 +89,9 @@ SheetContainer Load_Image(const char* fil) {
                ilGetInteger(IL_IMAGE_FORMAT), GL_UNSIGNED_BYTE, ilGetData());
   } else {
     auto t = ilGetError();
-    import std.conv : to;
-    Debug_Output("Error loading " ~ string(fil) ~ ": " ~
-      iluErrorString(t) ~ "(" ~ std.to!string(ilGetError()) + ")");
+    import std.conv;
+    Debug_Output("Error loading " ~ to!string(fil) ~ ": " ~
+      iluErrorString(t) ~ "(" ~ to!string(ilGetError()) + ")");
     return 0;
   }
   ilDeleteImages(1, &IL_ID);
