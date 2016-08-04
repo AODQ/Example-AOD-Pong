@@ -16,7 +16,7 @@ private:
     transformed = true;
   }
 public:
-  enum class Type { Circle, AABB, Polygon, Ray, nil };
+  enum Type { Circle, AABB, Polygon, Ray, nil };
 protected:
   GLuint image;
   int ID;
@@ -33,13 +33,14 @@ protected:
   int layer;
   float alpha;
   bool flipped_x, flipped_y;
-  GLfloat _UV[8];
-  friend AOD_Engine::Realm; // to access layer
+  GLfloat[8] _UV;
   bool is_coloured, visible, static_pos;
   float red, green, blue;
 
   bool transformed;
 public:
+  void R_Layer() { return layer; }
+
   static immutable(float[8]) Vertices = [
     -0.5f, -0.5f,
     -0.5f,  0.5f,
@@ -47,7 +48,8 @@ public:
      0.5f,  0.5f
   ];
 
-  this(Type _type = Type.nil) {
+  this(int _layer = 0, Type _type = Type.nil) {
+    layer = _layer;
     type = _type;
     alpha = 1;
     Set_UVs(Vector(0,0), Vector(1,1));
@@ -61,7 +63,7 @@ public:
     visible = 1;
     flipped_x = 0;
     flipped_y = 0;
-    rotate_origin = {0, 0};
+    rotate_origin = Vector( 0, 0 );
     scale = Vector( 1, 1 );
     Refresh_Transform();
   }

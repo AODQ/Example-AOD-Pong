@@ -85,13 +85,8 @@ public:
 		bg_green = 0;;
 	}
 
-  void __Add(Entity o, int layer = 0) {
-    o.layer = l;
-    if ( l < 0 ) {
-      l = 0;
-      Debug_Output("Invalid layer is < 0, setting to 0");
-    }
-
+  void __Add(Entity o) {
+    int l = o.R_Layer();
     if ( objects.length <= l ) objects.length = l+1;
     objects[l] ~= o;
   }
