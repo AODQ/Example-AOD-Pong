@@ -7,7 +7,7 @@ import std.string;
 import AOD.camera;
 import Console = AOD.console;
 import AOD.input;
-import AOD.entity : Entity;
+import AOD.entity;
 import AOD.realm;
 import AOD.sounds;
 import AOD.text;
@@ -24,7 +24,7 @@ static class Engine {
 
   bool started = 0;
   int start_ticks = 0;
-  AOD.Text fps_display;
+  Text fps_display;
   float[20] fps = { 0 };
 }
 
@@ -67,10 +67,10 @@ void End() {
   SDL_Quit();
 }
 
-AOD.Entity[int] obj_list;
+Entity[int] obj_list;
 
 
-int Add(AOD.Entity o,int layer) {
+int Add(Entity o,int layer) {
   static uint id_counter = 0;
   if ( Engine.realm != null && o && layer >= 0 ) {
     Engine.realm.__Add(o, layer);
@@ -95,7 +95,7 @@ void Add(Text t) {
   }
 }
 
-void Remove(AOD.Entity o) {
+void Remove(Entity o) {
   if ( Engine.realm != null )
     Engine.realm.__Remove(o);
 }

@@ -6,8 +6,9 @@ immutable(int) TYPE_NONE, /// No console
 
 static import AOD.AOD;
 import AOD.text;
-static import AOD.input;
-static import AOD.clientvars;
+import AOD.entity;
+import AOD.input;
+import AOD.clientvars;
 import derelict.opengl3.gl3;
 import derelict.sdl2.sdl;
 import std.string;
