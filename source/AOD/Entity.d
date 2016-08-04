@@ -453,7 +453,8 @@ static void Order_Vertices(ref Vector[] verts) {
   verts = [];
 
   foreach ( i; va ) {
-    i.first = std::atan2f(i.second.y - centy, i.second.x - centx);
+    import std.math;
+    i.dist = atan2(i.vert.y - centy, i.vert.x - centx);
     //std::cout << "ATAN2F( " << i.second.y << " - " << centy << ", "
     //                        << i.second.x << " - " << centx << ") = "
     //                        << i.first << '\n';
