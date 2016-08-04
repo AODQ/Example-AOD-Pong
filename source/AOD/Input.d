@@ -1,6 +1,6 @@
 module AOD.input;
 import derelict.sdl2.sdl;
-import Camera = AOD.Camera;
+import Camera = AOD.camera;
 
 // These represent SDL_ScanCodes. These are prefereable
 // to just calling R_LMB() or w/e b/c these are bindeable
