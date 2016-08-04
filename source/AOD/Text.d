@@ -154,15 +154,15 @@ class TextEng {
         return;
       }
     }
+  }
 
-    static Font Load_Font(string fil, int siz) {
-      Font_Type font_pair = Font_Type(fil, siz);
-      if ( fonts[font_pair] is null ) {
-        auto x = new Font(fil, siz);
-        fonts[font_pair] = x;
-      }
-      return fonts[font_pair];
+  static Font Load_Font(string fil, int siz) {
+    Font_Type font_pair = Font_Type(fil, siz);
+    if ( fonts[font_pair] is null ) {
+      auto x = new Font(fil, siz);
+      fonts[font_pair] = x;
     }
+    return fonts[font_pair];
   }
 }
 
@@ -222,7 +222,7 @@ public:
   }
 
   void Set_Font(string str, int pt_siz) {
-    TextEng.Font.Load_Font(str, pt_size);
+    TextEng.Load_Font(str, pt_size);
     font = str;
     pt_size = pt_siz;
     uses_default_font = 0;
@@ -241,7 +241,7 @@ public:
   string R_Default_Font() { return default_font; }
 
   static void Set_To_Default(string str, int pt_size) {
-    TextEng.Font.Load_Font(str, pt_size);
+    TextEng.Load_Font(str, pt_size);
     default_font = str;
     default_pt_size = pt_size;
   }
