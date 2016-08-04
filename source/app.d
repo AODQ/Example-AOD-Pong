@@ -9,7 +9,7 @@ void Render_Screen(SDL_Window* win) {
 }
 
 void main () {
-  static import AOD;
+  import AOD = AOD.AOD;
 
   AOD.Initialize(640, 840, 60, "CYBER BUTCHER");
 }

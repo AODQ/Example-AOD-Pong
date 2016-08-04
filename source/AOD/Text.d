@@ -1,6 +1,6 @@
 module AOD.text;
 
-import AOD;
+import AOD.AOD;
 import AOD.utility;
 import AOD.vector;
 import AOD.console;

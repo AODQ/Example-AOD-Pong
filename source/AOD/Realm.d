@@ -7,7 +7,7 @@ import derelict.devil.il;
 import derelict.devil.ilu;
 import derelict.devil.ilut;
 import derelict.freetype.ft;
-import AOD;
+import AOD.AOD;
 import AOD.entity;
 import AOD.text;
 import AOD.console;
