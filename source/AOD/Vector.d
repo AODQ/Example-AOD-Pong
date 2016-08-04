@@ -135,7 +135,7 @@ public:
   }
 
   static Vector Reflect(const Vector I, const Vector N) {
-    return I - (N*2.0 * I) * N;
+    return I - (N*2.0f * I) * N;
   }
 
   import AOD.matrix;
