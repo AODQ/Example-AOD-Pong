@@ -84,7 +84,7 @@ SheetContainer Load_Image(const char* fil) {
   } else {
     auto t = ilGetError();
     import std.conv : to;
-    AOD_Engine::Debug_Output("Error loading " ~ string(fil) ~ ": " ~
+    Debug_Output("Error loading " ~ string(fil) ~ ": " ~
       iluErrorString(t) ~ "(" ~ std.to!string(ilGetError()) + ")");
     return 0;
   }

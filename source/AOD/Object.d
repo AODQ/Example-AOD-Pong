@@ -1,4 +1,4 @@
-module AOD.Object;
+module AOD.Entity;
 
 import derelict.opengl3.gl3;
 import derelict.sdl2.sdl;
@@ -9,7 +9,7 @@ import AOD.Realm;
 import AOD.Matrix;
 import AOD.Vector;
 
-class Object {
+class Entity {
 private:
   void Refresh_Transform() {
     matrix.Compose(position, rotation, scale);
@@ -237,7 +237,7 @@ public:
   Matrix R_Matrix() { return matrix; }
   // ---- utility ----
   abstract void Update();
-  Collision_Info Collision(Object* o) {
+  Collision_Info Collision(Entity* o) {
     return Collision_Info();
   }
 
@@ -246,7 +246,7 @@ public:
 
   // -------------- POLY OBJ --------------------------------------------------
 
-  class PolyObj : public Object {
+  class PolyEnt : public Entity {
   protected:
     Vector[] vertices, vertices_transform;
     void Build_Transform() {}
@@ -255,7 +255,7 @@ public:
       super(Type.Polygon);
       vertices = [];
     }
-    PolyObj(Vector[] vertices, Vector off = [ 0, 0 ]) {
+    PolyEnt(Vector[] vertices, Vector off = [ 0, 0 ]) {
       super(Type.Polygon);
       vertices = vert;
       Set_Position(off);
@@ -291,15 +291,15 @@ public:
     // ---- utility ----
 
     // Returns information on current collision state with another poly
-    Collision_Info Collide(PolyObj* poly, AOD::Vector velocity) {
+    Collision_Info Collide(PolyEnt* poly, AOD::Vector velocity) {
       return PolyPolyColl(this, poly, velocity);
     }
-    Collision_Info Collide(AABBObj* aabb, AOD::Vector velocity) {
+    Collision_Info Collide(AABBEnt* aabb, AOD::Vector velocity) {
       return Collision_Info(); 
     }
   };
 
-  class AABBObj : public PolyObj {
+  class AABBEnt : public PolyEnt {
   public:
     this(Vector size = Vector(0, 0)) {
       super();
@@ -309,7 +309,7 @@ public:
                     { size.x/2.f,  size.y/2.f},
                     { size.x/2.f, -size.y/2.f}});
     }
-    AABBObj(Vector size = Vector( 0,0 ), Vector pos = Vector( 0,0 )) {
+    AABBEnt(Vector size = Vector( 0,0 ), Vector pos = Vector( 0,0 )) {
       this(size);
       position = pos;
     }
@@ -317,10 +317,10 @@ public:
     // ---- utility ----
 
     // Returns information on current collision with an AABB
-    Collision_Info Collide(AABBObj* aabb, AOD::Vector velocity) {
+    Collision_Info Collide(AABBEnt* aabb, AOD::Vector velocity) {
       return Collision_Info();
     }
-    Collision_Info Collide(PolyObj* poly, AOD::Vector velocity) {
+    Collision_Info Collide(PolyEnt* poly, AOD::Vector velocity) {
       return Collision_Info();
     }
   };
@@ -333,7 +333,7 @@ public:
          will_collide;
     Vector translation,
            projection, normal;
-    PolyObj obj;
+    PolyEnt obj;
     // collision will always be true in def constructor
     this() {
       collision = 1;
@@ -380,7 +380,7 @@ private float Project_Dist(float minA, float maxA, float minB, float maxB) {
                   : (minA - maxB);
 }
 
-private Collision_Info PolyPolyColl(PolyObj polyA, PolyObj polyB,
+private Collision_Info PolyPolyColl(PolyEnt polyA, PolyEnt polyB,
                                     Vector velocity) {
   // -- variable definitions --
   // the minimum distance needed to translate out of collision

@@ -50,7 +50,7 @@ public:
   }
 
   void Rotate(float r) {
-    import std.math
+    import std.math;
     float x = cos(r),
           y = sin(r);
 

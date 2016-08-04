@@ -6,7 +6,7 @@ immutable(int) TYPE_NONE, /// No console
 
 import AOD = AOD.AOD;
 import AOD.Text : Text;
-import AOD.Object : Object;
+import AOD.Entity : Entity;
 import Input = AOD.Input;
 import CV = AOD.ClientVars;
 import derelict.opengl3.gl3;
@@ -18,7 +18,7 @@ static class ConsEng {
   GLuint console_image = 0;
   Text console_text;
   Text input, input_after, input_sig;
-  Object cursor, background;
+  Entity cursor, background;
   int console_input_cursor,
       console_input_select_len;
   string[] to_console;
@@ -30,11 +30,11 @@ static class ConsEng {
     input_after = new Text(10, 100, "");
     input_sig   = new Text(0, 100, ">>");
     input_sig.Set_Visible(0);
-    cursor = new Object;
+    cursor = new Entity;
     cursor.Set_Image_Size(Vector(1, 10));
     cursor.Set_Visible(0);
     cursor.Set_Position(13, 96);
-    background = new Object;
+    background = new Entity;
     background.Set_Image_Size(Vector(CV.screen_width, 103));
     background.Set_Visible(0);
     background.Set_Position(CV.screen_width/2, 103/2);

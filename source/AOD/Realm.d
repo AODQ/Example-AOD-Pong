@@ -1,17 +1,17 @@
 import derelict.opengl3.gl3;
 import derelict.sdl2.sdl;
 import AOD.AOD;
-import AOD.Object;
+import AOD.Entity;
 import AOD.Text;
 import AOD.Console;
 
 module AOD.Realm;
 
 class Realm {
-  AOD.Object[][] objects;
+  AOD.Entity[][] objects;
   AOD.Text[] text;
 
-  AOD::Object[] objs_to_rem;
+  AOD::Entity[] objs_to_rem;
 
   GLfloat bg_red, bg_blue, bg_green;
 public:
@@ -85,7 +85,7 @@ public:
 		bg_green = 0;;
 	}
 
-  void __Add(Object o, int layer = 0) {
+  void __Add(Entity o, int layer = 0) {
     o.layer = l;
     if ( l < 0 ) {
       l = 0;
@@ -99,7 +99,7 @@ public:
     text.push_back(t);
   }
 
-  void __Remove(Object o) {
+  void __Remove(Entity o) {
     objs_to_rem.push_back(o);
   }
   void __Remove(Text t) 
@@ -186,7 +186,7 @@ public:
                      -origin.y*fy, 0);
         glScalef (lz.image_size.x, lz->image_size.y, 1);
 
-        glVertexPointer	(2, GL_FLOAT, 0, AOD.Object.Vertices);
+        glVertexPointer	(2, GL_FLOAT, 0, AOD.Entity.Vertices);
         glTexCoordPointer(2, GL_FLOAT, 0, lz._UV);
         glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_BYTE, index);
         glLoadIdentity();

@@ -7,7 +7,7 @@ import std.string;
 import AOD.Camera;
 import Console = AOD.Console;
 import AOD.Input;
-import AOD.Object : Object;
+import AOD.Entity : Entity;
 import Realm   = AOD.Realm;
 import AOD.Sounds;
 import AOD.Text;
@@ -67,10 +67,10 @@ void End() {
   SDL_Quit();
 }
 
-AOD.Object[int] obj_list;
+AOD.Entity[int] obj_list;
 
 
-int Add(AOD.Object o,int layer) {
+int Add(AOD.Entity o,int layer) {
   static uint id_counter = 0;
   if ( Engine.realm != null && o && layer >= 0 ) {
     Engine.realm.__Add(o, layer);
@@ -95,7 +95,7 @@ void Add(AOD.Text t) {
   }
 }
 
-void Remove(AOD.Object o) {
+void Remove(AOD.Entity o) {
   if ( Engine.realm != null )
     Engine.realm.__Remove(o);
 }
