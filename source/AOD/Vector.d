@@ -1,4 +1,4 @@
-module AOD.Vectostatic r;
+module AOD.Vector;
 
 struct Vector {
 public:

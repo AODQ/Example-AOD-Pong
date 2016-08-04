@@ -180,7 +180,7 @@ class Text {
     ft_font = TextEngine.fonts[TextEngine.Font_Type(font,pt_size)];
   }
 
-  Redefault(string str_) {
+  void Redefault(string str_) {
     msg = str_;
     font = "";
     ft_font = null;
