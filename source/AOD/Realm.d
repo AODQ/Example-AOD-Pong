@@ -11,7 +11,7 @@ import AOD.entity;
 import AOD.text;
 import AOD.console;
 import AOD.sound;
-import Camera = AOD.Camera;
+import Camera = AOD.camera;
 
 class Realm {
   Entity[][] objects;
