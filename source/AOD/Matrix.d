@@ -3,14 +3,14 @@ module AOD.Matrix;
 import AOD.Vector;
 
 struct Matrix {
-  public:
+public:
   float a, b, c, d, tx, ty;
   float rot, prev_rot;
   Vector scale;
 
-  Matrix(float _a = 1, float _b = 0, float _c = 0,
-         float _d = 1, float _tx = 0, float _ty = 0);
-    a = _a, b = _b, c = _c, d = _d, tx = _tx, ty = _ty;
+  this(float _a = 1, float _b = 0, float _c = 0,
+       float _d = 1, float _tx = 0, float _ty = 0);
+    a = _a; b = _b; c = _c; d = _d; tx = _tx; ty = _ty;
     rot = prev_rot = 0;
     scale = new Vector( 1,1 ); 
   }

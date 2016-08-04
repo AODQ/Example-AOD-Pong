@@ -29,11 +29,11 @@ bool R_MMB() { return MouseEngine.mouse&SDL_BUTTON(SDL_BUTTON_MIDDLE); }
 bool R_MX1() { return MouseEngine.mouse&SDL_BUTTON(SDL_BUTTON_X1    ); }
 bool R_MX2() { return MouseEngine.mouse&SDL_BUTTON(SDL_BUTTON_X2    ); }
 
-float AODInp::R_Mouse_X(bool camoffset) {
+float R_Mouse_X(bool camoffset) {
   return MouseEngine.mouse_x + (camoffset ?
           Camera.R_Position().x - Camera.R_Size().x/2 : 0);
 }
-float AODInp::R_Mouse_Y(bool camoffset) {
+float R_Mouse_Y(bool camoffset) {
   return MouseEngine.mouse_y + (camoffset ?
           Camera.R_Position().y - Camera.R_Size().y/2 : 0);
 }
