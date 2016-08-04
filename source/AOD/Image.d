@@ -1,7 +1,7 @@
 module AOD.image;
 
 import derelict.opengl3.gl3;
-import derelict.sdl2.sdl2;
+import derelict.sdl2.sdl;
 import derelict.devil.il;
 import derelict.devil.ilu;
 import derelict.devil.ilut;;
