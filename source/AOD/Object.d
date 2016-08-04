@@ -8,7 +8,7 @@ import AOD.Realm;
 
 import AOD.Matrix;
 import AOD.Vector;
-import AOD.Images;
+import AOD.Image;
 
 class Entity {
 private:
