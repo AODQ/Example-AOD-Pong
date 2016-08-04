@@ -9,9 +9,11 @@ enum Mouse_Bind
        Wheelup  = 303, Wheeldown = 304,
        X1   = 305, X2    = 306 };
 
-private class MouseEngine {
+class MouseEngine {
+static: private:
   ubyte mouse;
   int mouse_x, mouse_y;
+static: public:
   void Refresh_Input() {
     keys = cast(ubyte*)(SDL_GetKeyboardState(null));
     mouse = SDL_GetMouseState(&mouse_x, &mouse_y);

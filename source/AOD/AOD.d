@@ -48,8 +48,8 @@ void Initialize_Console(bool print_debug, SDL_Keycode key, string cons) {
   else
     Console.ConsEng.console_type = Console.TYPE_DEBUG_OUT;
   Console.Debug_Output("Created new console");
-  Console.key = key;
-  Console.Construct();
+  Console.ConsEng.key = key;
+  Console.ConsEng.Construct();
 }
 
 void Change_MSDT(Uint32 x) {
@@ -60,8 +60,8 @@ void Change_MSDT(Uint32 x) {
 }
 
 void Reset() {
-  if ( Engine.realm !is null )
-    Engine.realm.Reset();
+  /* if ( Engine.realm !is null ) */
+  /*   Engine.realm.Reset(); */
 }
 void End() {
   Engine.realm = null;
@@ -74,7 +74,7 @@ Entity[int] obj_list;
 
 int Add(Entity o) {
   static uint id_counter = 0;
-  if ( Engine.realm !is null && o && layer >= 0 ) {
+  if ( Engine.realm !is null && o ) {
     Engine.realm.__Add(o);
     o.Set_ID(id_counter++);
     /* obj_list[o.Ret_ID(), o); */
@@ -82,8 +82,6 @@ int Add(Entity o) {
   } else {
     if ( o is null )
       Console.Debug_Output("Error: Adding null text to realm");
-    if ( layer >= 0 )
-      Console.Debug_Output("Error: Negative layer not allowed");
     return -1;
   }
 }
@@ -128,14 +126,15 @@ void Run() {
 
   // so I can set up keys and not have to rely that update is ran first
   SDL_PumpEvents();
-  Refresh_Input();
+  Mouseeng.Refresh_Input();
   SDL_PumpEvents();
-  Refresh_Input();
+  Mouseeng.Refresh_Input();
 
   while ( SDL_PollEvent(&_event) ) {
     switch ( _event.type ) {
       case SDL_QUIT:
         return;
+      default: break;
     }
   }
   prev_dt = cast(float)SDL_GetTicks();
