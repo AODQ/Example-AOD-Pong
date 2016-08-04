@@ -25,12 +25,51 @@ public:
   this(int window_width, int window_height,
        immutable(char)* window_name, immutable(char)* icon = "") {
     Debug_Output("Initializing SDL");
-    DerelictGL3.load(/*SharedLibVersion(2, 1, 0)*/);
-    DerelictSDL2.load(/*SharedLibVersion(2, 0, 2)*/);
-    DerelictIL.load();
-    DerelictILU.load();
-    DerelictILUT.load();
-    DerelictFT.load();
+    import std.conv : to; 
+    import derelict.util.exception;
+    import std.stdio : writeln;
+    try {
+      DerelictGL3.load();
+    } catch ( DerelictException de ) {
+      writeln("\n------------------------------------------------------------------------\n");
+      writeln("Failed to load DerelictGL3: "  ~ to!string(de));
+      writeln("\n------------------------------------------------------------------------\n");
+    }
+    try {
+      DerelictSDL2.load();
+    } catch ( DerelictException de ) {
+      writeln("\n------------------------------------------------------------------------\n");
+      writeln("Failed to load DerelictSDL2: " ~ to!string(de));
+      writeln("\n------------------------------------------------------------------------\n");
+    }
+    try {
+      DerelictIL.load();
+    } catch ( DerelictException de ) {
+      writeln("\n------------------------------------------------------------------------\n");
+      writeln("Failed to load DerelictIL: "   ~ to!string(de));
+      writeln("\n------------------------------------------------------------------------\n");
+    }
+    try {
+      DerelictILU.load();
+    } catch ( DerelictException de ) {
+      writeln("\n------------------------------------------------------------------------\n");
+      writeln("Failed to load DerelictILU: "  ~ to!string(de));
+      writeln("\n------------------------------------------------------------------------\n");
+    }
+    try {
+      DerelictILUT.load();
+    } catch ( DerelictException de ) {
+      writeln("\n------------------------------------------------------------------------\n");
+      writeln("Failed to load DerelictILUT: " ~ to!string(de));
+      writeln("\n------------------------------------------------------------------------\n");
+    }
+    try {
+      DerelictFT.load();
+    } catch ( DerelictException de ) {
+      writeln("\n------------------------------------------------------------------------\n");
+      writeln("Failed to load DerelictFT: "   ~ to!string(de));
+      writeln("\n------------------------------------------------------------------------\n");
+    }
 
     SDL_Init ( SDL_INIT_EVERYTHING );
 
