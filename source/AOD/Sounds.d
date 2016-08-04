@@ -37,7 +37,14 @@ static class SoundEngine {
 
 
 static class Sounds {
-  Mix_Chunk* Load_Sound(string);
+  Mix_Chunk* Load_Sound(string str) {
+    Mix_Chunk* sample = Mix_LoadWAV(str.c_str());
+    if ( sample <= 0 ) {
+      Debug_Output("Error loading " ~ str + ": " ~ Mix_GetError());
+      return null;
+    }
+    return sample;
+  }
   void Delete_Sound(Mix_Chunk* mix) {
     Mix_FreeChunk(mix);
   }

@@ -243,8 +243,6 @@ public:
   Collision_Info Collision(Entity* o) {
     return Collision_Info();
   }
-
-  static immutable(float)[8] Vertices;
 };
 
 // -------------- POLY OBJ --------------------------------------------------
@@ -320,10 +318,10 @@ public:
   // ---- utility ----
 
   // Returns information on current collision with an AABB
-  Collision_Info Collide(AABBEnt* aabb, Vector velocity) {
+  Collision_Info Collide(AABBEnt aabb, Vector velocity) {
     return Collision_Info();
   }
-  Collision_Info Collide(PolyEnt* poly, Vector velocity) {
+  Collision_Info Collide(PolyEnt poly, Vector velocity) {
     return Collision_Info();
   }
 };
@@ -337,12 +335,6 @@ public:
   Vector translation,
          projection, normal;
   PolyEnt obj;
-  // collision will always be true in def constructor
-  this() {
-    collision = 1;
-    will_collide = 0;
-  }
-  this(this) { }
   this(bool c) {
     collision = c;
     will_collide = 0;

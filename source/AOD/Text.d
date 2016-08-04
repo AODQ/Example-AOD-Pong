@@ -177,7 +177,7 @@ class Text {
       pt_size = default_pt_size;
       font    = default_font;
     }
-    ft_font = TextEngine.fonts[TextEngine.Font_Type(font,pt_size)];
+    ft_font = TextEng.fonts[TextEng.Font_Type(font,pt_size)];
   }
 
   void Redefault(string str_) {
@@ -215,7 +215,7 @@ public:
   }
 
   void Set_Font(string str, int pt_siz) {
-    TextEngine.Load_Font(str, pt_size);
+    TextEng.Load_Font(str, pt_size);
     font = str;
     pt_size = pt_siz;
     uses_default_font = 0;
@@ -227,14 +227,14 @@ public:
     if ( ft_font == null ) return default_font;
     else                   return font;
   }
-  ref Font R_FT_Font() { return ft_font; }
+  ref TextEng.Font R_FT_Font() { return ft_font; }
   string R_Str() { return string; }
   bool R_Visible() { return visible; }
 
   string R_Default_Font() { return default_font; }
 
   static void Set_To_Default(string str, int pt_size) {
-    TextEngine.Load_Font(str, pt_size);
+    TextEng.Load_Font(str, pt_size);
     default_font = str;
     default_pt_size = pt_size;
   }

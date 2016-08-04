@@ -1,14 +1,15 @@
 module AOD.Image;
+
 import derelict.opengl3.gl3;
 import derelict.sdl2.sdl;
 import AOD.Console;
+import AOD.Vector;
 
 // contains information of image
 struct SheetContainer {
 public:
   GLuint texture;
   int width, height;
-  this() { }
   this(GLuint t, int w, int h) {
     texture = t;
     width = w;
@@ -29,8 +30,6 @@ struct SheetRect {
 public:
   SheetContainer image;
   Vector ul, lr;
-  // nil constructor ( no sheet container, ul/lr will set to 0, 0
-  this() {}
   // Creates sheet rect whose image is sheet container, and coordinates
   // are from upper-left (ul) to lower-right (lr), which are relative offsets
   // from the origin {0, 0}
