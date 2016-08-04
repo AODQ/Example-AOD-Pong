@@ -6,7 +6,7 @@ import AOD.vector;
 private Vector position;
 private Vector size;
 
-void Set_Position(const ref Vector pos) {
+void Set_Position(Vector pos) {
   position = pos;
 }
 
@@ -14,7 +14,7 @@ void Set_Position(float x, float y) {
   position = new Vector(x, y);
 }
 
-void Set_Size(const ref Vector siz) {
+void Set_Size(Vector siz) {
   if ( siz.x <= 0 || siz.y <= 0 ) return;
   size = siz;
 }

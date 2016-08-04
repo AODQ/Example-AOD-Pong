@@ -1,8 +1,8 @@
 module AOD.console;
 
-immutable(int) TYPE_NONE, /// No console
-               TYPE_DEBUG_IN, /// AOD generated messages left in
-               TYPE_DEBUG_OUT; /// AOD generated messaged left out
+immutable(int) TYPE_NONE       = 0, /// No console
+               TYPE_DEBUG_IN   = 1, /// AOD generated messages left in
+               TYPE_DEBUG_OUT  = 2; /// AOD generated messaged left out
 
 static import AOD.AOD;
 import AOD.text;

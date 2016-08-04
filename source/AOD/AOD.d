@@ -34,7 +34,7 @@ void Initialize(int window_width, int window_height, uint _fps,
   if ( Engine.realm is null ) {
     if ( window_name == "" )
       window_name = "Art of Dwarficorn";
-    Engine.realm = new realm.Realm(window_width, window_height, window_name, icon);
+    Engine.realm = new Realm(window_width, window_height, window_name, icon);
     Engine.ms_dt = _fps;
   }
   Camera.Set_Position(Vector(0, 0));
@@ -73,13 +73,13 @@ Entity[int] obj_list;
 
 int Add(Entity o) {
   static uint id_counter = 0;
-  if ( Engine.realm != null && o && layer >= 0 ) {
+  if ( Engine.realm !is null && o && layer >= 0 ) {
     Engine.realm.__Add(o);
     o.Set_ID(id_counter++);
     /* obj_list[o.Ret_ID(), o); */
     return o.Ret_ID();
   } else {
-    if ( o == null )
+    if ( o is null )
       Console.Debug_Output("Error: Adding null text to realm");
     if ( layer >= 0 )
       Console.Debug_Output("Error: Negative layer not allowed");
@@ -88,10 +88,10 @@ int Add(Entity o) {
 }
 
 void Add(Text t) {
-  if ( Engine.realm != null && t != null )
+  if ( Engine.realm !is null && t !is null )
     Engine.realm.__Add(t);
   else {
-    if ( t == null )
+    if ( t is null )
       Console.Debug_Output("Error: Adding null text to realm");
   }
 }
@@ -148,7 +148,7 @@ void Run() {
     while ( accumulated_dt >= Engine.ms_dt ) {
       // sdl
       SDL_PumpEvents();
-      Refresh_Input();
+      MouseEngine.Refresh_Input();
 
       // actual update
       accumulated_dt -= Engine.ms_dt;
@@ -164,6 +164,7 @@ void Run() {
 
       while ( SDL_PollEvent(&_event) ) {
         switch ( _event.type ) {
+          default: break;
 /* case SDL_MOUSEWHEEL: */
 /*   if ( _event.wheel.y > 0 ) // positive away from user */
 /*     Input::keys[ MOUSEBIND::MWHEELUP ] = true; */
@@ -296,7 +297,7 @@ void Run() {
       Engine.fps[0] = elapsed_dt;
       _FPS += Engine.fps[0];
 
-      if ( Engine.fps_display != null ) {
+      if ( Engine.fps_display !is null ) {
         /* engine.fps_display->Set_String( */
         /*                     std::to_string(int(20000/_FPS)) + " FPS"); */
       }
