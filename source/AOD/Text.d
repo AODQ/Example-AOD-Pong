@@ -52,7 +52,7 @@ static class TextEng {
         if ( FT_Render_Glyph(face.glyph,
                             FT_Render_Mode_.FT_RENDER_MODE_NORMAL ) ) {
           Debug_Output("Failed to render char index "
-                                    ~ to!string(i ~ " for font " + file);
+                                    ~ to!string(i) ~ " for font " + file);
           continue;
         }
 
