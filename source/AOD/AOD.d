@@ -9,7 +9,7 @@ import Console = AOD.console;
 import AOD.input;
 import AOD.entity;
 static import AOD.realm;
-import AOD.sounds;
+import AOD.sound;
 import AOD.text;
 import AOD.vector;
 import AOD.utility;
