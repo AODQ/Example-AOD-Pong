@@ -4,15 +4,15 @@ import derelict.opengl3.gl3;
 import derelict.sdl2.sdl;
 import std.string;
 
-import AOD.Camera;
-import Console = AOD.Console;
-import AOD.Input;
-import AOD.Entity : Entity;
-static import AOD.Realm;
-import AOD.Sounds;
-static import AOD.Text;
-import AOD.Vector;
-import AOD.Utility;
+import AOD.camera;
+import Console = AOD.console;
+import AOD.input;
+import AOD.entity : Entity;
+static import AOD.realm;
+import AOD.sounds;
+static import AOD.text;
+import AOD.vector;
+import AOD.utility;
 
 static class Engine {
   SDL_Window* screen = null;

@@ -27,7 +27,7 @@ void Delete_Image(GLuint t) {
 
 }
 
-import AOD.Vector;
+import AOD.vector;
 
 float To_Rad(float x) {
   return x * (Pi/180.f);
