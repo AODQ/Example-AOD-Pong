@@ -91,7 +91,7 @@ SheetContainer Load_Image(const char* fil) {
     auto t = ilGetError();
     import std.conv;
     Debug_Output("Error loading " ~ to!string(fil) ~ ": " ~
-      to!string(iluErrorString(t)) ~ "(" ~ to!string(ilGetError()) + ")");
+      to!string(iluErrorString(t)) ~ "(" ~ to!string(ilGetError()) ~ ")");
     return SheetContainer();
   }
   ilDeleteImages(1, &IL_ID);

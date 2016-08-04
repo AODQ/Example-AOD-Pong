@@ -2,6 +2,10 @@ module AOD.realm;
 
 import derelict.opengl3.gl3;
 import derelict.sdl2.sdl;
+import derelict.il.il;
+import derelict.il.ilu;
+import derelict.il.ilut;
+import derelict.freetype.ft;
 import AOD.AOD;
 import AOD.entity;
 import AOD.text;
@@ -20,24 +24,30 @@ public:
     Debug_Output("Initializing SDL");
     DerelictGL3.load();
     DerelictSDL2.load(SharedLibVersion(2, 0, 2));
+    DerelictIL.load();
+    DerelictILU.load();
+    DerelictILUT.load();
+    DerelictFT.load();
 
     SDL_Init ( SDL_INIT_EVERYTHING );
+
     Engine.screen = SDL_CreateWindow(window_name, SDL_WINDOWPOS_UNDEFINED,
                                                   SDL_WINDOWPOS_UNDEFINED,
                                                   window_width, window_height,
                                                   SDL_WINDOW_OPENGL |
                                                   SDL_WINDOW_SHOWN);
+    import std.conv : to;
 		if ( SDL_GL_SetAttribute( SDL_GL_CONTEXT_MAJOR_VERSION, 2 ) == -1 )
-			Output("Error CONTEXT_MAJOR: " ~ string(SDL_GetError()));
+			Output("Error CONTEXT_MAJOR: " ~ to!string(SDL_GetError()));
 		if ( SDL_GL_SetAttribute( SDL_GL_CONTEXT_MINOR_VERSION, 1 ) == -1 )
-			Output("Error CONTEXT_MINOR: " ~ string(SDL_GetError()));
-		if ( SDL_GL_CreateContext( Engine.screen ) == nullptr ) {
-			Output("Error window context: " ~ string(SDL_GetError()));
+			Output("Error CONTEXT_MINOR: " ~ to!string(SDL_GetError()));
+		if ( SDL_GL_CreateContext( Engine.screen ) is null ) {
+			Output("Error window context: " ~ to!string(SDL_GetError()));
 		}
 		if ( SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1) == -1 )
-			Output("Error DOUBLEBUFFER: " + string(SDL_GetError()));
+			Output("Error DOUBLEBUFFER: " ~ to!string(SDL_GetError()));
 		if ( SDL_GL_SetAttribute(SDL_GL_ALPHA_SIZE, 8) == -1 )
-			Output("Error ALPHA_SIZE: " + string(SDL_GetError()));
+			Output("Error ALPHA_SIZE: " ~ to!string(SDL_GetError()));
 		//glShadeModel(GL_SMOOTH);
 		glEnable(GL_TEXTURE_2D);
 		glEnable(GL_BLEND);
@@ -48,30 +58,23 @@ public:
 
 		glClearDepth(1.0f);
 		glPolygonMode(GL_FRONT, GL_FILL);
-		glShadeModel(GL_FLAT);
-		glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_FASTEST);
+		/* glShadeModel(GL_FLAT); */
+		/* glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_FASTEST); */
 		glDepthFunc(GL_LEQUAL);
 		glEnable(GL_DEPTH_TEST);
 		glEnable(GL_BLEND);
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-		glMatrixMode(GL_PROJECTION);
-		if ( !ilutRenderer(ILUT_OPENGL) )
-			AOD.Output("Error setting ilut Renderer to ILUT_OPENGL");
-		ilInit();
-		iluInit();
-		ilutInit();
-		if ( !ilutRenderer(ILUT_OPENGL) )
-			AOD.Output("Error setting ilut Renderer to ILUT_OPENGL");
+		/* glMatrixMode(GL_PROJECTION); */
 		glEnable(GL_ALPHA);
 
-		glLoadIdentity();
+		/* glLoadIdentity(); */
 		
-		glOrtho(0, window_width, window_height, 0, 0, 1);
+		/* glOrtho(0, window_width, window_height, 0, 0, 1); */
 
 		//glMatrixMode(GL_MODELVIEW);
 		glDisable(GL_DEPTH_TEST);
-		glMatrixMode(GL_MODELVIEW);
+		/* glMatrixMode(GL_MODELVIEW); */
     { // others
       Debug_Output("Initializing Sounds Core");
       SoundEngine.Set_Up();
