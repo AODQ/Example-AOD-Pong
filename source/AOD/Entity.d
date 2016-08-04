@@ -461,7 +461,7 @@ static void Order_Vertices(ref Vector[] verts) {
   }
   
   import std.algorithm;
-  sort!((x, y) => return x.dist < y.dist)(va);
+  sort!((x, y) => x.dist < y.dist)(va);
   // put back in vector
   foreach ( i; va )
     verts.push_back ( i.second );
