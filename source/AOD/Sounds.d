@@ -1,8 +1,8 @@
-module AOD.Sounds;
+module AOD.sounds;
 import derelict.opengl3.gl3;
 import derelict.sdl2.mixer;
 
-import AOD.Console : Output, Debug_Output;
+import AOD.console : Output, Debug_Output;
 import std.string;
 import std.conv : to;
 

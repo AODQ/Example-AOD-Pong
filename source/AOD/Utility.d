@@ -1,4 +1,4 @@
-module AOD.Utility;
+module AOD.utility;
 
 import derelict.opengl3.gl3;
 import derelict.sdl2.sdl;

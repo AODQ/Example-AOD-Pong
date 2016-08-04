@@ -1,4 +1,4 @@
-module AOD.Vector;
+module AOD.vector;
 
 struct Vector {
 public:

@@ -1,18 +1,17 @@
-module AOD.Camera;
+module AOD.camera;
 
 import AOD.AOD;
-import AODUtil = AOD.Utility;
-import AOD.Vector;
+import AOD.vector;
 
-private AODUtil.Vector position;
-private AODUtil.Vector size;
+private Vector position;
+private Vector size;
 
 void Set_Position(const ref Vector pos) {
   position = pos;
 }
 
 void Set_Position(float x, float y) {
-  position = new AODUtil.Vector(x, y);
+  position = new Vector(x, y);
 }
 
 void Set_Size(const ref Vector siz) {
@@ -25,5 +24,5 @@ void Set_Size(float x, float y) {
   Camera.size = new AODUtil.Vector(x, y);
 }
 
-AODUtil.Vector R_Size() { return size; }
-AODUtil.Vector R_Position() { return position; }
+Vector R_Size()     { return size;     }
+Vector R_Position() { return position; }

@@ -1,6 +1,6 @@
-module AOD.Matrix;
+module AOD.matrix;
 
-import AOD.Vector;
+import AOD.vector;
 
 struct Matrix {
 public:

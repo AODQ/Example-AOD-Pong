@@ -1,11 +1,11 @@
-module AOD.Realm;
+module AOD.realm;
 
 import derelict.opengl3.gl3;
 import derelict.sdl2.sdl;
 import AOD.AOD;
-import AOD.Entity;
-import AOD.Text;
-import AOD.Console;
+import AOD.entity;
+import AOD.text;
+import AOD.console;
 
 class Realm {
   Entity[][] objects;

@@ -5,8 +5,8 @@ immutable(int) TYPE_NONE, /// No console
                TYPE_DEBUG_OUT; /// AOD generated messaged left out
 
 static import AOD.AOD;
-import AOD.Text : Text;
-import AOD.Entity : Entity;
+import AOD.text : Text;
+import AOD.entity : Entity;
 static import AOD.Input;
 static import AOD.ClientVars;
 import derelict.opengl3.gl3;

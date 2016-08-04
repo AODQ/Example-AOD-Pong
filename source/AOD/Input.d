@@ -1,4 +1,4 @@
-module AOD.Input;
+module AOD.input;
 import derelict.sdl2.sdl;
 
 // These represent SDL_ScanCodes. These are prefereable
