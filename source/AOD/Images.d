@@ -24,8 +24,9 @@ public:
 // A sheet container that will also contain lcoation of obj inside a sheet,
 // pixel-based coordinates where origin is {0, 0}. Useful for spritesheets,
 // I'm sure there are some other utilities such as image cropping
-struct SheetRect : SheetContainer {
+struct SheetRect {
 public:
+  SheetContainer image;
   Vector ul, lr;
   // nil constructor ( no sheet container, ul/lr will set to 0, 0
   this() {}
@@ -33,7 +34,7 @@ public:
   // are from upper-left (ul) to lower-right (lr), which are relative offsets
   // from the origin {0, 0}
   this(ref SheetContainer sc, ref Vector ul_, ref Vector lr_) {
-    super(sc.texture, sc.width, sc.height);
+    image = sc;
     ul = ul_;
     lr = lr_;
   }
