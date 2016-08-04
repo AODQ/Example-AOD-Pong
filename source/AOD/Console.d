@@ -4,11 +4,11 @@ immutable(int) TYPE_NONE, /// No console
                TYPE_DEBUG_IN, /// AOD generated messages left in
                TYPE_DEBUG_OUT; /// AOD generated messaged left out
 
-import AOD = AOD.AOD;
+static import AOD.AOD;
 import AOD.Text : Text;
 import AOD.Entity : Entity;
-import Input = AOD.Input;
-import CV = AOD.ClientVars;
+static import AOD.Input;
+static import AOD.ClientVars;
 import derelict.opengl3.gl3;
 import derelict.sdl2.sdl;
 import std.string;
@@ -35,9 +35,9 @@ static class ConsEng {
     cursor.Set_Visible(0);
     cursor.Set_Position(13, 96);
     background = new Entity;
-    background.Set_Image_Size(Vector(CV.screen_width, 103));
+    background.Set_Image_Size(Vector(AOD.ClientVars.screen_width, 103));
     background.Set_Visible(0);
-    background.Set_Position(CV.screen_width/2, 103/2);
+    background.Set_Position(AOD.ClientVars.screen_width/2, 103/2);
     Add(input);
     Add(input_after);
     Add(input_sig);
@@ -53,7 +53,7 @@ static class ConsEng {
 
   void Refresh() {
     if ( console_type == TYPE_DEBUG_IN || console_type == TYPE_DEBUG_OUT ) {
-      if ( Input.keys[ key ] ) {
+      if ( AOD.Input.keys[ key ] ) {
         console_open ^= 1;
         if ( console_open ) {
           for ( int i = 0; i != console_text.length; ++ i ) {
@@ -75,7 +75,7 @@ static class ConsEng {
           SDL_StopTextInput();
         }
       }
-      Input.keys[ key ] = 0;
+      AOD.Input.keys[ key ] = 0;
       if ( console_open )
         for ( int i = console_text.size()-1; i != -1; -- i )
           console_text[i].Set_Position(3, 1 + (console_text.length - i)*10);
