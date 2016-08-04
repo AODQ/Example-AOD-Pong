@@ -3,14 +3,14 @@ module AOD.utility;
 import derelict.opengl3.gl3;
 import derelict.sdl2.sdl;
 
-const(float) E         =  2.718282f,
-             Log10E    =  0.4342945f,
-             Log2E     =  1.442695f,
-             Pi        =  3.141593f,
-             Tau       =  6.283185f,
-             Max_float =  3.402823E+38f,
-             Min_float = -3.402823E+38f,
-             Epsilon   =  0.000001f;
+const(float) E         =  2.718282,
+             Log10E    =  0.4342945,
+             Log2E     =  1.442695,
+             Pi        =  3.141593,
+             Tau       =  6.283185,
+             Max_float =  3.402823E+38,
+             Min_float = -3.402823E+38,
+             Epsilon   =  0.000001;
 
 import std.random;
 
@@ -30,9 +30,9 @@ void Delete_Image(GLuint t) {
 import AOD.vector;
 
 float To_Rad(float x) {
-  return x * (Pi/180.f);
+  return x * (Pi/180.0);
 }
 
 float To_Deg(float x) {
-  return x * (180.f/Pi);
+  return x * (180.0/Pi);
 }

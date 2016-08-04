@@ -27,7 +27,7 @@ static class TextEng {
       int size;
     };
 
-    Font[Font_Type] fonts = [Font_Type("N/A", 0):null];
+    static Font[Font_Type] fonts = [Font_Type("N/A", 0):null];
 
     this(string file, int siz) {
       import File = std.file;
@@ -206,7 +206,7 @@ public:
 
   void Set_Position(Vector v)          { position = v;                   }
   void Set_Position(float x, float y)  { position.x = x; position.y = y; }
-  void Set_String(string str_)         { str = str_;                   }
+  void Set_String(string str_)         { msg = str_;                     }
   void Set_Colour(int r, int g, int b) {                                 }
   void Set_Visible(bool t)             { visible = t;                    }
   void Set_To_Default() {
@@ -225,11 +225,11 @@ public:
 
   Vector R_Position() { return position; }
   string R_Font()     {
-    if ( ft_font == null ) return default_font;
+    if ( ft_font is null ) return default_font;
     else                   return font;
   }
   ref TextEng.Font R_FT_Font() { return ft_font; }
-  string R_Str() { return string; }
+  string R_Str() { return msg; }
   bool R_Visible() { return visible; }
 
   string R_Default_Font() { return default_font; }
@@ -245,6 +245,7 @@ public:
 
 string R_FT_Error_String(int code) {
   switch ( code ) {
+    default: return "no error";
     case 0x00: return "no error";
     case 0x01: return "cannot open resource";
     case 0x02: return "unknown file format";
