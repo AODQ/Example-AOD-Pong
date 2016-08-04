@@ -27,7 +27,7 @@ class TextEng {
       int size;
     };
 
-    static Font[Font_Type] fonts = [Font_Type("N/A", 0):null];
+    static Font[Font_Type] fonts;
 
     this(string file, int siz) {
       import File = std.file;
