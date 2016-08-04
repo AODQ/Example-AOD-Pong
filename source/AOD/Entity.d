@@ -72,14 +72,14 @@ public:
     position = Vector(x, y);
     Refresh_Transform();
   }
-  void Set_Position(const ref Vector v) {
+  void Set_Position(Vector v) {
     position = v;
   }
   void Add_Position(float x, float y) {
     position.x += x;
     position.y += y;
   }
-  void Add_Position(const ref Vector v) {
+  void Add_Position(Vector v) {
     position += v;
   }
   Vector R_Position() { return position;  }
@@ -109,12 +109,12 @@ public:
     }
     image = index;
   }
-  void Set_Sprite(const ref SheetContainer sc) {
+  void Set_Sprite(SheetContainer sc) {
     image = sc.texture;
     image_size.x = sc.width;
     image_size.y = sc.height;
   }
-  void Set_Sprite(const ref SheetRect sr) {
+  void Set_Sprite(SheetRect sr) {
     image = sr.texture;
     image_size.x = sr.width;
     image_size.y = sr.height;
@@ -128,10 +128,10 @@ public:
   }
   float R_Rotation() { return rotation; }
 
-  void Apply_Force(const ref Vector force) {
+  void Apply_Force(Vector force) {
     velocity += force;
   }
-  void Set_Velocity(const ref Vector vel) {
+  void Set_Velocity(Vector vel) {
     velocity = vel;
   }
   void Set_Velocity(float x, float y) {
@@ -154,7 +154,7 @@ public:
             Vector(right_x , bot_y));
   }
 
-  void Set_UVs(const ref Vector left, const ref Vector right,
+  void Set_UVs(Vector left, Vector right,
               bool reset_flip = 1) {
     _UV[0] = left.x;
     _UV[1] = right.y;
@@ -186,7 +186,7 @@ public:
     flipped_y ^= 1;
   }
 
-  void Set_Size(const ref Vector vec, bool scale_image = 0) {
+  void Set_Size(Vector vec, bool scale_image = 0) {
     size = vec;
     if ( scale_image )
       Set_Image_Size(vec);
@@ -195,7 +195,7 @@ public:
   void Set_Size(int x, int y, bool scale_image = 0) {
     Set_Size(Vector(x, y), scale_image);
   }
-  void Set_Image_Size(const ref Vector vec) {
+  void Set_Image_Size(Vector vec) {
     image_size = vec;
   }
   void Set_Visible(bool v) {
@@ -215,7 +215,7 @@ public:
     static_pos = s;
   }
 
-  void Set_Origin(const ref Vector v) {
+  void Set_Origin(Vector v) {
     rotate_origin = v;
   }
   // will reset origin to image_size/2

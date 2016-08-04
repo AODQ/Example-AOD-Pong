@@ -18,7 +18,7 @@ class ConsEng {
 static:
   int console_type = 0;
   GLuint console_image = 0;
-  Text console_text;
+  Text[] console_text;
   Text input, input_after, input_sig;
   Entity cursor, background;
   int console_input_cursor,
@@ -33,30 +33,30 @@ static:
     input_after = new Text(10, 100, "");
     input_sig   = new Text(0, 100, ">>");
     input_sig.Set_Visible(0);
-    cursor = new Entity();
+    cursor = new Entity(50);
     cursor.Set_Image_Size(Vector(1, 10));
     cursor.Set_Visible(0);
     cursor.Set_Position(13, 96);
-    background = new Entity();
-    background.Set_Image_Size(Vector(AOD.ClientVars.screen_width, 103));
+    background = new Entity(50);
+    background.Set_Image_Size(Vector(screen_width, 103));
     background.Set_Visible(0);
-    background.Set_Position(AOD.ClientVars.screen_width/2, 103/2);
+    background.Set_Position(screen_width/2, 103/2);
     Add(input);
     Add(input_after);
     Add(input_sig);
-    Add(background, 50);
-    Add(cursor, 50);
+    Add(background);
+    Add(cursor);
   }
   void Deconstruct() {
     console_text = [];
-    AOD.Remove(input);
-    AOD.Remove(input_after);
-    AOD.Remove(cursor);
+    Remove(input);
+    Remove(input_after);
+    Remove(cursor);
   }
 
   void Refresh() {
     if ( console_type == TYPE_DEBUG_IN || console_type == TYPE_DEBUG_OUT ) {
-      if ( AOD.Input.keys[ key ] ) {
+      if ( keys[ key ] ) {
         console_open ^= 1;
         if ( console_open ) {
           for ( int i = 0; i != console_text.length; ++ i ) {

@@ -9,6 +9,8 @@ enum Mouse_Bind
        Wheelup  = 303, Wheeldown = 304,
        X1   = 305, X2    = 306 };
 
+ubyte* keys;
+
 class MouseEngine {
 static: private:
   ubyte mouse;
@@ -21,7 +23,7 @@ static: public:
     keys[ Mouse_Bind.Right ] = R_RMB();
     keys[ Mouse_Bind.Middle ] = R_MMB();
     keys[ Mouse_Bind.X1 ] = R_MX1();
-    Keys[ Mouse_Bind.X2 ] = R_MX2();
+    keys[ Mouse_Bind.X2 ] = R_MX2();
     // Let AOD.D handle mouse wheel
   }
 }

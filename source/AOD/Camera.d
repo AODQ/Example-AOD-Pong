@@ -21,7 +21,7 @@ void Set_Size(Vector siz) {
 
 void Set_Size(float x, float y) {
   if ( x <= 0 || y <= 0 ) return;
-  Camera.size = Vector(x, y);
+  size = Vector(x, y);
 }
 
 Vector R_Size()     { return size;     }

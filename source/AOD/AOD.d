@@ -126,9 +126,9 @@ void Run() {
 
   // so I can set up keys and not have to rely that update is ran first
   SDL_PumpEvents();
-  MouseEng.Refresh_Input();
+  MouseEngine.Refresh_Input();
   SDL_PumpEvents();
-  MouseEng.Refresh_Input();
+  MouseEngine.Refresh_Input();
 
   while ( SDL_PollEvent(&_event) ) {
     switch ( _event.type ) {
