@@ -8,7 +8,7 @@ import AOD.Camera;
 import Console = AOD.Console;
 import AOD.Input;
 import AOD.Entity : Entity;
-static import AOD.Realm : Realm;
+static import AOD.Realm;
 import AOD.Sounds;
 static import AOD.Text;
 import AOD.Vector;
