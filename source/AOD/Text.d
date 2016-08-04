@@ -130,7 +130,7 @@ static class TextEng {
 
     FT_Face R_Face()           { return face;            }
     GLuint R_Character(char c) { return char_texture[c]; }
-    GLuint R_Character_List()  { return char_lists       }
+    GLuint R_Character_List()  { return char_lists;      }
     int R_Width()              { return width;           }
 
     static void Init() {
@@ -143,7 +143,7 @@ static class TextEng {
     }
 
     static Font Load_Font(string fil, int siz) {
-      auto font_pair = tuple(str, int);
+      auto font_pair = Font_Type(fil, siz);
       if ( fonts.get(font_pair, null) == null ) {
         fonts[font_pair] = new Font(str, pt_size);
       }
@@ -151,7 +151,12 @@ static class TextEng {
     }
   }
 
-  Font[Tuple!(string, int)] fonts;
+  struct Font_Type {
+    string name;
+    int size;
+  };
+
+  Font[Font_Type] fonts;
 }
 
 class Text {
@@ -171,10 +176,8 @@ class Text {
     if ( uses_default_font ) {
       pt_size = default_pt_size;
       font    = default_font;
-      ft_font = TextEngine.fonts[tuple(default_font,default_pt_size)];
-    } else {
-      ft_font = TextEngine.fonts[pair(font, pt_size)];
     }
+    ft_font = TextEngine.fonts[TextEngine.Font_Type(font,pt_size)];
   }
 
   Redefault(string str_) {
@@ -240,123 +243,125 @@ public:
 
 
 string R_FT_Error_String(int code) {
-  if ( 0x00 == code ) return "no error";
-  if ( 0x01 == code ) return "cannot open resource";
-  if ( 0x02 == code ) return "unknown file format";
-  if ( 0x03 == code ) return "broken file";
-  if ( 0x04 == code ) return "invalid FreeType version";
-  if ( 0x05 == code ) return "module version is too low";
-  if ( 0x06 == code ) return "invalid argument";
-  if ( 0x07 == code ) return "unimplemented feature";
-  if ( 0x08 == code ) return "broken table";
-  if ( 0x09 == code ) return "broken offset within table";
-  if ( 0x0A == code ) return "array allocation size too large";
+  switch ( code ) {
+    case 0x00: return "no error";
+    case 0x01: return "cannot open resource";
+    case 0x02: return "unknown file format";
+    case 0x03: return "broken file";
+    case 0x04: return "invalid FreeType version";
+    case 0x05: return "module version is too low";
+    case 0x06: return "invalid argument";
+    case 0x07: return "unimplemented feature";
+    case 0x08: return "broken table";
+    case 0x09: return "broken offset within table";
+    case 0x0A: return "array allocation size too large";
 
   /* glyph/character errors */
 
-  if ( 0x10 == code ) return "invalid glyph index";
-  if ( 0x11 == code ) return "invalid character code";
-  if ( 0x12 == code ) return "unsupported glyph image format";
-  if ( 0x13 == code ) return "cannot render this glyph format";
-  if ( 0x14 == code ) return "invalid outline";
-  if ( 0x15 == code ) return "invalid composite glyph";
-  if ( 0x16 == code ) return "too many hints";
-  if ( 0x17 == code ) return "invalid pixel size";
+    case 0x10: return "invalid glyph index";
+    case 0x11: return "invalid character code";
+    case 0x12: return "unsupported glyph image format";
+    case 0x13: return "cannot render this glyph format";
+    case 0x14: return "invalid outline";
+    case 0x15: return "invalid composite glyph";
+    case 0x16: return "too many hints";
+    case 0x17: return "invalid pixel size";
 
   /* handle errors */
 
-  if ( 0x20 == code ) return "invalid object handle";
-  if ( 0x21 == code ) return "invalid library handle";
-  if ( 0x22 == code ) return "invalid module handle";
-  if ( 0x23 == code ) return "invalid face handle";
-  if ( 0x24 == code ) return "invalid size handle";
-  if ( 0x25 == code ) return "invalid glyph slot handle";
-  if ( 0x26 == code ) return "invalid charmap handle";
-  if ( 0x27 == code ) return "invalid cache manager handle";
-  if ( 0x28 == code ) return "invalid stream handle";
+    case 0x20: return "invalid object handle";
+    case 0x21: return "invalid library handle";
+    case 0x22: return "invalid module handle";
+    case 0x23: return "invalid face handle";
+    case 0x24: return "invalid size handle";
+    case 0x25: return "invalid glyph slot handle";
+    case 0x26: return "invalid charmap handle";
+    case 0x27: return "invalid cache manager handle";
+    case 0x28: return "invalid stream handle";
 
   /* driver errors */
 
-  if ( 0x30 == code ) return "too many modules";
-  if ( 0x31 == code ) return "too many extensions";
+    case 0x30: return "too many modules";
+    case 0x31: return "too many extensions";
 
   /* memory errors */
 
-  if ( 0x40 == code ) return "out of memory";
-  if ( 0x41 == code ) return "unlisted object";
+    case 0x40: return "out of memory";
+    case 0x41: return "unlisted object";
 
   /* stream errors */
 
-  if ( 0x51 == code ) return "cannot open stream";
-  if ( 0x52 == code ) return "invalid stream seek";
-  if ( 0x53 == code ) return "invalid stream skip";
-  if ( 0x54 == code ) return "invalid stream read";
-  if ( 0x55 == code ) return "invalid stream operation";
-  if ( 0x56 == code ) return "invalid frame operation";
-  if ( 0x57 == code ) return "nested frame access";
-  if ( 0x58 == code ) return "invalid frame read";
+    case 0x51: return "cannot open stream";
+    case 0x52: return "invalid stream seek";
+    case 0x53: return "invalid stream skip";
+    case 0x54: return "invalid stream read";
+    case 0x55: return "invalid stream operation";
+    case 0x56: return "invalid frame operation";
+    case 0x57: return "nested frame access";
+    case 0x58: return "invalid frame read";
 
   /* raster errors */
 
-  if ( 0x60 == code ) return "raster uninitialized";
-  if ( 0x61 == code ) return "raster corrupted";
-  if ( 0x62 == code ) return "raster overflow";
-  if ( 0x63 == code ) return "negative height while rastering";
+    case 0x60: return "raster uninitialized";
+    case 0x61: return "raster corrupted";
+    case 0x62: return "raster overflow";
+    case 0x63: return "negative height while rastering";
 
   /* cache errors */
 
-  if ( 0x70 == code ) return "too many registered caches";
+    case 0x70: return "too many registered caches";
 
   /* TrueType and SFNT errors */
 
-  if ( 0x80 == code ) return "invalid opcode";
-  if ( 0x81 == code ) return "too few arguments";
-  if ( 0x82 == code ) return "stack overflow";
-  if ( 0x83 == code ) return "code overflow";
-  if ( 0x84 == code ) return "bad argument";
-  if ( 0x85 == code ) return "division by zero";
-  if ( 0x86 == code ) return "invalid reference";
-  if ( 0x87 == code ) return "found debug opcode";
-  if ( 0x88 == code ) return "found ENDF opcode in execution stream";
-  if ( 0x89 == code ) return "nested DEFS";
-  if ( 0x8A == code ) return "invalid code range";
-  if ( 0x8B == code ) return "execution context too long";
-  if ( 0x8C == code ) return "too many function definitions";
-  if ( 0x8D == code ) return "too many instruction definitions";
-  if ( 0x8E == code ) return "SFNT font table missing";
-  if ( 0x8F == code ) return "horizontal header (hhea) table missing";
-  if ( 0x90 == code ) return "locations (loca) table missing";
-  if ( 0x91 == code ) return "name table missing";
-  if ( 0x92 == code ) return "character map (cmap) table missing";
-  if ( 0x93 == code ) return "horizontal metrics (hmtx) table missing";
-  if ( 0x94 == code ) return "PostScript (post) table missing";
-  if ( 0x95 == code ) return "invalid horizontal metrics";
-  if ( 0x96 == code ) return "invalid character map (cmap) format";
-  if ( 0x97 == code ) return "invalid ppem value";
-  if ( 0x98 == code ) return "invalid vertical metrics";
-  if ( 0x99 == code ) return "could not find context";
-  if ( 0x9A == code ) return "invalid PostScript (post) table format";
-  if ( 0x9B == code ) return "invalid PostScript (post) table";
+    case 0x80: return "invalid opcode";
+    case 0x81: return "too few arguments";
+    case 0x82: return "stack overflow";
+    case 0x83: return "code overflow";
+    case 0x84: return "bad argument";
+    case 0x85: return "division by zero";
+    case 0x86: return "invalid reference";
+    case 0x87: return "found debug opcode";
+    case 0x88: return "found ENDF opcode in execution stream";
+    case 0x89: return "nested DEFS";
+    case 0x8A: return "invalid code range";
+    case 0x8B: return "execution context too long";
+    case 0x8C: return "too many function definitions";
+    case 0x8D: return "too many instruction definitions";
+    case 0x8E: return "SFNT font table missing";
+    case 0x8F: return "horizontal header (hhea) table missing";
+    case 0x90: return "locations (loca) table missing";
+    case 0x91: return "name table missing";
+    case 0x92: return "character map (cmap) table missing";
+    case 0x93: return "horizontal metrics (hmtx) table missing";
+    case 0x94: return "PostScript (post) table missing";
+    case 0x95: return "invalid horizontal metrics";
+    case 0x96: return "invalid character map (cmap) format";
+    case 0x97: return "invalid ppem value";
+    case 0x98: return "invalid vertical metrics";
+    case 0x99: return "could not find context";
+    case 0x9A: return "invalid PostScript (post) table format";
+    case 0x9B: return "invalid PostScript (post) table";
 
   /* CFF, CID, and Type 1 errors */
 
-  if ( 0xA0 == code ) return "opcode syntax error";
-  if ( 0xA1 == code ) return "argument stack underflow";
-  if ( 0xA2 == code ) return "ignore";
-  if ( 0xA3 == code ) return "no Unicode glyph name found";
+    case 0xA0: return "opcode syntax error";
+    case 0xA1: return "argument stack underflow";
+    case 0xA2: return "ignore";
+    case 0xA3: return "no Unicode glyph name found";
 
 
   /* BDF errors */
 
-  if ( 0xB0 == code ) return "`STARTFONT' field missing";
-  if ( 0xB1 == code ) return "`FONT' field missing";
-  if ( 0xB2 == code ) return "`SIZE' field missing";
-  if ( 0xB3 == code ) return "`FONTBOUNDINGBOX' field missing";
-  if ( 0xB4 == code ) return "`CHARS' field missing";
-  if ( 0xB5 == code ) return "`STARTCHAR' field missing";
-  if ( 0xB6 == code ) return "`ENCODING' field missing";
-  if ( 0xB7 == code ) return "`BBX' field missing";
-  if ( 0xB8 == code ) return "`BBX' too big";
-  if ( 0xB9 == code ) return "Font header corrupted or missing fields";
-  if ( 0xBA == code ) return "Font glyphs corrupted or missing fields";
+    case 0xB0: return "`STARTFONT' field missing";
+    case 0xB1: return "`FONT' field missing";
+    case 0xB2: return "`SIZE' field missing";
+    case 0xB3: return "`FONTBOUNDINGBOX' field missing";
+    case 0xB4: return "`CHARS' field missing";
+    case 0xB5: return "`STARTCHAR' field missing";
+    case 0xB6: return "`ENCODING' field missing";
+    case 0xB7: return "`BBX' field missing";
+    case 0xB8: return "`BBX' too big";
+    case 0xB9: return "Font header corrupted or missing fields";
+    case 0xBA: return "Font glyphs corrupted or missing fields";
+  }
 }
