@@ -4,7 +4,7 @@ import derelict.opengl3.gl3;
 import derelict.sdl2.sdl;
 import std.string;
 
-import AOD.camera;
+import Camera = AOD.camera;
 import Console = AOD.console;
 import AOD.input;
 import AOD.entity;
@@ -33,15 +33,15 @@ void Initialize(int window_width, int window_height, uint _fps,
   if ( Engine.realm is null ) {
     if ( window_name == "" )
       window_name = "Art of Dwarficorn";
-    Engine.realm = new AOD.Realm(window_width, window_height, window_name, icon);
+    Engine.realm = new Realm(window_width, window_height, window_name, icon);
     Engine.ms_dt = _fps;
   }
   Camera.Set_Position(Vector(0, 0));
   Camera.Set_Size(Vector(cast(float)window_width, cast(float)window_height));
 }
 
-void Initialize_Console(bool debg, SDL_Keycode key, string cons) {
-  if ( dbug )
+void Initialize_Console(bool print_debug, SDL_Keycode key, string cons) {
+  if ( print_debug )
     Console.console_type = Console.TYPE_DEBUG_IN;
   else
     Console.console_type = Console.TYPE_DEBUG_OUT;
@@ -126,9 +126,9 @@ void Run() {
 
   // so I can set up keys and not have to rely that update is ran first
   SDL_PumpEvents();
-  Input.Refresh_Input();
+  Refresh_Input();
   SDL_PumpEvents();
-  AOD.Input.Refresh_Input();
+  Refresh_Input();
 
   while ( SDL_PollEvent(&_event) ) {
     switch ( _event.type ) {

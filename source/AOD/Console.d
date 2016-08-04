@@ -24,6 +24,7 @@ static class ConsEng {
   string[] to_console;
   int console_history = 9;
   ubyte console_message_count;
+  
 
   void Construct() {
     input = new Text(12, 100, "");
