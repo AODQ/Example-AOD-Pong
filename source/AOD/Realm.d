@@ -72,17 +72,16 @@ public:
 		//glMatrixMode(GL_MODELVIEW);
 		glDisable(GL_DEPTH_TEST);
 		glMatrixMode(GL_MODELVIEW);
-	}
-
-	{ // others
-		Debug_Output("Initializing Sounds Core");
-		SoundEngine.Set_Up();
-		Debug_Output("Initializing Font Core");
-    TextEngine.Font.Init();
-		objs_to_rem.clear();
-		bg_red	 = 0;
-		bg_blue	= 0;
-		bg_green = 0;;
+    { // others
+      Debug_Output("Initializing Sounds Core");
+      SoundEngine.Set_Up();
+      Debug_Output("Initializing Font Core");
+      TextEngine.Font.Init();
+      objs_to_rem.clear();
+      bg_red	 = 0;
+      bg_blue	= 0;
+      bg_green = 0;;
+    }
 	}
 
   void __Add(Entity o) {

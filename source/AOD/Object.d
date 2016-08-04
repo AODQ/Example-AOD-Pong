@@ -248,7 +248,7 @@ public:
 
   // -------------- POLY OBJ --------------------------------------------------
 
-  class PolyEnt : public Entity {
+  class PolyEnt : Entity {
   protected:
     Vector[] vertices, vertices_transform;
     void Build_Transform() {}
@@ -257,7 +257,7 @@ public:
       super(Type.Polygon);
       vertices = [];
     }
-    PolyEnt(Vector[] vertices, Vector off = [ 0, 0 ]) {
+    PolyEnt(Vector[] vertices, Vector off = Vector( 0, 0 )) {
       super(Type.Polygon);
       vertices = vert;
       Set_Position(off);
@@ -281,7 +281,7 @@ public:
         transformed = 0;
         vertices_transform.clear();
 
-        for ( auto i : vertices ) {
+        foreach ( i; vertices ) {
           vertices_transform.push_back(
             Vector.Transform(R_Matrix(), i));
         }
@@ -293,10 +293,10 @@ public:
     // ---- utility ----
 
     // Returns information on current collision state with another poly
-    Collision_Info Collide(PolyEnt* poly, AOD::Vector velocity) {
+    Collision_Info Collide(PolyEnt* poly, Vector velocity) {
       return PolyPolyColl(this, poly, velocity);
     }
-    Collision_Info Collide(AABBEnt* aabb, AOD::Vector velocity) {
+    Collision_Info Collide(AABBEnt* aabb, Vector velocity) {
       return Collision_Info(); 
     }
   };
