@@ -7,6 +7,7 @@ import AOD.matrix;
 import AOD.realm;
 import AOD.vector;
 import AOD.image;
+import AOD.console;
 
 class Entity {
 private:
@@ -37,7 +38,7 @@ protected:
 
   bool transformed;
 public:
-  void R_Layer() { return layer; }
+  int R_Layer() { return layer; }
 
   static immutable(float[8]) Vertices = [
     -0.5f, -0.5f,
@@ -164,7 +165,7 @@ public:
     _UV[5] = right.y;
     _UV[6] = right.x;
     _UV[7] = left.y;
-    if ( f ) {
+    if ( reset_flip ) {
       flipped_x = 0;
       flipped_y = 1;
     }
@@ -254,16 +255,16 @@ public:
     super(Type.Polygon);
     vertices = [];
   }
-  this(Vector[] vertices, Vector off = Vector( 0, 0 )) {
+  this(Vector[] vertices_, Vector off = Vector( 0, 0 )) {
     super(Type.Polygon);
-    vertices = vert;
+    vertices = vertices_;
     Set_Position(off);
   }
 
   // ---- ret/set ----
   // will override previous vectors
-  void Set_Vertices(Vector[] , bool reorder = 1) {
-    vertices = vert;
+  void Set_Vertices(Vector[] vertices_, bool reorder = 1) {
+    vertices = vertices_;
     if ( reorder ) {
       Order_Vertices(vertices);
     }
@@ -426,4 +427,58 @@ private Collision_Info PolyPolyColl(PolyEnt polyA, PolyEnt polyB,
   if ( ci.will_collide )
     ci.translation = trans_vec * min_dist;
   return ci;
+}
+
+
+
+static void Order_Vertices(ref Vector[] verts) {
+  struct Vert_Pair {
+    float dist;
+    Vector vert;
+  };
+  // get centroid, same time preparing to calculate angle of verts
+  float centx = 0, centy = 0;
+  std::vector<Vert_Pair> va;
+  foreach ( i; verts ) {
+    centx += i.x;
+    centy += i.y;
+    va.push_back(Vert_Pair{0, i});
+  }
+  centx /= verts.size();
+  centy /= verts.size();
+
+  foreach ( i; va ) {
+    i.first = std::atan2f(i.second.y - centy, i.second.x - centx);
+    //std::cout << "ATAN2F( " << i.second.y << " - " << centy << ", "
+    //                        << i.second.x << " - " << centx << ") = "
+    //                        << i.first << '\n';
+  }
+  std::sort( va.begin(), va.end(),
+    [](std::pair<float, AOD::Vector>& x,
+       std::pair<float, AOD::Vector>& y) {
+           //std::cout << x.first << " > " << y.first << '\n';
+      return x.first < y.first;
+    });
+  // put back in vector
+  verts.clear();
+  for ( auto i : va )
+    verts.push_back ( i.second );
+
+  /*// double check that it is in sorted CCW order
+  int count = 0;
+  for ( int i = 0; i != verts.size(); ++ i ) {
+    int pt1 = ( i + 1 ) % verts.size(),
+        pt2 = ( i + 2 ) % verts.size();
+    int z = ( verts[pt1].x - verts[i].x ) * ( verts[pt2].y - verts[pt1].y );
+    z -=    ( verts[pt1].y - verts[i].y ) * ( verts[pt2].x - verts[pt1].x );
+    if      ( z < 0 ) -- count;
+    else if ( z > 0 ) ++ count;
+  }
+  if ( count <= 0 ) {
+    std::cout << "ERROR, polygon is clockwise: " << count << '\n';
+    std::cout << "CENT: " << centx << ", " << centy << '\n';
+    for ( int i = 0; i != verts.size(); ++ i )
+      std::cout << verts[i] << '\n';
+    std::cout << "----------------------------\n";
+  }*/
 }

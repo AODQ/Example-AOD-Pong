@@ -9,7 +9,7 @@ enum Mouse_Bind
        Wheelup  = 303, Wheeldown = 304,
        X1   = 305, X2    = 306 };
 
-ubyte* keys;
+ubyte* keystate;
 
 class MouseEngine {
 static: private:

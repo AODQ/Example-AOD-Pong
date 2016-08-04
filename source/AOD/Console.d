@@ -56,7 +56,7 @@ static:
 
   void Refresh() {
     if ( console_type == TYPE_DEBUG_IN || console_type == TYPE_DEBUG_OUT ) {
-      if ( keys[ key ] ) {
+      if ( keystate[ key ] ) {
         console_open ^= 1;
         if ( console_open ) {
           for ( int i = 0; i != console_text.length; ++ i ) {
@@ -78,9 +78,9 @@ static:
           SDL_StopTextInput();
         }
       }
-      AOD.Input.keys[ key ] = 0;
+      keystate[ key ] = 0;
       if ( console_open )
-        for ( int i = console_text.size()-1; i != -1; -- i )
+        for ( int i = console_text.length-1; i != -1; -- i )
           console_text[i].Set_Position(3, 1 + (console_text.length - i)*10);
     }
     // push back new texts
@@ -90,8 +90,8 @@ static:
     }
     to_console = [];
     // pop back old debugs
-    while ( console_text.size() > console_history ) {
-      AOD.Remove(console_text[console_text.size()-1]);
+    while ( console_text.length > console_history ) {
+      AOD.Remove(console_text[console_text.length-1]);
       -- console_text.length;
     }
   }
@@ -116,6 +116,6 @@ void Output(string ot) {
 }
 
 void Debug_Output(string ot) {
-  if ( ConsEng.console_type == ConsEng.TYPE_DEBUG_IN )
+  if ( ConsEng.console_type == TYPE_DEBUG_IN )
     Out(ot);
 }
