@@ -30,12 +30,12 @@ static:
   float[20] fps = [ 0 ];
 }
 
-void Initialize(int window_width, int window_height, uint _fps,
-                string window_name, string icon = "") {
+void Initialize(uint _fps, string window_name, string icon = "") {
   if ( Engine.realm is null ) {
     if ( window_name == "" )
       window_name = "Art of Dwarficorn";
-    Engine.realm = new AOD.realm.Realm(window_width, window_height,
+    static import AOD.clientvars;
+    Engine.realm = new AOD.realm.Realm(AOD.clientvars.screen_width, AOD.clientvars.screen_height,
                                        window_name.ptr, icon.ptr);
     Engine.ms_dt = _fps;
   }
