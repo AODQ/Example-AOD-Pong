@@ -87,8 +87,8 @@ static class TextEng {
 
         //map.palette_mode = ILUT_PALETTE_MODE;
 
-        int d = (face.glyph.metrics.height -
-                 face.glyph.metrics.horiBearingY)>>6;
+        int d = cast(int)((face.glyph.metrics.height -
+                           face.glyph.metrics.horiBearingY)>>6);
 
         int w = map.width*map.width,
             h = map.rows *map.rows;

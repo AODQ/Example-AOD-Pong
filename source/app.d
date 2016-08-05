@@ -16,17 +16,16 @@ void Init () {
   static import AOD.clientvars;
   AOD.clientvars.screen_width  = 640;
   AOD.clientvars.screen_height = 480;
-
-  AOD.Initialize(17, "CYBER BUTCHER");
+  static import AOD.AOD;
+  AOD.AOD.Initialize(17, "CYBER BUTCHER");
   static import AOD.camera;
-  import AOD.Vector;
+  import AOD.vector;
   AOD.camera.Set_Size(Vector(AOD.clientvars.screen_width,
                              AOD.clientvars.screen_height));
   AOD.camera.Set_Position(AOD.clientvars.screen_width,
                           AOD.clientvars.screen_height);
   static import AOD.text;
   AOD.text.Set_Default_Font("DejaVuSansMono.ttf", 8);
-  static import AOD.AOD;
   AOD.AOD.Initialize_Console(1, SDL_SCANCODE_GRAVE, "");
   AOD.AOD.Set_BG_Colour(.08, .08, .095);
 

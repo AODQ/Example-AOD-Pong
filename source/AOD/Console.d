@@ -80,7 +80,7 @@ static:
       }
       keystate[ key ] = 0;
       if ( console_open )
-        for ( int i = console_text.length-1; i != -1; -- i )
+        for ( int i = cast(int)(console_text.length-1); i != -1; -- i )
           console_text[i].Set_Position(3, 1 + (console_text.length - i)*10);
     }
     // push back new texts
@@ -105,6 +105,14 @@ void Set_Open_Console_Key(SDL_Keycode k) {
 
 void Set_Console_History(int history_limit) {
   ConsEng.console_history = history_limit;
+}
+
+void Set_Console_Output_Type(int otype) in {
+  assert ( otype == TYPE_NONE ||
+           otype == TYPE_DEBUG_IN ||
+           otype == TYPE_DEBUG_OUT );
+} body {
+  ConsEng.console_type = otype;
 }
 
 private void Out ( string o ) {
