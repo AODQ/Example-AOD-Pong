@@ -12,7 +12,7 @@ void Render_Screen(SDL_Window* win) {
 void Init () {
   static import AOD.console;
   AOD.console.console_open = false;
-  AOD.console.Set_Open_Console_Type(AOD.Console.TYPE_DEBUG_IN);
+  AOD.console.Set_Open_Console_Type(AOD.console.TYPE_DEBUG_IN);
   static import AOD.clientvars;
   AOD.clientvars.screen_width  = 640;
   AOD.clientvars.screen_height = 480;
@@ -25,7 +25,7 @@ void Init () {
   AOD.camera.Set_Position(AOD.clientvars.screen_width,
                           AOD.clientvars.screen_height);
   static import AOD.text;
-  AOD.text.Set_Default_Font("DejaVuSansMono.ttf", 8);
+  AOD.text.Text.Set_Default_Font("DejaVuSansMono.ttf", 8);
   AOD.AOD.Initialize_Console(1, SDL_SCANCODE_GRAVE, "");
   AOD.AOD.Set_BG_Colour(.08, .08, .095);
 
