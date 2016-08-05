@@ -28,6 +28,8 @@ public:
     import std.conv : to; 
     import derelict.util.exception;
     import std.stdio : writeln;
+    writeln("Initializing Art of Dwarficorn engine");
+    writeln("Loading external libraries");
     try {
       DerelictGL3.load();
     } catch ( DerelictException de ) {
@@ -71,66 +73,104 @@ public:
       writeln("\n------------------------------------------------------------------------\n");
     }
 
+    writeln("Initializing SDL");
     SDL_Init ( SDL_INIT_EVERYTHING );
 
+    writeln("Creating SDL Window");
     Engine.screen = SDL_CreateWindow(window_name, SDL_WINDOWPOS_UNDEFINED,
                                                   SDL_WINDOWPOS_UNDEFINED,
                                                   window_width, window_height,
                                                   SDL_WINDOW_OPENGL |
                                                   SDL_WINDOW_SHOWN);
     import std.conv : to;
-		if ( SDL_GL_SetAttribute( SDL_GL_CONTEXT_MAJOR_VERSION, 2 ) == -1 )
-			Output("Error CONTEXT_MAJOR: " ~ to!string(SDL_GetError()));
-		if ( SDL_GL_SetAttribute( SDL_GL_CONTEXT_MINOR_VERSION, 1 ) == -1 )
-			Output("Error CONTEXT_MINOR: " ~ to!string(SDL_GetError()));
-		if ( SDL_GL_CreateContext( Engine.screen ) is null ) {
-			Output("Error window context: " ~ to!string(SDL_GetError()));
-		}
-		if ( SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1) == -1 )
-			Output("Error DOUBLEBUFFER: " ~ to!string(SDL_GetError()));
-		if ( SDL_GL_SetAttribute(SDL_GL_ALPHA_SIZE, 8) == -1 )
-			Output("Error ALPHA_SIZE: " ~ to!string(SDL_GetError()));
+    writeln("Creating OpenGL Context");
+    if ( SDL_GL_SetAttribute( SDL_GL_CONTEXT_MAJOR_VERSION, 2 ) == -1 ) {
+      auto x = "Error CONTEXT_MAJOR: " ~ to!string(SDL_GetError()); 
+      Output(x);
+      writeln(x);
+    }
+    if ( SDL_GL_SetAttribute( SDL_GL_CONTEXT_MINOR_VERSION, 1 ) == -1 ) {
+      auto x = "Error CONTEXT_MINOR: " ~ to!string(SDL_GetError());
+      Output(x);
+      writeln(x);
+    }
+    if ( SDL_GL_CreateContext( Engine.screen ) is null ) {
+      auto x = "Error window context: " ~ to!string(SDL_GetError());
+      Output(x);
+      writeln(x);
+    }
+    if ( SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1) == -1 ) {
+      auto x = "Error DOUBLEBUFFER: " ~ to!string(SDL_GetError());
+      Output(x);
+      writeln(x);
+    }
+    if ( SDL_GL_SetAttribute(SDL_GL_ALPHA_SIZE, 8) == -1 ) {
+      auto x = "Error ALPHA_SIZE: " ~ to!string(SDL_GetError());
+      Output(x);
+      writeln(x);
+    }
 
+    writeln("Reloading GL3");
     DerelictGL3.reload();
 
-		glShadeModel(GL_SMOOTH);
-		glEnable(GL_TEXTURE_2D);
-		glEnable(GL_BLEND);
-		if ( icon != "" ) {
-			SDL_Surface* ico = SDL_LoadBMP(icon);
-			SDL_SetWindowIcon(Engine.screen, ico);
-		}
+    /* writeln("Setting glShadeModel"); */
+    /* glShadeModel(GL_SMOOTH); */
+    /* writeln("Enabling GL_TEXTURE2D and GL_BLEND"); */
+    /* glEnable(GL_TEXTURE_2D); */
+    /* glEnable(GL_BLEND); */
+    /* if ( icon != "" ) { */
+    /*   writeln("Loading window icon"); */
+    /*   SDL_Surface* ico = SDL_LoadBMP(icon); */
+    /*   SDL_SetWindowIcon(Engine.screen, ico); */
+    /* } */
 
-		glClearDepth(1.0f);
-		glPolygonMode(GL_FRONT, GL_FILL);
-		glShadeModel(GL_FLAT);
-		glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_FASTEST);
-		glDepthFunc(GL_LEQUAL);
-		glEnable(GL_DEPTH_TEST);
-		glEnable(GL_BLEND);
-		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    /* writeln("glClearDepth"); */
+    /* glClearDepth(1.0f); */
+    /* writeln("glPolygonMode"); */
+    /* glPolygonMode(GL_FRONT, GL_FILL); */
+    /* writeln("glShadeModel"); */
+    /* glShadeModel(GL_FLAT); */
+    /* writeln("glHint"); */
+    /* glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_FASTEST); */
+    /* writeln("glDepthFunc"); */
+    /* glDepthFunc(GL_LEQUAL); */
+    /* writeln("glEnable"); */
+    /* glEnable(GL_DEPTH_TEST); */
+    /* writeln("glEnable"); */
+    /* glEnable(GL_BLEND); */
+    /* writeln("glBlendFunc"); */
+    /* glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA); */
 
-		glMatrixMode(GL_PROJECTION);
-		glEnable(GL_ALPHA);
+    /* writeln("glMatrixMode"); */
+    /* glMatrixMode(GL_PROJECTION); */
+    /* writeln("glEnable"); */
+    /* glEnable(GL_ALPHA); */
 
-		glLoadIdentity();
-		
-		glOrtho(0, window_width, window_height, 0, 0, 1);
+    /* writeln("glLoadIdentity"); */
+    /* glLoadIdentity(); */
+    
+    /* writeln("glOrtho"); */
+    /* glOrtho(0, window_width, window_height, 0, 0, 1); */
 
-		//glMatrixMode(GL_MODELVIEW);
-		glDisable(GL_DEPTH_TEST);
-		glMatrixMode(GL_MODELVIEW);
-    { // others
-      Debug_Output("Initializing Sounds Core");
-      SoundEng.Set_Up();
-      Debug_Output("Initializing Font Core");
-      TextEng.Font.Init();
-      objs_to_rem = [];
-      bg_red	 = 0;
-      bg_blue	= 0;
-      bg_green = 0;
-    }
-	}
+    /* //glMatrixMode(GL_MODELVIEW); */
+    /* writeln("glDisable"); */
+    /* glDisable(GL_DEPTH_TEST); */
+    /* writeln("glMatrixMode"); */
+    /* glMatrixMode(GL_MODELVIEW); */
+    /* { // others */
+    /*   writeln("Initializing sounds core"); */
+    /*   Debug_Output("Initializing Sounds Core"); */
+    /*   SoundEng.Set_Up(); */
+    /*   writeln("Initializing font core"); */
+    /*   Debug_Output("Initializing Font Core"); */
+    /*   TextEng.Font.Init(); */
+    /*   objs_to_rem = []; */
+    /*   bg_red   = 0; */
+    /*   bg_blue  = 0; */
+    /*   bg_green = 0; */
+    /* } */
+    writeln("Finalized initializing Art of Dwarficorn main core");
+  }
 
   void __Add(Entity o) {
     int l = o.R_Layer();
@@ -200,7 +240,7 @@ public:
     foreach ( lz ; az ) {
       if ( !lz.R_Is_Visible() ) continue;
       auto position = lz.R_Position(),
-           size		  = lz.R_Size();
+           size      = lz.R_Size();
       if ( !lz.R_Is_Static_Pos() ) {
         position.x -= off_x;
         position.y -= off_y;
@@ -227,7 +267,7 @@ public:
         glScalef (lz.R_Img_Size().x, lz.R_Img_Size().y, 1);
 
         import std.conv : to;
-        glVertexPointer	 (2, GL_FLOAT, 0, Entity.Vertices.ptr);
+        glVertexPointer   (2, GL_FLOAT, 0, Entity.Vertices.ptr);
         glTexCoordPointer(2, GL_FLOAT, 0, lz.R_UV_Array().ptr);
         glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_BYTE, index.ptr);
         glLoadIdentity();
