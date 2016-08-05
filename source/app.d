@@ -12,7 +12,7 @@ void Render_Screen(SDL_Window* win) {
 void Init () {
   static import AOD.console;
   AOD.console.console_open = false;
-  AOD.console.Set_Open_Console_Type(AOD.console.TYPE_DEBUG_IN);
+  AOD.console.Set_Console_Output_Type(AOD.console.TYPE_DEBUG_IN);
   static import AOD.clientvars;
   AOD.clientvars.screen_width  = 640;
   AOD.clientvars.screen_height = 480;
