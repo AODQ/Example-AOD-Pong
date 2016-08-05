@@ -11,16 +11,19 @@ void Render_Screen(SDL_Window* win) {
 
 void Init () {
   static import AOD.console;
-  AOD.Console.console_open = false;
-  AOD.Console.Set_Open_Console_Type(AOD.Console.TYPE_DEBUG_IN);
+  AOD.console.console_open = false;
+  AOD.console.Set_Open_Console_Type(AOD.Console.TYPE_DEBUG_IN);
   static import AOD.clientvars;
   AOD.clientvars.screen_width  = 640;
   AOD.clientvars.screen_height = 480;
 
   AOD.Initialize(17, "CYBER BUTCHER");
   static import AOD.camera;
-  AOD.camera.Set_Size(Vector(AOD.clientvars.screen_width, AOD.clientvars.screen_height));
-  AOD.camera.Set_Position(AOD.clientvars.screen_width, AOD.clientvars.screen_heighT);
+  import AOD.Vector;
+  AOD.camera.Set_Size(Vector(AOD.clientvars.screen_width,
+                             AOD.clientvars.screen_height));
+  AOD.camera.Set_Position(AOD.clientvars.screen_width,
+                          AOD.clientvars.screen_height);
   static import AOD.text;
   AOD.text.Set_Default_Font("DejaVuSansMono.ttf", 8);
   static import AOD.AOD;

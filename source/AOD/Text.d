@@ -240,10 +240,10 @@ public:
 
   string R_Default_Font() { return default_font; }
 
-  static void Set_To_Default(string str, int pt_size) {
-    Load_Font(str, pt_size);
+  static void Set_Default_Font(string str, int pt_siz) {
+    Load_Font(str, pt_siz);
     default_font = str;
-    default_pt_size = pt_size;
+    default_pt_size = pt_siz;
   }
   static string R_Default_Font() { return default_font; }
 }

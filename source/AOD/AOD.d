@@ -31,16 +31,17 @@ static:
 }
 
 void Initialize(uint _fps, string window_name, string icon = "") {
+  static import AOD.clientvars;
   if ( Engine.realm is null ) {
     if ( window_name == "" )
       window_name = "Art of Dwarficorn";
-    static import AOD.clientvars;
     Engine.realm = new AOD.realm.Realm(AOD.clientvars.screen_width, AOD.clientvars.screen_height,
                                        window_name.ptr, icon.ptr);
     Engine.ms_dt = _fps;
   }
   Camera.Set_Position(Vector(0, 0));
-  Camera.Set_Size(Vector(cast(float)window_width, cast(float)window_height));
+  Camera.Set_Size(Vector(cast(float)AOD.clientvars.window_width,
+                         cast(float)AOD.clientvars.window_height));
 }
 
 void Initialize_Console(bool print_debug, SDL_Keycode key, string cons) {
