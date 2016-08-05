@@ -4,6 +4,7 @@ import derelict.opengl3.gl3;
 import derelict.opengl3.gl;
 import derelict.sdl2.sdl;
 import std.string;
+import std.stdio;
 
 import Camera = AOD.camera;
 import Console = AOD.console;
@@ -40,6 +41,7 @@ void Initialize(uint _fps, string window_name, string icon = "") {
                                        window_name.ptr, icon.ptr);
     Engine.ms_dt = _fps;
   }
+  writeln("Setting positions");
   Camera.Set_Position(Vector(0, 0));
   Camera.Set_Size(Vector(cast(float)AOD.clientvars.screen_width,
                          cast(float)AOD.clientvars.screen_height));
@@ -114,6 +116,7 @@ void Set_BG_Colour(GLfloat r, GLfloat g, GLfloat b) {
 }
 
 void Run() {
+  writeln("AOD@Realm.d@Run Initializing main loop");
   if ( Engine.realm is null ) return;
   float prev_dt        = 0, // DT from previous frame
         curr_dt        = 0, // DT for beginning of current frame
@@ -128,6 +131,7 @@ void Run() {
   SDL_PushEvent(&_event);
 
   // so I can set up keys and not have to rely that update is ran first
+  writeln("AOD@Realm.d@Run pumping events before first update");
   SDL_PumpEvents();
   MouseEngine.Refresh_Input();
   SDL_PumpEvents();
@@ -141,6 +145,7 @@ void Run() {
     }
   }
   prev_dt = cast(float)SDL_GetTicks();
+  writeln("AOD@Realm.d@Run Now beginning main engine loop");
   while ( true ) {
     // refresh time handlers
     curr_dt = cast(float)SDL_GetTicks();
@@ -150,11 +155,14 @@ void Run() {
     // refresh calculations
     while ( accumulated_dt >= Engine.ms_dt ) {
       // sdl
+      writeln("AOD@Realm.d@Run pumping events");
       SDL_PumpEvents();
+      writeln("AOD@Realm.d@Run MouseEngine.Refresh_Input()");
       MouseEngine.Refresh_Input();
 
       // actual update
       accumulated_dt -= Engine.ms_dt;
+      writeln("AOD@Realm.d@Run Engine.realm.Update()");
       Engine.realm.Update();
 
       string tex;
@@ -306,6 +314,7 @@ void Run() {
       }
 
       /* Refresh(); */
+      writeln("AOD@Realm.d@Run Engine.realm.Render()");
       Engine.realm.Render(); // render the screen
     }
 

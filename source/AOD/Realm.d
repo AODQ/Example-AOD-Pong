@@ -27,9 +27,9 @@ public:
     Debug_Output("Initializing SDL");
     import std.conv : to; 
     import derelict.util.exception;
-    import std.stdio : writeln;
-    writeln("Initializing Art of Dwarficorn engine");
-    writeln("Loading external libraries");
+    import std.stdio;
+    writeln("AOD@Realm.d@Initialize Initializing Art of Dwarficorn engine");
+    writeln("AOD@Realm.d@Initialize Loading external libraries");
     try {
       DerelictGL3.load();
     } catch ( DerelictException de ) {
@@ -38,7 +38,14 @@ public:
       writeln("\n----------------------------------------------------------\n");
     }
     try {
-      DerelictSDL2.load();
+      DerelictGL.load();
+    } catch ( DerelictException de ) {
+      writeln("\n----------------------------------------------------------\n");
+      writeln("Failed to load DerelictGL: "  ~ to!string(de));
+      writeln("\n----------------------------------------------------------\n");
+    }
+    try {
+      DerelictSDL2.load(SharedLibVersion(2, 0, 2));
     } catch ( DerelictException de ) {
       writeln("\n----------------------------------------------------------\n");
       writeln("Failed to load DerelictSDL2: " ~ to!string(de));
@@ -65,111 +72,110 @@ public:
       writeln("Failed to load DerelictILUT: " ~ to!string(de));
       writeln("\n----------------------------------------------------------\n");
     }
-    try {
-      DerelictFT.load();
-    } catch ( DerelictException de ) {
-      writeln("\n----------------------------------------------------------\n");
-      writeln("Failed to load DerelictFT: "   ~ to!string(de));
-      writeln("\n----------------------------------------------------------\n");
-    }
+    /* try { */
+    /*   DerelictFT.load("freetype265.dll"); */
+    /* } catch ( DerelictException de ) { */
+    /*   writeln("\n---------------------------------------------------\n"); */
+    /*   writeln("Failed to load DerelictFT: "   ~ to!string(de)); */
+    /*   writeln("\n---------------------------------------------------\n"); */
+    /* } */
 
-    writeln("Initializing SDL");
+    writeln("AOD@Realm.d@Initialize Initializing SDL");
     SDL_Init ( SDL_INIT_EVERYTHING );
 
-    writeln("Creating SDL Window");
+    writeln("Creating OpenGL Context");
+    SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3);
+    SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 2);
+    SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
+    SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE,  24);
+
+    writeln("AOD@Realm.d@Initialize Creating SDL Window");
     Engine.screen = SDL_CreateWindow(window_name, SDL_WINDOWPOS_UNDEFINED,
                                                   SDL_WINDOWPOS_UNDEFINED,
                                                   window_width, window_height,
-                                                  SDL_WINDOW_OPENGL |
-                                                  SDL_WINDOW_SHOWN);
+                                                  SDL_WINDOW_OPENGL );
     import std.conv : to;
-    writeln("Creating OpenGL Context");
-    if ( SDL_GL_SetAttribute( SDL_GL_CONTEXT_MAJOR_VERSION, 2 ) == -1 ) {
-      auto x = "Error CONTEXT_MAJOR: " ~ to!string(SDL_GetError()); 
-      Output(x);
-      writeln(x);
-    }
-    if ( SDL_GL_SetAttribute( SDL_GL_CONTEXT_MINOR_VERSION, 1 ) == -1 ) {
-      auto x = "Error CONTEXT_MINOR: " ~ to!string(SDL_GetError());
-      Output(x);
-      writeln(x);
-    }
-    if ( SDL_GL_CreateContext( Engine.screen ) is null ) {
-      auto x = "Error window context: " ~ to!string(SDL_GetError());
-      Output(x);
-      writeln(x);
-    }
-    if ( SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1) == -1 ) {
-      auto x = "Error DOUBLEBUFFER: " ~ to!string(SDL_GetError());
-      Output(x);
-      writeln(x);
-    }
-    if ( SDL_GL_SetAttribute(SDL_GL_ALPHA_SIZE, 8) == -1 ) {
-      auto x = "Error ALPHA_SIZE: " ~ to!string(SDL_GetError());
-      Output(x);
-      writeln(x);
+    if ( Engine.screen is null ) {
+      throw new Exception("Error SDL_CreateWindow: "
+                          ~ to!string(SDL_GetError()));
     }
 
-    writeln("Reloading GL3");
-    DerelictGL3.reload();
+    if ( SDL_GL_CreateContext(Engine.screen) is null ) {
+      throw new Exception("Error SDL_GL_CreateContext: "
+                          ~ to!string(SDL_GetError()));
+    }
 
-    /* writeln("Setting glShadeModel"); */
-    /* glShadeModel(GL_SMOOTH); */
-    /* writeln("Enabling GL_TEXTURE2D and GL_BLEND"); */
-    /* glEnable(GL_TEXTURE_2D); */
-    /* glEnable(GL_BLEND); */
-    /* if ( icon != "" ) { */
-    /*   writeln("Loading window icon"); */
-    /*   SDL_Surface* ico = SDL_LoadBMP(icon); */
-    /*   SDL_SetWindowIcon(Engine.screen, ico); */
-    /* } */
+    try {
+      DerelictGL3.reload();
+    } catch ( DerelictException de ) {
+      writeln("\n----------------------------------------------------------\n");
+      writeln("Failed to reload DerelictGL3: " ~ to!string(de));
+      writeln("\n----------------------------------------------------------\n");
+    }
 
-    /* writeln("glClearDepth"); */
-    /* glClearDepth(1.0f); */
-    /* writeln("glPolygonMode"); */
-    /* glPolygonMode(GL_FRONT, GL_FILL); */
-    /* writeln("glShadeModel"); */
-    /* glShadeModel(GL_FLAT); */
-    /* writeln("glHint"); */
-    /* glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_FASTEST); */
-    /* writeln("glDepthFunc"); */
-    /* glDepthFunc(GL_LEQUAL); */
-    /* writeln("glEnable"); */
-    /* glEnable(GL_DEPTH_TEST); */
-    /* writeln("glEnable"); */
-    /* glEnable(GL_BLEND); */
-    /* writeln("glBlendFunc"); */
-    /* glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA); */
+    writeln("AOD@Realm.d@Initialize Reloading GL3");
 
-    /* writeln("glMatrixMode"); */
-    /* glMatrixMode(GL_PROJECTION); */
-    /* writeln("glEnable"); */
-    /* glEnable(GL_ALPHA); */
+    writeln("Setting glShadeModel");
+    glShadeModel(GL_SMOOTH);
+    writeln("Enabling GL_TEXTURE2D and GL_BLEND");
+    glEnable(GL_TEXTURE_2D);
+    glEnable(GL_BLEND);
+    if ( icon != "" ) {
+      writeln("Loading window icon");
+      SDL_Surface* ico = SDL_LoadBMP(icon);
+      SDL_SetWindowIcon(Engine.screen, ico);
+    }
 
-    /* writeln("glLoadIdentity"); */
-    /* glLoadIdentity(); */
+    writeln("glClearDepth");
+    glClearDepth(1.0f);
+    writeln("glPolygonMode");
+    glPolygonMode(GL_FRONT, GL_FILL);
+    writeln("glShadeModel");
+    glShadeModel(GL_FLAT);
+    writeln("glHint");
+    glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_FASTEST);
+    writeln("glDepthFunc");
+    glDepthFunc(GL_LEQUAL);
+    writeln("glEnable");
+    glEnable(GL_DEPTH_TEST);
+    writeln("glEnable");
+    glEnable(GL_BLEND);
+    writeln("glBlendFunc");
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+    writeln("glMatrixMode");
+    glMatrixMode(GL_PROJECTION);
+    writeln("glEnable");
+    glEnable(GL_ALPHA);
+
+    writeln("glLoadIdentity");
+    glLoadIdentity();
     
-    /* writeln("glOrtho"); */
-    /* glOrtho(0, window_width, window_height, 0, 0, 1); */
+    writeln("glOrtho");
+    glOrtho(0, window_width, window_height, 0, 0, 1);
 
-    /* //glMatrixMode(GL_MODELVIEW); */
-    /* writeln("glDisable"); */
-    /* glDisable(GL_DEPTH_TEST); */
-    /* writeln("glMatrixMode"); */
-    /* glMatrixMode(GL_MODELVIEW); */
-    /* { // others */
-    /*   writeln("Initializing sounds core"); */
-    /*   Debug_Output("Initializing Sounds Core"); */
-    /*   SoundEng.Set_Up(); */
-    /*   writeln("Initializing font core"); */
-    /*   Debug_Output("Initializing Font Core"); */
-    /*   TextEng.Font.Init(); */
-    /*   objs_to_rem = []; */
-    /*   bg_red   = 0; */
-    /*   bg_blue  = 0; */
-    /*   bg_green = 0; */
-    /* } */
-    writeln("Finalized initializing Art of Dwarficorn main core");
+    glMatrixMode(GL_MODELVIEW);
+    writeln("glDisable");
+    glDisable(GL_DEPTH_TEST);
+    writeln("glMatrixMode");
+    glMatrixMode(GL_MODELVIEW);
+    { // others
+      writeln("Initializing sounds core");
+      Debug_Output("Initializing Sounds Core");
+      SoundEng.Set_Up();
+
+      Sounds.Play_Song( Sounds.Load_Song("assets/test-song.ogg") );
+      Sounds.Clean_Up();
+
+      writeln("Initializing font core");
+      Debug_Output("Initializing Font Core");
+      TextEng.Font.Init();
+      objs_to_rem = [];
+      bg_red   = 0;
+      bg_blue  = 0;
+      bg_green = 0;
+    }
+    writeln("AOD@Realm.d@Initialize Finalized initializing AOD main core");
   }
 
   void __Add(Entity o) {

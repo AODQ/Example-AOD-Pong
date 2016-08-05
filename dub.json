@@ -7,9 +7,11 @@
 	"copyright": "Copyright © 2016, aodq",
 	"license": "proprietary",
   "dependencies": {
-    "derelict-gl3":  "~master",
-    "derelict-sdl2": "~master",
-    "derelict-ft":   "~master",
-    "derelict-il":   "~master"
+    "derelict-gl3":    "~master",
+    "derelict-sdl2":   "~master",
+    "derelict-ft":     "~master",
+    "derelict-il":     "~master",
+    "derelict-al":     "~master",
+    "derelict-vorbis": "~master"
   }
 }

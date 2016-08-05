@@ -159,7 +159,7 @@ static class TextEng {
 }
 private TextEng.Font Load_Font(string fil, int siz) {
   TextEng.Font_Type font_pair = TextEng.Font_Type(fil, siz);
-  if ( TextEng.fonts[font_pair] is null ) {
+  if ( (font_pair in TextEng.fonts) == null ) {
     auto x = new TextEng.Font(fil, siz);
     TextEng.fonts[font_pair] = x;
   }

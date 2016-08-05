@@ -1,6 +1,7 @@
 module AOD.sound;
-import derelict.opengl3.gl3;
-import derelict.sdl2.mixer;
+import derelict.openal.al;
+import derelict.vorbis.vorbis;
+import derelict.vorbis.file;
 
 import AOD.console : Output, Debug_Output;
 import std.string;
@@ -8,83 +9,133 @@ import std.conv : to;
 
 class SoundEng {
 static:
-  int sound_size, music_size;
-  immutable(int) Max_channels = 64;
-  int[] channel_playing;
-  extern(C) void Stop_Sound(int channel) {
-    channel_playing[channel] = 0;
-  }
+  ALCdevice* al_device;
+  immutable(int) Buffer_size     = 32768; // 32 KB buffer
+
+  ALfloat[] listener_position    = [0.0,0.0,4.0              ] ;
+  ALfloat[] listener_velocity    = [0.0,0.0,0.0              ] ;
+  ALfloat[] listener_orientation = [0.0,0.0,1.0, 0.0,1.0,0.0 ] ;
 
   void Set_Up() {
-    if ( Mix_OpenAudio( 44100, MIX_DEFAULT_FORMAT, 2, 4096) == -1 )
-      Output("Init Audio Error: " ~ to!string(Mix_GetError()));
-    int t = Mix_AllocateChannels(Max_channels);
-    int rate, channels;
-    ushort format;
-    Mix_QuerySpec(&rate, &format, &channels);
+    import derelict.util.exception;
+    import std.stdio;
 
-    Output("Audio specs:");
-    Output(to!string(rate) ~ " Hz");
-    Output(to!string(format&0xFF) ~ " bitrate " ~
-      (channels > 2 ? "surround" : (channels > 1) ? "stereo" : "mono") ~
-      "(" ~ (format&0x1000 ? "BE" : "LE") ~ ")");
-    Output("1024 bytes of audio buffer");
-    Output(to!string(t) ~ " channels allocated");
+    writeln("AOD@Sound@Set_Up setting up AL");
 
-    Mix_Init(MIX_INIT_OGG);
-    Mix_ChannelFinished(&Stop_Sound);
+    try {
+      DerelictAL.load();
+    } catch ( DerelictException de ) {
+      writeln("--------------------------------------------------------------");
+      writeln("Error initializing derelict-OpenAL library: " ~ to!string(de));
+      writeln("--------------------------------------------------------------");
+    }
+
+    try {
+      DerelictVorbis.load();
+    } catch ( DerelictException de ) {
+      writeln("--------------------------------------------------------------");
+      writeln("Error initializing DerelictVorbis library: " ~ to!string(de));
+      writeln("--------------------------------------------------------------");
+    }
+
+    try {
+      DerelictVorbisFile.load();
+    } catch ( DerelictException de ) {
+      writeln("--------------------------------------------------------------");
+      writeln("Error initializing DerelictVorbisFil library: " ~ to!string(de));
+      writeln("--------------------------------------------------------------");
+    }
+
+    writeln("Setting listener");
+    alListenerfv(AL_POSITION, listener_position.ptr);
+    alListenerfv(AL_VELOCITY, listener_velocity.ptr);
+    alListenerfv(AL_ORIENTATION, listener_orientation.ptr);
+    writeln("Finished with setting up AL");
   }
+
+  void LoadOGG(string file_name, ref long[] buffer, ref ALenum format,
+                                                    ref ALsizei freq) {
+    int endian = 0;
+    int bit_stream;
+    long bytes;
+    byte[Buffer_size] array;
+    import std.stdio;
+    File f = File(file_name, "rb");
+    vorbis_info* p_info;
+    OggVorbis_File ogg_file;
+    writeln("Loading song " ~ file_name);
+    if ( ov_open(f.getFP(), &ogg_file, null, 0) != 0 ) {
+      throw new Exception("OGG file not found: " ~ file_name);
+    }
+    p_info = ov_info(&ogg_file, -1);
+    if ( p_info is null ) {
+      throw new Exception("Could not generate info for OGG file");
+    }
+
+    format = p_info.channels == 1 ? AL_FORMAT_MONO16 : AL_FORMAT_STEREO16;
+    freq = p_info.rate;
+    
+    writeln("Loading song buffer");
+    do {
+      bytes = ov_read(&ogg_file, array.ptr, Buffer_size,
+                             endian, 2, 1, &bit_stream);
+      buffer ~= bytes;
+    } while ( bytes > 0 );
+    ov_clear(&ogg_file);
+    writeln("OGG Song loaded");
+  }
+
+  class Song {
+    ALint state;
+    uint buffer_id, source_id;
+    ALsizei size, freq;
+    ALenum format;
+    long[] data;
+    string filename;
+    bool playing;
+  };
+
+  Song[] songs;
 }
 
 
-static class Sounds {
-  Mix_Chunk* Load_Sound(string str) {
-    Mix_Chunk* sample = Mix_LoadWAV(str.ptr);
-    if ( sample is null ) {
-      Debug_Output("Error loading " ~ str ~ ": " ~ to!string(Mix_GetError()));
-      return null;
-    }
-    return sample;
-  }
-  void Delete_Sound(Mix_Chunk* mix) {
-    Mix_FreeChunk(mix);
-  }
-  int Play_Sound(Mix_Chunk* mix, int vol = 256, int rep = 0) {
-    if ( mix == null ) return -1;
-    int a = Mix_PlayChannelTimed(-1, mix, rep, -1);
-    if ( a < 0 )
-      return -1;
-    else {
-      Mix_Volume(a, vol);
-      SoundEng.channel_playing[a] = 1;
-    }
-    return a;
-  }
-  bool Channel_State(int x) { return cast(bool)SoundEng.channel_playing[x]; }
-  int R_Max_Channels() { return SoundEng.Max_channels; }
-
-  Mix_Music* Load_Music(string str) {
-    Mix_Music* sample = Mix_LoadMUS(str.ptr);
-    if ( sample is null ) {
-      Debug_Output("Error loading " ~ str  ~ ": " ~ to!string(Mix_GetError()));
-      return null;
-    }
-    return sample;
+class Sounds {
+static:
+  int Load_Song(string file_name) {
+    import std.stdio : writeln;
+    SoundEng.Song s = new SoundEng.Song();
+    alGenBuffers(1, &s.buffer_id);
+    alGenSources(1, &s.source_id);
+    writeln("Loading OGG");
+    SoundEng.LoadOGG(file_name, s.data, s.format, s.freq);
+    writeln("Creating buffer data");
+    alBufferData(s.buffer_id, s.format, s.data.ptr,
+                cast(ALsizei)s.data.length,  s.freq);
+    writeln("Creating source index");
+    alSourcei(s.source_id, AL_BUFFER, s.buffer_id);
+    SoundEng.songs ~= s;
+    writeln("Song prepared");
+    return SoundEng.songs.length-1;
   }
 
-  void Delete_Music(Mix_Music* mix) {
-    Mix_FreeMusic(mix);
+  void Play_Song(int index) in {
+    assert(index >= 0 && index < SoundEng.songs.length); 
+  } body {
+    import std.stdio : writeln;
+    writeln("Playing song");
+    SoundEng.Song s = SoundEng.songs[index];
+    writeln("PLAYING SONG");
+    do {
+      alGetSourcei(s.source_id, AL_SOURCE_STATE, &s.state);
+    } while ( s.state != AL_STOPPED );
+    writeln("PLAYED SONG");
   }
 
-  bool Play_Music(Mix_Music* mix, int vol, int rep) {
-    int a = Mix_PlayMusic(mix, rep);
-    Mix_VolumeMusic(vol);
-    if ( a == -1 )
-      Debug_Output("Could not play music: " ~ to!string(Mix_GetError()));
-    return cast(bool)a;
+  void Clean_Up() {
+    foreach ( s; SoundEng.songs ) {
+      alDeleteBuffers(1, &s.buffer_id);
+      alDeleteSources(1, &s.source_id);
+    }
+    SoundEng.songs = [];
   }
-  
-  void Stop_Music() { Mix_HaltMusic(); }
-  bool Music_State() { return cast(bool)Mix_PlayingMusic(); }
 }
-
