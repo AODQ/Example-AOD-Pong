@@ -38,7 +38,7 @@ static class TextEng {
     this(string file, int siz) {
       import File = std.file;
       import std.conv : to;
-      if ( File.exists(file) ) {
+      if ( !File.exists(file) ) {
         Debug_Output("font " ~ file ~ ": not found\n");
         return;
       }

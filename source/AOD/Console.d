@@ -11,6 +11,7 @@ import AOD.input;
 import AOD.clientvars;
 import AOD.vector;
 import derelict.opengl3.gl3;
+import std.stdio : writeln;
 import derelict.sdl2.sdl;
 import std.string;
 
@@ -120,10 +121,12 @@ private void Out ( string o ) {
 }
 
 void Output(string ot) {
+  writeln(ot);
   Out(ot);
 }
 
 void Debug_Output(string ot) {
+  writeln("AOD SAYS: " ~ ot);
   if ( ConsEng.console_type == TYPE_DEBUG_IN )
     Out(ot);
 }

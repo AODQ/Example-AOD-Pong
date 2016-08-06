@@ -309,8 +309,9 @@ void Run() {
       _FPS += Engine.fps[0];
 
       if ( Engine.fps_display !is null ) {
-        /* engine.fps_display->Set_String( */
-        /*                     std::to_string(int(20000/_FPS)) + " FPS"); */
+        import std.conv : to;
+        Engine.fps_display.Set_String(
+                            to!string(cast(int)(20000/_FPS)) ~ " FPS");
       }
 
       /* Refresh(); */

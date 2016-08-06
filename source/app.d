@@ -11,7 +11,6 @@ void Render_Screen(SDL_Window* win) {
 static import AOD.entity;
 
 class Test_Object : AOD.entity.Entity {
-  
 public:
   this() {
     super();
@@ -23,8 +22,51 @@ public:
   }
 
   override void Update() {
-    import AOD.vector;
-    Add_Position(Vector(0.5, 0.5));
+    import AOD.vector, AOD.input;
+    Set_Position(R_Mouse_X(0), R_Mouse_Y(0));
+    import AOD.utility;
+    if ( R_Rand(0.0f, 100.0f) > 75.0f ) {
+      import AOD.AOD;
+      auto f = new Flykick();
+      f.Set_Position(R_Position());
+      AOD.AOD.Add(f);
+    }
+  }
+}
+
+static import AOD.image;
+
+AOD.image.SheetContainer flykick_img;
+
+class Flykick : AOD.entity.Entity {
+public:
+  this() {
+    super();
+    static bool loaded = false;
+    if ( !loaded ) {
+      loaded = true;
+      flykick_img = AOD.image.Load_Image("assets/flyside.png");
+      flykick_img.width  = 64;
+      flykick_img.height = 64;
+    }
+    Set_Size(64, 64, true);
+    Set_Sprite(flykick_img);
+    Set_Is_Static_Pos(true);
+    import AOD.utility;
+    fx = R_Rand(-15.0f, 15.0f);
+    fy = R_Rand(-15.0f, 15.0f);
+  }
+
+  float fx, fy;
+
+  override void Update() {
+    fx *= 0.91f;
+    fy *= 0.898f;
+    Add_Position(fx, fy);
+    if ( fx <= 1f && fy <= 1f ) {
+      static import AOD.AOD;
+      AOD.AOD.Remove(this);
+    }
   }
 }
 
@@ -38,7 +80,7 @@ void Init () {
   AOD.clientvars.screen_height = 480;
   static import AOD.AOD;
   writeln("app.d@Init initializing AOD");
-  AOD.AOD.Initialize(17, "CYBER BUTCHER");
+  AOD.AOD.Initialize(16, "CYBER BUTCHER"); // 16 approx = 60 frames (1000/16)
   static import AOD.camera;
   import AOD.vector;
   writeln("app.d@Setting up camera");
@@ -48,14 +90,14 @@ void Init () {
                           AOD.clientvars.screen_height/2);
   static import AOD.text;
   writeln("app.d@Setting up text");
-  AOD.text.Text.Set_Default_Font("assets/DejaVuSansMono.ttf", 8);
+  AOD.text.Text.Set_Default_Font("assets/DejaVuSansMono.ttf", 13);
   AOD.AOD.Initialize_Console(1, SDL_SCANCODE_GRAVE, "");
   AOD.AOD.Set_BG_Colour(.08, .08, .095);
-  auto test_text = new AOD.text.Text(20, 20, "asdf");
-  AOD.AOD.Add(test_text);
   writeln("Setting up test object");
-  auto text_obj = new Test_Object();
-  AOD.AOD.Add(text_obj);
+  auto test_obj = new Test_Object();
+  AOD.AOD.Add(test_obj);
+  AOD.AOD.Engine.fps_display = new AOD.text.Text(20, 20, "");
+  AOD.AOD.Add(AOD.AOD.Engine.fps_display);
 }
 
 int main () {

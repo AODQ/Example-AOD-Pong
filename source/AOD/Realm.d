@@ -108,17 +108,19 @@ public:
     writeln("AOD@Realm.d@Initialize Initializing SDL");
     SDL_Init ( SDL_INIT_EVERYTHING );
 
-    writeln("Creating OpenGL Context");
-    SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3);
-    SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 2);
-    SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
-    SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE,  24);
 
     writeln("AOD@Realm.d@Initialize Creating SDL Window");
     Engine.screen = SDL_CreateWindow(window_name, SDL_WINDOWPOS_UNDEFINED,
                                                   SDL_WINDOWPOS_UNDEFINED,
                                                   window_width, window_height,
-                                                  SDL_WINDOW_OPENGL );
+                                                  SDL_WINDOW_OPENGL |
+                                                  SDL_WINDOW_SHOWN );
+    writeln("Creating OpenGL Context");
+    SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 2);
+    SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 2);
+    SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
+    SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE,  24);
+    SDL_GL_SetAttribute(SDL_GL_ALPHA_SIZE,   8);
     import std.conv : to;
     if ( Engine.screen is null ) {
       throw new Exception("Error SDL_CreateWindow: "
@@ -139,7 +141,6 @@ public:
       writeln("\n----------------------------------------------------------\n");
     }
 
-    glShadeModel(GL_SMOOTH);
     glEnable(GL_TEXTURE_2D);
     glEnable(GL_BLEND);
     if ( icon != "" ) {
@@ -166,10 +167,14 @@ public:
     ilInit();
     iluInit();
     ilutInit();
+    if ( !ilutRenderer(ILUT_OPENGL) )
+      writeln("Error setting ilut Renderer to ILUT_OPENGL");
+    import AOD.vector;
+    writeln("window dimensions: " ~ cast(string)Vector(window_width,
+                                                       window_height));
     
     glOrtho(0, window_width, window_height, 0, 0, 1);
 
-    /* glMatrixMode(GL_MODELVIEW); */
     glDisable(GL_DEPTH_TEST);
     glMatrixMode(GL_MODELVIEW);
     { // others
@@ -205,6 +210,8 @@ public:
   void __Remove(Text t) {
     foreach ( i; 0 .. text.length ) {
       if ( text[i] == t ) {
+        destroy(text[i]);
+        text[i] = null;
         text = text[0 .. i] ~ text[i+1 .. $];
         return;
       }
@@ -229,6 +236,7 @@ public:
       int layer_it = objs_to_rem[rem_it].R_Layer();
       foreach ( obj_it; 0 .. objects[layer_it].length ) {
         if ( objects[layer_it][obj_it] is objs_to_rem[rem_it] ) {
+          destroy(objects[layer_it][obj_it]);
           objects[layer_it][obj_it] = null;
           objects[layer_it] = objects[layer_it][0 .. obj_it] ~
                               objects[layer_it][obj_it+1 .. $];
@@ -281,19 +289,16 @@ public:
                      position.y + origin.y*fy, 0);
         import std.conv : to;
         import std.stdio : writeln;
-        writeln("Rendering to " ~ to!string(position.x + origin.x*fx) ~ ", " ~
-                                  to!string(position.y + origin.y*fy));
         glRotatef((lz.R_Rotation()*180.0)/3.14159f, 0, 0, 1);
         glTranslatef(-origin.x*fx,
                      -origin.y*fy, 0);
-        writeln("Scale: " ~ cast(string)lz.R_Img_Size());
         glScalef (lz.R_Img_Size().x, lz.R_Img_Size().y, 1);
 
         import std.conv : to;
         glVertexPointer  (2, GL_FLOAT, 0, Entity.Vertices.ptr);
         glTexCoordPointer(2, GL_FLOAT, 0, lz.R_UV_Array().ptr);
         glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_BYTE, index.ptr);
-        /* glLoadIdentity(); */
+        glLoadIdentity();
       glPopAttrib();
       glPopMatrix();
     }
@@ -332,7 +337,6 @@ public:
         glPopMatrix();
       }
     }
-
 
     glDisableClientState(GL_VERTEX_ARRAY);
     glDisableClientState(GL_TEXTURE_COORD_ARRAY);
