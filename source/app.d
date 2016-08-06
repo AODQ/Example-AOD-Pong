@@ -98,6 +98,8 @@ void Init () {
   AOD.AOD.Add(test_obj);
   AOD.AOD.Engine.fps_display = new AOD.text.Text(20, 20, "");
   AOD.AOD.Add(AOD.AOD.Engine.fps_display);
+  static import AOD.sound;
+  AOD.sound.Sounds.Play_Song("assets/test-song.ogg");
 }
 
 int main () {

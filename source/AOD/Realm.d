@@ -181,10 +181,6 @@ public:
       writeln("Initializing sounds core");
       Debug_Output("Initializing Sounds Core");
       SoundEng.Set_Up();
-
-      Sounds.Play_Song( Sounds.Load_Song("assets/test-song.ogg") );
-      Sounds.Clean_Up();
-
       Debug_Output("Initializing Font Core");
       TextEng.Font.Init();
       /* objs_to_rem = []; */
