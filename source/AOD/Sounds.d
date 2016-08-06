@@ -9,8 +9,10 @@ import std.conv : to;
 
 class SoundEng {
 static:
-  ALCdevice* al_device;
-  immutable(int) Buffer_size     = 32768; // 32 KB buffer
+  ALCdevice*  al_device;
+  ALCcontext* al_context;
+  immutable(int) Buffer_size = 22050,
+                 Buffer_amt  =    3;
 
   ALfloat[] listener_position    = [0.0,0.0,4.0              ] ;
   ALfloat[] listener_velocity    = [0.0,0.0,0.0              ] ;
@@ -45,58 +47,115 @@ static:
       writeln("Error initializing DerelictVorbisFil library: " ~ to!string(de));
       writeln("--------------------------------------------------------------");
     }
+    Check_AL_Errors() ;
+
+    al_device = alcOpenDevice(null);
+    Check_AL_Errors() ;
+    if ( al_device == null ) {
+      throw new Exception("Failed to open ALC device");
+    }
+    al_context = alcCreateContext(al_device, null);
+    Check_AL_Errors() ;
+    alcMakeContextCurrent(al_context);
+    Check_AL_Errors() ;
 
     writeln("Setting listener");
     alListenerfv(AL_POSITION, listener_position.ptr);
+    Check_AL_Errors() ;
     alListenerfv(AL_VELOCITY, listener_velocity.ptr);
+    Check_AL_Errors() ;
     alListenerfv(AL_ORIENTATION, listener_orientation.ptr);
+    Check_AL_Errors() ;
     writeln("Finished with setting up AL");
   }
 
-  void LoadOGG(string file_name, ref long[] buffer, ref ALenum format,
-                                                    ref ALsizei freq) {
-    int endian = 0;
-    int bit_stream;
-    long bytes;
-    byte[Buffer_size] array;
+  Song LoadOGG(string file_name) {
+    Song s =  new Song();
+
+    alGenBuffers(Buffer_amt, s.buffer_id.ptr);
+    Check_AL_Errors();
+    alGenSources(1, &s.source_id);
+    Check_AL_Errors();
+    s.file_name = file_name;
+
     import std.stdio;
-    File f = File(file_name, "rb");
+    import core.stdc.stdio : fopen;
+    FILE* f = fopen(file_name.ptr, "rb".ptr);
     vorbis_info* p_info;
     OggVorbis_File ogg_file;
     writeln("Loading song " ~ file_name);
-    if ( ov_open(f.getFP(), &ogg_file, null, 0) != 0 ) {
+    if ( ov_open(f, &ogg_file, null, 0) != 0 ) {
       throw new Exception("OGG file not found: " ~ file_name);
     }
+    Check_AL_Errors() ;
     p_info = ov_info(&ogg_file, -1);
     if ( p_info is null ) {
       throw new Exception("Could not generate info for OGG file");
     }
+    Check_AL_Errors() ;
 
-    format = p_info.channels == 1 ? AL_FORMAT_MONO16 : AL_FORMAT_STEREO16;
-    freq = p_info.rate;
+    s.format = p_info.channels == 1 ? AL_FORMAT_MONO16 : AL_FORMAT_STEREO16;
+    s.freq = p_info.rate;
     
-    writeln("Loading song buffer");
-    do {
-      bytes = ov_read(&ogg_file, array.ptr, Buffer_size,
-                             endian, 2, 1, &bit_stream);
-      buffer ~= bytes;
-    } while ( bytes > 0 );
-    ov_clear(&ogg_file);
+    s.ogg_file = ogg_file;
+    s.endian = 0;
+
+    Check_AL_Errors() ;
     writeln("OGG Song loaded");
-    f.close();
+
+    return s;
   }
 
   class Song {
     ALint state;
-    uint buffer_id, source_id;
-    ALsizei size, freq;
+    ALuint[Buffer_amt] buffer_id;
+    byte[Buffer_size] buffers;
+    ALuint source_id;
+    int endian;
+    OggVorbis_File ogg_file;
     ALenum format;
-    long[] data;
-    string filename;
-    bool playing;
+    ALint freq;
+    string file_name;
   };
 
   Song[] songs;
+
+  void Check_AL_Errors() {
+    import std.stdio;
+    int error = alGetError();
+    switch ( error ) {
+      default: break;
+      case AL_NO_ERROR: return;
+    }
+    write("OpenAL error: ");
+    switch ( error ) {
+      default: assert(0);
+      case AL_INVALID_NAME:
+        writeln("AL_INVALID_NAME");
+      break;
+      case AL_INVALID_ENUM:
+        writeln("AL_INVALID_ENUM");
+      break;
+      case AL_INVALID_VALUE:
+        writeln("AL_INVALID_VALUE");
+      break;
+      case AL_INVALID_OPERATION:
+        writeln("AL_INVALID_OPERATION");
+      break;
+      case AL_OUT_OF_MEMORY:
+        writeln("AL_OUT_OF_MEMORY");
+      break;
+    }
+  }
+
+
+  void Stream_Buffer( ALuint id, ALenum format, byte[] buffers, int frq ) {
+    // load buffer 
+    
+    
+    // set to OpenAL
+    alBufferData ( id, format, buffers.ptr, buffers.length, frq );
+  }
 }
 
 
@@ -104,18 +163,7 @@ class Sounds {
 static:
   int Load_Song(string file_name) {
     import std.stdio : writeln;
-    SoundEng.Song s = new SoundEng.Song();
-    alGenBuffers(1, &s.buffer_id);
-    alGenSources(1, &s.source_id);
-    writeln("Loading OGG");
-    SoundEng.LoadOGG(file_name, s.data, s.format, s.freq);
-    writeln("Creating buffer data");
-    alBufferData(s.buffer_id, s.format, s.data.ptr,
-                cast(ALsizei)s.data.length,  s.freq);
-    writeln("Creating source index");
-    alSourcei(s.source_id, AL_BUFFER, s.buffer_id);
-    SoundEng.songs ~= s;
-    writeln("Song prepared");
+    SoundEng.songs ~= SoundEng.LoadOGG(file_name);
     return SoundEng.songs.length-1;
   }
 
@@ -123,18 +171,30 @@ static:
     assert(index >= 0 && index < SoundEng.songs.length); 
   } body {
     import std.stdio : writeln;
-    writeln("Playing song");
     SoundEng.Song s = SoundEng.songs[index];
-    writeln("PLAYING SONG");
-    do {
-      alGetSourcei(s.source_id, AL_SOURCE_STATE, &s.state);
-    } while ( s.state != AL_STOPPED );
-    writeln("PLAYED SONG");
+    writeln("Playing song " ~ s.file_name);
+
+    foreach ( i; 0 .. SoundEng.Buffer_amt ) // buffer 
+      SoundEng.Stream_Buffer(s.buffer_id[i], s.format, s.buffers, s.freq);
+    
+    alSourceQueueBuffers(s.source_id, 3, s.buffer_id.ptr);
+
+    while ( true ) {
+      ALint processed;
+      alGetSourcei ( s.source_id, AL_BUFFERS_PROCESSED, &processed);
+
+      while ( -- processed ) {
+        ALuint buf_id;
+        alSourceUnqueueBuffers ( s.source_id, 1, &buf_id );
+        SoundEng.Stream_Buffer(buf_id, s.format, s.buffers, s.freq);
+        alSourceQueueBuffers ( s.source_id, 1, &buf_id );
+      }
+    }
   }
 
   void Clean_Up() {
     foreach ( s; SoundEng.songs ) {
-      alDeleteBuffers(1, &s.buffer_id);
+      alDeleteBuffers(1, s.buffer_id.ptr);
       alDeleteSources(1, &s.source_id);
     }
     SoundEng.songs = [];

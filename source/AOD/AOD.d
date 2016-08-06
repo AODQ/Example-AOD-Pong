@@ -116,7 +116,7 @@ void Set_BG_Colour(GLfloat r, GLfloat g, GLfloat b) {
 }
 
 void Run() {
-  writeln("AOD@Realm.d@Run Initializing main loop");
+  /* writeln("AOD@AOD.d@Run Initializing main loop"); */
   if ( Engine.realm is null ) return;
   float prev_dt        = 0, // DT from previous frame
         curr_dt        = 0, // DT for beginning of current frame
@@ -131,7 +131,7 @@ void Run() {
   SDL_PushEvent(&_event);
 
   // so I can set up keys and not have to rely that update is ran first
-  writeln("AOD@Realm.d@Run pumping events before first update");
+  /* writeln("AOD@AOD.d@Run pumping events before first update"); */
   SDL_PumpEvents();
   MouseEngine.Refresh_Input();
   SDL_PumpEvents();
@@ -145,7 +145,7 @@ void Run() {
     }
   }
   prev_dt = cast(float)SDL_GetTicks();
-  writeln("AOD@Realm.d@Run Now beginning main engine loop");
+  /* writeln("AOD@AOD.d@Run Now beginning main engine loop"); */
   while ( true ) {
     // refresh time handlers
     curr_dt = cast(float)SDL_GetTicks();
@@ -155,14 +155,14 @@ void Run() {
     // refresh calculations
     while ( accumulated_dt >= Engine.ms_dt ) {
       // sdl
-      writeln("AOD@Realm.d@Run pumping events");
+      /* writeln("AOD@AOD.d@Run pumping events"); */
       SDL_PumpEvents();
-      writeln("AOD@Realm.d@Run MouseEngine.Refresh_Input()");
+      /* writeln("AOD@AOD.d@Run MouseEngine.Refresh_Input()"); */
       MouseEngine.Refresh_Input();
 
       // actual update
       accumulated_dt -= Engine.ms_dt;
-      writeln("AOD@Realm.d@Run Engine.realm.Update()");
+      /* writeln("AOD@AOD.d@Run Engine.realm.Update()"); */
       Engine.realm.Update();
 
       string tex;
@@ -314,7 +314,7 @@ void Run() {
       }
 
       /* Refresh(); */
-      writeln("AOD@Realm.d@Run Engine.realm.Render()");
+      /* writeln("AOD@AOD.d@Run Engine.realm.Render()"); */
       Engine.realm.Render(); // render the screen
     }
 

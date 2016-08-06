@@ -164,16 +164,16 @@ public:
       Debug_Output("Initializing Sounds Core");
       SoundEng.Set_Up();
 
-      Sounds.Play_Song( Sounds.Load_Song("assets/test-song.ogg") );
-      Sounds.Clean_Up();
+      /* Sounds.Play_Song( Sounds.Load_Song("assets/test-song.ogg") ); */
+      /* Sounds.Clean_Up(); */
 
-      writeln("Initializing font core");
-      Debug_Output("Initializing Font Core");
-      TextEng.Font.Init();
-      objs_to_rem = [];
-      bg_red   = 0;
-      bg_blue  = 0;
-      bg_green = 0;
+      /* writeln("Initializing font core"); */
+      /* Debug_Output("Initializing Font Core"); */
+      /* TextEng.Font.Init(); */
+      /* objs_to_rem = []; */
+      /* bg_red   = 0; */
+      /* bg_blue  = 0; */
+      /* bg_green = 0; */
     }
     writeln("AOD@Realm.d@Initialize Finalized initializing AOD main core");
   }

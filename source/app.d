@@ -41,6 +41,5 @@ int main () {
   static import AOD.AOD;
   AOD.AOD.Run();
   writeln("Ending program");
-  readln();
   return 0;
 }
