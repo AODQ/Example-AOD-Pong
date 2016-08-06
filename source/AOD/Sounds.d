@@ -61,7 +61,7 @@ static:
 
     import std.stdio;
     import core.stdc.stdio : fopen;
-    FILE* f = fopen(file_name.ptr, "rb".ptr);
+    FILE* f = fopen(file_name.ptr, "r".ptr);
     vorbis_info* p_info;
     OggVorbis_File ogg_file;
     writeln("Loading song " ~ file_name);
