@@ -139,11 +139,7 @@ public:
       writeln("\n----------------------------------------------------------\n");
     }
 
-    writeln("AOD@Realm.d@Initialize Reloading GL3");
-
-    writeln("Setting glShadeModel");
     glShadeModel(GL_SMOOTH);
-    writeln("Enabling GL_TEXTURE2D and GL_BLEND");
     glEnable(GL_TEXTURE_2D);
     glEnable(GL_BLEND);
     if ( icon != "" ) {
@@ -152,38 +148,29 @@ public:
       SDL_SetWindowIcon(Engine.screen, ico);
     }
 
-    writeln("glClearDepth");
     glClearDepth(1.0f);
-    writeln("glPolygonMode");
     glPolygonMode(GL_FRONT, GL_FILL);
-    writeln("glShadeModel");
     glShadeModel(GL_FLAT);
-    writeln("glHint");
     glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_FASTEST);
-    writeln("glDepthFunc");
     glDepthFunc(GL_LEQUAL);
-    writeln("glEnable");
     glEnable(GL_DEPTH_TEST);
-    writeln("glEnable");
     glEnable(GL_BLEND);
-    writeln("glBlendFunc");
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-    writeln("glMatrixMode");
     glMatrixMode(GL_PROJECTION);
-    writeln("glEnable");
     glEnable(GL_ALPHA);
 
     writeln("glLoadIdentity");
     glLoadIdentity();
+
+    ilInit();
+    iluInit();
+    ilutInit();
     
-    writeln("glOrtho");
     glOrtho(0, window_width, window_height, 0, 0, 1);
 
-    glMatrixMode(GL_MODELVIEW);
-    writeln("glDisable");
+    /* glMatrixMode(GL_MODELVIEW); */
     glDisable(GL_DEPTH_TEST);
-    writeln("glMatrixMode");
     glMatrixMode(GL_MODELVIEW);
     { // others
       writeln("Initializing sounds core");
@@ -292,16 +279,21 @@ public:
             fy = lz.R_Flipped_Y() ?   1 :- 1 ;
         glTranslatef(position.x + origin.x*fx,
                      position.y + origin.y*fy, 0);
+        import std.conv : to;
+        import std.stdio : writeln;
+        writeln("Rendering to " ~ to!string(position.x + origin.x*fx) ~ ", " ~
+                                  to!string(position.y + origin.y*fy));
         glRotatef((lz.R_Rotation()*180.0)/3.14159f, 0, 0, 1);
         glTranslatef(-origin.x*fx,
                      -origin.y*fy, 0);
+        writeln("Scale: " ~ cast(string)lz.R_Img_Size());
         glScalef (lz.R_Img_Size().x, lz.R_Img_Size().y, 1);
 
         import std.conv : to;
-        glVertexPointer   (2, GL_FLOAT, 0, Entity.Vertices.ptr);
+        glVertexPointer  (2, GL_FLOAT, 0, Entity.Vertices.ptr);
         glTexCoordPointer(2, GL_FLOAT, 0, lz.R_UV_Array().ptr);
         glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_BYTE, index.ptr);
-        glLoadIdentity();
+        /* glLoadIdentity(); */
       glPopAttrib();
       glPopMatrix();
     }

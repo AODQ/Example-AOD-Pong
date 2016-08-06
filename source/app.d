@@ -18,13 +18,13 @@ public:
     Set_Size(32, 32);
     static import AOD.image;
     Set_Sprite(AOD.image.Load_Image("assets/AOD.png"));
+    Set_Is_Static_Pos(true);
+    Set_Visible(true);
   }
 
   override void Update() {
     import AOD.vector;
-    Set_Position(Vector(300, 250));
-    writeln("Updating position to " ~ cast(string)R_Position());
-    writeln("Updating position to " ~ cast(string)R_Position());
+    Add_Position(Vector(0.5, 0.5));
   }
 }
 
@@ -44,8 +44,8 @@ void Init () {
   writeln("app.d@Setting up camera");
   AOD.camera.Set_Size(Vector(AOD.clientvars.screen_width,
                              AOD.clientvars.screen_height));
-  AOD.camera.Set_Position(AOD.clientvars.screen_width,
-                          AOD.clientvars.screen_height);
+  AOD.camera.Set_Position(AOD.clientvars.screen_width/2, 
+                          AOD.clientvars.screen_height/2);
   static import AOD.text;
   writeln("app.d@Setting up text");
   AOD.text.Text.Set_Default_Font("assets/DejaVuSansMono.ttf", 8);
