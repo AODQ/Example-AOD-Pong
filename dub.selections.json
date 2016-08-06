@@ -1,0 +1,13 @@
+{
+	"fileVersion": 1,
+	"versions": {
+		"derelict-al": "~master",
+		"derelict-ft": "~master",
+		"derelict-gl3": "~master",
+		"derelict-il": "~master",
+		"derelict-ogg": "1.0.1",
+		"derelict-sdl2": "~master",
+		"derelict-util": "2.0.6",
+		"derelict-vorbis": "~master"
+	}
+}

@@ -83,6 +83,7 @@ static:
     } while ( bytes > 0 );
     ov_clear(&ogg_file);
     writeln("OGG Song loaded");
+    f.close();
   }
 
   class Song {
