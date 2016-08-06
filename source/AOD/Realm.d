@@ -72,13 +72,13 @@ public:
       writeln("Failed to load DerelictILUT: " ~ to!string(de));
       writeln("\n----------------------------------------------------------\n");
     }
-    /* try { */
-    /*   DerelictFT.load("freetype265.dll"); */
-    /* } catch ( DerelictException de ) { */
-    /*   writeln("\n---------------------------------------------------\n"); */
-    /*   writeln("Failed to load DerelictFT: "   ~ to!string(de)); */
-    /*   writeln("\n---------------------------------------------------\n"); */
-    /* } */
+    try {
+      //DerelictFT.load("freetype265.dll");
+    } catch ( DerelictException de ) {
+      writeln("\n---------------------------------------------------\n");
+      writeln("Failed to load DerelictFT: "   ~ to!string(de));
+      writeln("\n---------------------------------------------------\n");
+    }
 
     writeln("AOD@Realm.d@Initialize Initializing SDL");
     SDL_Init ( SDL_INIT_EVERYTHING );
@@ -164,8 +164,8 @@ public:
       Debug_Output("Initializing Sounds Core");
       SoundEng.Set_Up();
 
-      /* Sounds.Play_Song( Sounds.Load_Song("assets/test-song.ogg") ); */
-      /* Sounds.Clean_Up(); */
+      Sounds.Play_Song( Sounds.Load_Song("assets/test-song.ogg") );
+      Sounds.Clean_Up();
 
       /* writeln("Initializing font core"); */
       /* Debug_Output("Initializing Font Core"); */

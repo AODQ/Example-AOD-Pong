@@ -1,1 +1,6 @@
 *.swp
+*.dll
+*.exe
+*.sln
+.dub/*
+.vs/*

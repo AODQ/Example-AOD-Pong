@@ -98,8 +98,6 @@ static:
     s.freq = p_info.rate;
     
     s.ogg_file = ogg_file;
-    s.endian = 0;
-
     Check_AL_Errors() ;
     writeln("OGG Song loaded");
 
@@ -109,10 +107,9 @@ static:
   class Song {
     ALint state;
     ALuint[Buffer_amt] buffer_id;
-    byte[Buffer_size] buffers;
     ALuint source_id;
-    int endian;
     OggVorbis_File ogg_file;
+    int ogg_bitstream_section;
     ALenum format;
     ALint freq;
     string file_name;
@@ -149,12 +146,17 @@ static:
   }
 
 
-  void Stream_Buffer( ALuint id, ALenum format, byte[] buffers, int frq ) {
+  // returns TRUE if file has finished loading
+  bool Stream_Buffer( ALuint id, ALenum format, ref OggVorbis_File ogg_file,
+                      ref int ogg_bitstream_section, int frq ) {
     // load buffer 
-    
-    
+    byte[Buffer_size] buffer;
+
+    uint bytes = ov_read(&ogg_file, buffer.ptr, Buffer_size, 0, 2, 1,
+                         &ogg_bitstream_section);
     // set to OpenAL
-    alBufferData ( id, format, buffers.ptr, buffers.length, frq );
+    alBufferData ( id, format, buffer.ptr, bytes, frq );
+    return (bytes > 0);
   }
 }
 
@@ -175,19 +177,23 @@ static:
     writeln("Playing song " ~ s.file_name);
 
     foreach ( i; 0 .. SoundEng.Buffer_amt ) // buffer 
-      SoundEng.Stream_Buffer(s.buffer_id[i], s.format, s.buffers, s.freq);
+      SoundEng.Stream_Buffer(s.buffer_id[i], s.format, s.ogg_file,
+                             s.ogg_bitstream_section, s.freq);
     
     alSourceQueueBuffers(s.source_id, 3, s.buffer_id.ptr);
+    alSourcePlay(s.source_id);
 
     while ( true ) {
       ALint processed;
       alGetSourcei ( s.source_id, AL_BUFFERS_PROCESSED, &processed);
 
-      while ( -- processed ) {
+      foreach ( p ; 0 .. processed ) {
         ALuint buf_id;
         alSourceUnqueueBuffers ( s.source_id, 1, &buf_id );
-        SoundEng.Stream_Buffer(buf_id, s.format, s.buffers, s.freq);
+        SoundEng.Stream_Buffer(buf_id, s.format, s.ogg_file,
+                                s.ogg_bitstream_section, s.freq);
         alSourceQueueBuffers ( s.source_id, 1, &buf_id );
+        writeln("Queueing buffer");
       }
     }
   }
