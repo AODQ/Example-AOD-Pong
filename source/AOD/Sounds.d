@@ -21,34 +21,6 @@ static:
   void Set_Up() {
     import derelict.util.exception;
     import std.stdio;
-
-    writeln("AOD@Sound@Set_Up setting up AL");
-
-    try {
-      DerelictAL.load();
-    } catch ( DerelictException de ) {
-      writeln("--------------------------------------------------------------");
-      writeln("Error initializing derelict-OpenAL library: " ~ to!string(de));
-      writeln("--------------------------------------------------------------");
-    }
-
-    try {
-      DerelictVorbis.load();
-    } catch ( DerelictException de ) {
-      writeln("--------------------------------------------------------------");
-      writeln("Error initializing DerelictVorbis library: " ~ to!string(de));
-      writeln("--------------------------------------------------------------");
-    }
-
-    try {
-      DerelictVorbisFile.load();
-    } catch ( DerelictException de ) {
-      writeln("--------------------------------------------------------------");
-      writeln("Error initializing DerelictVorbisFil library: " ~ to!string(de));
-      writeln("--------------------------------------------------------------");
-    }
-    Check_AL_Errors() ;
-
     al_device = alcOpenDevice(null);
     Check_AL_Errors() ;
     if ( al_device == null ) {
@@ -172,30 +144,35 @@ static:
   void Play_Song(int index) in {
     assert(index >= 0 && index < SoundEng.songs.length); 
   } body {
-    import std.stdio : writeln;
-    SoundEng.Song s = SoundEng.songs[index];
-    writeln("Playing song " ~ s.file_name);
+    /* import core.thread; */
+    /* import std.stdio; */
+    /* writeln("bah"); */
+    /* import std.stdio : writeln; */
+    /* SoundEng.Song s = SoundEng.songs[0]; */
+    /* writeln("Playing song " ~ s.file_name); */
 
-    foreach ( i; 0 .. SoundEng.Buffer_amt ) // buffer 
-      SoundEng.Stream_Buffer(s.buffer_id[i], s.format, s.ogg_file,
-                             s.ogg_bitstream_section, s.freq);
+    /* foreach ( i; 0 .. SoundEng.Buffer_amt ) // buffer */ 
+    /*   SoundEng.Stream_Buffer(s.buffer_id[i], s.format, s.ogg_file, */
+    /*                          s.ogg_bitstream_section, s.freq); */
     
-    alSourceQueueBuffers(s.source_id, 3, s.buffer_id.ptr);
-    alSourcePlay(s.source_id);
+    /* alSourceQueueBuffers(s.source_id, 3, s.buffer_id.ptr); */
+    /* alSourcePlay(s.source_id); */
 
-    while ( true ) {
-      ALint processed;
-      alGetSourcei ( s.source_id, AL_BUFFERS_PROCESSED, &processed);
+    /* while ( true ) { */
+    /*   ALint processed; */
+    /*   alGetSourcei ( s.source_id, AL_BUFFERS_PROCESSED, &processed); */
 
-      foreach ( p ; 0 .. processed ) {
-        ALuint buf_id;
-        alSourceUnqueueBuffers ( s.source_id, 1, &buf_id );
-        SoundEng.Stream_Buffer(buf_id, s.format, s.ogg_file,
-                                s.ogg_bitstream_section, s.freq);
-        alSourceQueueBuffers ( s.source_id, 1, &buf_id );
-        writeln("Queueing buffer");
-      }
-    }
+    /*   foreach ( p ; 0 .. processed ) { */
+    /*     ALuint buf_id; */
+    /*     alSourceUnqueueBuffers ( s.source_id, 1, &buf_id ); */
+    /*     SoundEng.Stream_Buffer(buf_id, s.format, s.ogg_file, */
+    /*                             s.ogg_bitstream_section, s.freq); */
+    /*     alSourceQueueBuffers ( s.source_id, 1, &buf_id ); */
+    /*     writeln("Queueing buffer"); */
+    /*     import derelict.sdl2.sdl; */
+    /*     Thread.sleep( dur!("msecs")(5) ); */
+    /*   } */
+    /* } */
   }
 
   void Clean_Up() {

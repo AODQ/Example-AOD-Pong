@@ -78,7 +78,7 @@ public:
   }
   string opCast(T)() if (is(T == string)) {
     import std.conv : to;
-    return "< " + to!string(x) + ", " + to!string(y) + " >";
+    return "< " ~ to!string(x) ~ ", " ~ to!string(y) ~ " >";
   }
 
   //                      utility methods

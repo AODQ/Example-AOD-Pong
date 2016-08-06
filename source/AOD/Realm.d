@@ -45,39 +45,64 @@ public:
       writeln("\n----------------------------------------------------------\n");
     }
     try {
-      DerelictSDL2.load(SharedLibVersion(2, 0, 2));
+      DerelictSDL2.load("SDL2.dll", SharedLibVersion(2, 0, 2));
     } catch ( DerelictException de ) {
       writeln("\n----------------------------------------------------------\n");
       writeln("Failed to load DerelictSDL2: " ~ to!string(de));
       writeln("\n----------------------------------------------------------\n");
     }
     try {
-      DerelictIL.load();
+      DerelictIL.load("DevIL.dll");
     } catch ( DerelictException de ) {
       writeln("\n----------------------------------------------------------\n");
       writeln("Failed to load DerelictIL: "   ~ to!string(de));
       writeln("\n----------------------------------------------------------\n");
     }
     try {
-      DerelictILU.load();
+      DerelictILU.load("ILU.dll");
     } catch ( DerelictException de ) {
       writeln("\n----------------------------------------------------------\n");
       writeln("Failed to load DerelictILU: "  ~ to!string(de));
       writeln("\n----------------------------------------------------------\n");
     }
     try {
-      DerelictILUT.load();
+      DerelictILUT.load("ILUT.dll");
     } catch ( DerelictException de ) {
       writeln("\n----------------------------------------------------------\n");
       writeln("Failed to load DerelictILUT: " ~ to!string(de));
       writeln("\n----------------------------------------------------------\n");
     }
     try {
-      //DerelictFT.load("freetype265.dll");
+      DerelictFT.load("freetype265.dll");
     } catch ( DerelictException de ) {
       writeln("\n---------------------------------------------------\n");
       writeln("Failed to load DerelictFT: "   ~ to!string(de));
       writeln("\n---------------------------------------------------\n");
+    }
+    try {
+      import derelict.openal.al;
+      DerelictAL.load();
+    } catch ( DerelictException de ) {
+      writeln("--------------------------------------------------------------");
+      writeln("Error initializing derelict-OpenAL library: " ~ to!string(de));
+      writeln("--------------------------------------------------------------");
+    }
+    try {
+      import derelict.vorbis.vorbis;
+      DerelictVorbis.load("libvorbis-0.dll");
+    } catch ( DerelictException de ) {
+      writeln("--------------------------------------------------------------");
+      writeln("Error initializing DerelictVorbis library: " ~ to!string(de));
+      writeln("--------------------------------------------------------------");
+    }
+
+    try {
+      import derelict.vorbis.file;
+      DerelictVorbisFile.load("libvorbisfile-3.dll");
+    } catch ( DerelictException de ) {
+      writeln("--------------------------------------------------------------");
+      writeln("Error initializing DerelictVorbisFil library: " ~ to!string(de));
+      writeln("--------------------------------------------------------------");
     }
 
     writeln("AOD@Realm.d@Initialize Initializing SDL");
@@ -107,6 +132,7 @@ public:
 
     try {
       DerelictGL3.reload();
+      DerelictGL.reload();
     } catch ( DerelictException de ) {
       writeln("\n----------------------------------------------------------\n");
       writeln("Failed to reload DerelictGL3: " ~ to!string(de));
@@ -167,9 +193,8 @@ public:
       Sounds.Play_Song( Sounds.Load_Song("assets/test-song.ogg") );
       Sounds.Clean_Up();
 
-      /* writeln("Initializing font core"); */
-      /* Debug_Output("Initializing Font Core"); */
-      /* TextEng.Font.Init(); */
+      Debug_Output("Initializing Font Core");
+      TextEng.Font.Init();
       /* objs_to_rem = []; */
       /* bg_red   = 0; */
       /* bg_blue  = 0; */
@@ -280,5 +305,48 @@ public:
       glPopAttrib();
       glPopMatrix();
     }
+
+
+    // ---- texts
+    foreach ( i; 0 .. text.length ) {
+      auto tz = text[i];
+      if ( !tz.R_Visible() ) continue;
+      if ( !tz.R_FT_Font() ) {
+        Debug_Output("Font face uninitialized for " ~ tz.R_Font());
+      }
+    
+      string t_str = tz.R_Str();
+      import std.stdio : writeln;
+      /* writeln("Rendering " ~ t_str ~ " @ " ~ cast(string)tz.R_Position()); */
+
+      glPushMatrix();
+        glTranslatef(tz.R_Position().x, tz.R_Position().y, 0);
+        glListBase(tz.R_FT_Font().R_Character_List());
+        glCallLists(t_str.length, GL_UNSIGNED_BYTE, t_str.ptr);
+      glPopMatrix();
+    }
+
+
+    // ---- console
+    static import AOD.console;
+    if ( AOD.console.console_open ) {
+      foreach ( tz; AOD.console.ConsEng.console_text ) {
+        string t_str = tz.R_Str();
+
+        glPushMatrix();
+          glTranslatef(tz.R_Position().x, tz.R_Position().y, 0);
+          glListBase(tz.R_FT_Font().R_Character_List());
+          glCallLists(t_str.length, GL_UNSIGNED_BYTE, t_str.ptr);
+        glPopMatrix();
+      }
+    }
+
+
+    glDisableClientState(GL_VERTEX_ARRAY);
+    glDisableClientState(GL_TEXTURE_COORD_ARRAY);
+    glDisableClientState(GL_TEXTURE_2D);
+
+
+    SDL_GL_SwapWindow(Engine.screen);
   }
 }

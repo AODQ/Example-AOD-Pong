@@ -4,7 +4,7 @@ import derelict.opengl3.gl3;
 import derelict.sdl2.sdl;
 import derelict.devil.il;
 import derelict.devil.ilu;
-import derelict.devil.ilut;;
+//import derelict.devil.ilut;
 import AOD.console;
 import AOD.vector;
 
@@ -46,7 +46,7 @@ public:
   }
 }
 
-
+import std.string;
 SheetContainer Load_Image(const char* fil) {
   ILuint IL_ID;
   GLuint GL_ID;
