@@ -1,13 +1,13 @@
-module AOD.entity;
+module AODCore.entity;
 
 import derelict.opengl3.gl3;
 import derelict.sdl2.sdl;
 
-import AOD.matrix;
-import AOD.realm;
-import AOD.vector;
-import AOD.image;
-import AOD.console;
+import AODCore.matrix;
+import AODCore.realm;
+import AODCore.vector;
+import AODCore.image;
+import AODCore.console;
 
 class Entity {
 private:

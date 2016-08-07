@@ -1,4 +1,4 @@
-module AOD.vector;
+module AODCore.vector;
 
 struct Vector {
 public:
@@ -138,7 +138,7 @@ public:
     return I - (N*2.0f * I) * N;
   }
 
-  import AOD.matrix;
+  import AODCore.matrix;
 
   static Vector Transform(Matrix mat, Vector vec) {
     Vector v;

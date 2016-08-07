@@ -1,9 +1,8 @@
-module AOD.text;
+module AODCore.text;
 
-import AOD.AOD;
-import AOD.utility;
-import AOD.vector;
-import AOD.console;
+import AODCore.utility;
+import AODCore.vector;
+import AODCore.console;
 
 import derelict.opengl3.gl3;
 import derelict.opengl3.gl;

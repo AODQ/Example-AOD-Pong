@@ -1,4 +1,4 @@
-module AOD.clientvars;
+module AODCore.clientvars;
 import std.string;
 
 struct Keybind {

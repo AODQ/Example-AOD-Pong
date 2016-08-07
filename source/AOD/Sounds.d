@@ -1,9 +1,9 @@
-module AOD.sound;
+module AODCore.sound;
 import derelict.openal.al;
 import derelict.vorbis.vorbis;
 import derelict.vorbis.file;
 
-import AOD.console : Output, Debug_Output;
+import AODCore.console : Output, Debug_Output;
 import std.string;
 import std.conv : to;
 
@@ -11,7 +11,7 @@ class SoundEng {
 static:
   ALCdevice*  al_device;
   ALCcontext* al_context;
-  immutable(int) Buffer_size = 22050,
+  immutable(int) Buffer_size = 4096,
                  Buffer_amt  =    3;
 
   ALfloat[] listener_position    = [0.0,0.0,4.0              ] ;
@@ -50,8 +50,8 @@ static:
 
   private Tid thread_id;
 
-  Song LoadOGG(immutable(string) file_name) {
-    Song s = Song();
+  Sample LoadOGG(immutable(string) file_name) {
+    Sample s = new Sample();
 
     alGenBuffers(Buffer_amt, s.buffer_id.ptr);
     Check_AL_Errors();
@@ -61,11 +61,26 @@ static:
 
     import std.stdio;
     import core.stdc.stdio : fopen;
-    FILE* f = fopen(file_name.ptr, "r".ptr);
+    FILE* f = fopen(file_name.ptr, "rb".ptr);
+    if ( f == null ) {
+      writeln("Error opening file for playing: " ~ file_name);
+      return null;
+    }
     vorbis_info* p_info;
     OggVorbis_File ogg_file;
     writeln("Loading song " ~ file_name);
-    if ( ov_open(f, &ogg_file, null, 0) != 0 ) {
+    auto x = ov_open(f, &ogg_file, null, 0);
+    if ( x != 0 ) {
+      import std.conv : to;
+      switch ( x ) {
+        default:                                                         break ;
+        case OV_EREAD:      writeln ("eread ");                          break ;
+        case OV_ENOTVORBIS: writeln ("not vorbis");                      break ;
+        case OV_EVERSION:   writeln ("mismatch version");                break ;
+        case OV_EBADHEADER: writeln ("invalid vorbis bitstream header"); break ;
+        case OV_EFAULT:     writeln ("Internal logic fault");            break ;
+      }
+      writeln("error: "~ to!string(x));
       throw new Exception("OGG file not found: " ~ file_name);
     }
     Check_AL_Errors() ;
@@ -80,17 +95,18 @@ static:
     
     s.ogg_file = ogg_file;
     Check_AL_Errors() ;
-    writeln("OGG Song loaded");
+    writeln("OGG Sample loaded");
 
     return s;
   }
 
-  void Check_AL_Errors() {
+  // returns true if error
+  bool Check_AL_Errors() {
     import std.stdio;
     int error = alGetError();
     switch ( error ) {
       default: break;
-      case AL_NO_ERROR: return;
+      case AL_NO_ERROR: return false;
     }
     write("OpenAL error: ");
     switch ( error ) {
@@ -111,32 +127,44 @@ static:
         writeln("AL_OUT_OF_MEMORY");
       break;
     }
-  }
-
-  // returns TRUE if file has finished loading
-  bool Stream_Buffer( ALuint id, ALenum format, ref OggVorbis_File ogg_file,
-                      ref int ogg_bitstream_section, int frq ) {
-    // load buffer 
-    byte[Buffer_size] buffer;
-    uint bytes = ov_read(&ogg_file, buffer.ptr,
-                         SoundEng.Buffer_size, 0, 2, 1,
-                         &ogg_bitstream_section);
-    import std.conv : to;
-    import std.stdio : writeln;
-    writeln("Read in " ~ to!string(bytes) ~ " bytes");
-
-    // set to OpenAL
-    alBufferData ( id, format, buffer.ptr, bytes, frq );
-    SoundEng.Check_AL_Errors();
     return true;
   }
 
-  struct Song {
+  // returns TRUE if file has finished loading or errored
+  bool Stream_Buffer( Sample s, ALuint buffer_id ) {
+    // load buffer 
+    byte[Buffer_size] buffer;
+    int result, section = 0, size = 0;
+    while ( size < Buffer_size ) {
+      result = ov_read(&s.ogg_file, buffer.ptr + size, Buffer_size - size,
+                       0, 2, 1, &section);
+
+      if ( result > 0 ) size += result;
+      else if ( result < 0 ) {
+        import std.stdio : writeln;
+        writeln("Error while attempting to buffer sample" ~ s.file_name);
+        return true;
+      } else {
+        break;
+      }
+    }
+
+    if ( size == 0 ) {
+      return true;
+    }
+
+    // set to OpenAL
+    alBufferData ( buffer_id, s.format, buffer.ptr, size, s.freq );
+    SoundEng.Check_AL_Errors();
+    return false;
+  }
+
+  class Sample {
     ALint state;
+    bool loop;
     ALuint[Buffer_amt] buffer_id;
     ALuint source_id;
     OggVorbis_File ogg_file;
-    int ogg_bitstream_section;
     ALenum format;
     ALint freq;
     string file_name;
@@ -145,22 +173,21 @@ static:
 }
 
 private enum ThreadMsg {
-  PlaySong, PauseSong, StopSong,
+  PlaySample, PauseSample, StopSample,
   PlaySound, StopSound,
+  ChangePosition,
   StopAllSounds
 }
 
 private void Main_Sound_Loop() {
-  SoundEng.Song current_song;
+  SoundEng.Sample current_song;
   bool playing_song;
 
-  void Play_Song() {
+  void Play_Sample() {
     auto s = current_song;
     playing_song = true;
     foreach ( i; 0 .. SoundEng.Buffer_amt ) // buffer 
-      SoundEng.Stream_Buffer(s.buffer_id[i], s.format, s.ogg_file,
-                             s.ogg_bitstream_section, s.freq);
-    
+      SoundEng.Stream_Buffer(s, s.buffer_id[i]);
     alSourceQueueBuffers(s.source_id, 3, s.buffer_id.ptr);
     SoundEng.Check_AL_Errors();
     alSourcei(s.source_id, AL_LOOPING, AL_FALSE);
@@ -177,9 +204,21 @@ private void Main_Sound_Loop() {
       (ThreadMsg msg, immutable(string)[] params) {
         switch ( msg ) {
           default: break;
-          case ThreadMsg.PlaySong:
+          case ThreadMsg.PlaySample:
             current_song = SoundEng.LoadOGG(params[0]);
-            Play_Song();
+            writeln("Playing song " ~ params[0]);
+            Play_Sample();
+          break;
+        }
+      },
+      (ThreadMsg msg, immutable(float)[] params) {
+        switch ( msg ) {
+          default: break;
+          case ThreadMsg.ChangePosition:
+            alSourcefv(current_song.source_id, AL_POSITION, params.ptr);
+            if ( SoundEng.Check_AL_Errors() ) {
+              writeln("Couldn't update song's position");
+            }
           break;
         }
       }
@@ -188,27 +227,30 @@ private void Main_Sound_Loop() {
 
     if ( playing_song ) { // refresh song
       auto s = current_song;
-      ALint processed;
-      alGetSourcei ( s.source_id, AL_BUFFERS_PROCESSED, &processed);
-      SoundEng.Check_AL_Errors();
-      import std.conv : to;
 
-      foreach ( p ; 0 .. processed ) {
-        ALuint buf_id;
-        alSourceUnqueueBuffers ( s.source_id, 1, &buf_id );
+      int state, processed;
+      bool ended = false;
+
+      alGetSourcei(s.source_id, AL_SOURCE_STATE, &state);
+      alGetSourcei(s.source_id, AL_BUFFERS_PROCESSED, &processed);
+
+      while ( processed -- > 0) {
+        ALuint buffer;
+        ALenum error;
+
+        alSourceUnqueueBuffers(s.source_id, 1, &buffer);
         SoundEng.Check_AL_Errors();
-        import std.stdio : write;
-        write("Queueing buffer: ");
-        SoundEng.Stream_Buffer(buf_id, s.format, s.ogg_file,
-                               s.ogg_bitstream_section, s.freq);
+        ended = SoundEng.Stream_Buffer(s, buffer);
+        if ( ended ) break;
+        alSourceQueueBuffers(s.source_id, 1, &buffer);
         SoundEng.Check_AL_Errors();
-        alSourceQueueBuffers ( s.source_id, 1, &buf_id );
-        SoundEng.Check_AL_Errors();
+        if ( state != AL_PLAYING && state != AL_PAUSED )
+          alSourcePlay(s.source_id);
       }
+      // processing finished
     }
 
     // refresh sounds
-
     import core.thread;
     Thread.sleep(dur!("msecs")(10));
   }
@@ -218,14 +260,20 @@ private void Main_Sound_Loop() {
 
 class Sounds {
 static:
-  void Play_Song(immutable(string) file_name) in {
+  void Play_Sample(immutable(string) file_name) in {
     import File = std.file;
     assert(File.exists(file_name));
   } body {
     import std.stdio : writeln;
     writeln("Playing song " ~ file_name);
     import std.concurrency;
-    send(SoundEng.thread_id, ThreadMsg.PlaySong,[ file_name ]);
+    send(SoundEng.thread_id, ThreadMsg.PlaySample,[ file_name ]);
+  }
+
+  void Change_Sample_Position(immutable(float) x, immutable(float) y,
+                              immutable(float) z) {
+    import std.concurrency;
+    send(SoundEng.thread_id, ThreadMsg.ChangePosition, [x, y, z]);
   }
 
   void Clean_Up() {

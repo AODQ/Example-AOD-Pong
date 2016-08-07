@@ -1,4 +1,4 @@
-module AOD.utility;
+module AODCore.utility;
 
 import derelict.opengl3.gl3;
 import derelict.sdl2.sdl;
@@ -12,22 +12,16 @@ const(float) E         =  2.718282,
              Min_float = -3.402823E+38,
              Epsilon   =  0.000001;
 
-import std.random;
-
-Random gen;
 
 float R_Rand(float bot, float top) {
+  import std.random;
   return uniform(bot, top, gen);
 }
 
 T R_Max(T)(T x, T y) { return x > y ? x : y; }
 T R_Min(T)(T x, T y) { return x < y ? x : y; }
 
-void Delete_Image(GLuint t) {
-
-}
-
-import AOD.vector;
+import AODCore.vector;
 
 float To_Rad(float x) {
   return x * (Pi/180.0);

@@ -1,4 +1,4 @@
-module AOD.realm;
+module AODCore.realm;
 
 import derelict.opengl3.gl3;
 import derelict.opengl3.gl;
@@ -7,12 +7,14 @@ import derelict.devil.il;
 import derelict.devil.ilu;
 import derelict.devil.ilut;
 import derelict.freetype.ft;
-import AOD.AOD;
-import AOD.entity;
-import AOD.text;
-import AOD.console;
-import AOD.sound;
-import Camera = AOD.camera;
+import AODCore.entity;
+import AODCore.text;
+import AODCore.console;
+import AODCore.input;
+import AODCore.sound;
+import Camera = AODCore.camera;
+
+private SDL_Window* screen = null;
 
 class Realm {
   Entity[][] objects;
@@ -21,100 +23,78 @@ class Realm {
   Entity[] objs_to_rem;
 
   GLfloat bg_red, bg_blue, bg_green;
+
+  bool started;
+  uint start_ticks;
+
+  int width, height;
+  uint ms_dt;
+  float[20] fps = [ 0 ];
+  AODCore.text.Text fps_display;
 public:
-  this(int window_width, int window_height,
+
+  void Change_MSDT(uint ms_dt_) in {
+    assert(x > 0);
+  } body {
+    ms_dt = ms_dt_;
+  }
+
+  int R_Width ()       { return width;                        }
+  int R_Height()       { return height;                       }
+  float R_MS  ()       { return cast(float)ms_dt;             }
+  float To_MS(float x) { return cast(float)(x*ms_dt)/1000.0f; }
+
+  void Set_FPS_Display(AODCore.text.Text fps) {
+    if ( fps_display !is null )
+      Remove(fps_display);
+    fps_display = fps;
+    if ( fps_display !is null )
+      Add(fps_display);
+  }
+
+  this(int window_width, int window_height, uint ms_dt_,
        immutable(char)* window_name, immutable(char)* icon = "") {
+    width  = window_width;
+    height = window_height;
+    ms_dt = ms_dt_;
     Debug_Output("Initializing SDL");
     import std.conv : to; 
     import derelict.util.exception;
     import std.stdio;
     writeln("AOD@Realm.d@Initialize Initializing Art of Dwarficorn engine");
     writeln("AOD@Realm.d@Initialize Loading external libraries");
-    try {
-      DerelictGL3.load();
-    } catch ( DerelictException de ) {
-      writeln("\n----------------------------------------------------------\n");
-      writeln("Failed to load DerelictGL3: "  ~ to!string(de));
-      writeln("\n----------------------------------------------------------\n");
-    }
-    try {
-      DerelictGL.load();
-    } catch ( DerelictException de ) {
-      writeln("\n----------------------------------------------------------\n");
-      writeln("Failed to load DerelictGL: "  ~ to!string(de));
-      writeln("\n----------------------------------------------------------\n");
-    }
-    try {
-      DerelictSDL2.load("SDL2.dll", SharedLibVersion(2, 0, 2));
-    } catch ( DerelictException de ) {
-      writeln("\n----------------------------------------------------------\n");
-      writeln("Failed to load DerelictSDL2: " ~ to!string(de));
-      writeln("\n----------------------------------------------------------\n");
-    }
-    try {
-      DerelictIL.load("DevIL.dll");
-    } catch ( DerelictException de ) {
-      writeln("\n----------------------------------------------------------\n");
-      writeln("Failed to load DerelictIL: "   ~ to!string(de));
-      writeln("\n----------------------------------------------------------\n");
-    }
-    try {
-      DerelictILU.load("ILU.dll");
-    } catch ( DerelictException de ) {
-      writeln("\n----------------------------------------------------------\n");
-      writeln("Failed to load DerelictILU: "  ~ to!string(de));
-      writeln("\n----------------------------------------------------------\n");
-    }
-    try {
-      DerelictILUT.load("ILUT.dll");
-    } catch ( DerelictException de ) {
-      writeln("\n----------------------------------------------------------\n");
-      writeln("Failed to load DerelictILUT: " ~ to!string(de));
-      writeln("\n----------------------------------------------------------\n");
-    }
-    try {
-      DerelictFT.load("freetype265.dll");
-    } catch ( DerelictException de ) {
-      writeln("\n---------------------------------------------------\n");
-      writeln("Failed to load DerelictFT: "   ~ to!string(de));
-      writeln("\n---------------------------------------------------\n");
-    }
-    try {
-      import derelict.openal.al;
-      DerelictAL.load();
-    } catch ( DerelictException de ) {
-      writeln("--------------------------------------------------------------");
-      writeln("Error initializing derelict-OpenAL library: " ~ to!string(de));
-      writeln("--------------------------------------------------------------");
-    }
-    try {
-      import derelict.vorbis.vorbis;
-      DerelictVorbis.load("libvorbis-0.dll");
-    } catch ( DerelictException de ) {
-      writeln("--------------------------------------------------------------");
-      writeln("Error initializing DerelictVorbis library: " ~ to!string(de));
-      writeln("--------------------------------------------------------------");
+    
+    void Load_Library(immutable(string) lib, immutable(string) params) {
+      try {
+        mixin(lib ~ ".load(" ~ params ~ ");");
+      } catch ( DerelictException de ) {
+        writeln("\n--------------------------------------------------------\n");
+        writeln("Failed to load " ~ lib ~ ": "  ~ to!string(de));
+        writeln("\n--------------------------------------------------------\n");
+      }
     }
 
-    try {
-      import derelict.vorbis.file;
-      DerelictVorbisFile.load("libvorbisfile-3.dll");
-    } catch ( DerelictException de ) {
-      writeln("--------------------------------------------------------------");
-      writeln("Error initializing DerelictVorbisFil library: " ~ to!string(de));
-      writeln("--------------------------------------------------------------");
-    }
-
+    Load_Library("DerelictGL3"       ,"");
+    Load_Library("DerelictGL"        ,"");
+    Load_Library("DerelictSDL2"      ,"\"SDL2.dll\",SharedLibVersion(2 ,0 ,2)");
+    Load_Library("DerelictIL"        ,"");
+    Load_Library("DerelictILU"       ,"");
+    Load_Library("DerelictILUT"      ,"");
+    Load_Library("DerelictFT"        ,"\"freetype265.dll\"");
+    Load_Library("DerelictAL"        ,"");
+    Load_Library("DerelictVorbis"    ,"\"libvorbis-0.dll\"");
+    Load_Library("DerelictVorbisFile","\"libvorbisfile-3.dll\"");
+    
     writeln("AOD@Realm.d@Initialize Initializing SDL");
     SDL_Init ( SDL_INIT_EVERYTHING );
 
 
     writeln("AOD@Realm.d@Initialize Creating SDL Window");
-    Engine.screen = SDL_CreateWindow(window_name, SDL_WINDOWPOS_UNDEFINED,
-                                                  SDL_WINDOWPOS_UNDEFINED,
-                                                  window_width, window_height,
-                                                  SDL_WINDOW_OPENGL |
-                                                  SDL_WINDOW_SHOWN );
+    screen = SDL_CreateWindow(window_name, SDL_WINDOWPOS_UNDEFINED,
+                                           SDL_WINDOWPOS_UNDEFINED,
+                                           window_width, window_height,
+                                           SDL_WINDOW_OPENGL |
+                                           SDL_WINDOW_SHOWN );
     writeln("Creating OpenGL Context");
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 2);
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 2);
@@ -122,12 +102,12 @@ public:
     SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE,  24);
     SDL_GL_SetAttribute(SDL_GL_ALPHA_SIZE,   8);
     import std.conv : to;
-    if ( Engine.screen is null ) {
+    if ( screen is null ) {
       throw new Exception("Error SDL_CreateWindow: "
                           ~ to!string(SDL_GetError()));
     }
 
-    if ( SDL_GL_CreateContext(Engine.screen) is null ) {
+    if ( SDL_GL_CreateContext(screen) is null ) {
       throw new Exception("Error SDL_GL_CreateContext: "
                           ~ to!string(SDL_GetError()));
     }
@@ -146,7 +126,7 @@ public:
     if ( icon != "" ) {
       writeln("Loading window icon");
       SDL_Surface* ico = SDL_LoadBMP(icon);
-      SDL_SetWindowIcon(Engine.screen, ico);
+      SDL_SetWindowIcon(screen, ico);
     }
 
     glClearDepth(1.0f);
@@ -169,7 +149,7 @@ public:
     ilutInit();
     if ( !ilutRenderer(ILUT_OPENGL) )
       writeln("Error setting ilut Renderer to ILUT_OPENGL");
-    import AOD.vector;
+    import AODCore.vector;
     writeln("window dimensions: " ~ cast(string)Vector(window_width,
                                                        window_height));
     
@@ -188,22 +168,39 @@ public:
       /* bg_blue  = 0; */
       /* bg_green = 0; */
     }
+    static import AOD.camera;
+    AODCore.camera.Set_Position(Vector(0, 0));
+    AODCore.camera.Set_Size(
+                    Vector(cast(float)AODCore.clientvars.screen_width,
+                           cast(float)AODCore.clientvars.screen_height));
     writeln("AOD@Realm.d@Initialize Finalized initializing AOD main core");
   }
 
-  void __Add(Entity o) {
+  int Add(Entity o) in {
+    assert(o !is null);
+  } body {
+    static uint id_count = 0;
+    o.Set_Id(id_count ++);
     int l = o.R_Layer();
     if ( objects.length <= l ) objects.length = l+1;
     objects[l] ~= o;
+    return o;
   }
-  void __Add(Text t) {
+
+  void Add(Text t) in {
+    assert(t !is null);
+  } body {
     text ~= t;
   }
 
-  void __Remove(Entity o) {
+  void Remove(Entity o) in {
+    assert(o !is null);
+  } body {
     objs_to_rem ~= o;
   }
-  void __Remove(Text t) {
+  void Remove(Text t) in {
+    assert(t !is null);
+  } body {
     foreach ( i; 0 .. text.length ) {
       if ( text[i] == t ) {
         destroy(text[i]);
@@ -218,6 +215,100 @@ public:
     bg_red = r;
     bg_green = g;
     bg_blue = g;
+  }
+
+
+  void Run() {
+    float prev_dt        = 0, // DT from previous frame
+          curr_dt        = 0, // DT for beginning of current frame
+          elapsed_dt     = 0, // DT elapsed between previous frame and this frame
+          accumulated_dt = 0; // DT needing to be processed
+    started = 1;
+    start_ticks = SDL_GetTicks();
+    SDL_Event _event;
+    _event.user.code = 2;
+    _event.user.data1 = null;
+    _event.user.data2 = null;
+    SDL_PushEvent(&_event);
+
+    // so I can set up keys and not have to rely that update is ran first
+    /* writeln("AOD@AODCore.d@Run pumping events before first update"); */
+    SDL_PumpEvents();
+    MouseEngine.Refresh_Input();
+    SDL_PumpEvents();
+    MouseEngine.Refresh_Input();
+
+    while ( SDL_PollEvent(&_event) ) {
+      switch ( _event.type ) {
+        case SDL_QUIT:
+          return;
+        default: break;
+      }
+    }
+    prev_dt = cast(float)SDL_GetTicks();
+    /* writeln("AOD@AODCore.d@Run Now beginning main engine loop"); */
+    while ( true ) {
+      // refresh time handlers
+      curr_dt = cast(float)SDL_GetTicks();
+      elapsed_dt = curr_dt - prev_dt;
+      accumulated_dt += elapsed_dt;
+
+      // refresh calculations
+      while ( accumulated_dt >= ms_dt ) {
+        // sdl
+        SDL_PumpEvents();
+        MouseEngine.Refresh_Input();
+
+        // actual update
+        accumulated_dt -= ms_dt;
+        Update();
+
+        string tex;
+        string to_handle;
+        bool alnum;
+        char* chptr = null;
+
+        /* auto input = Console::input->R_Str(), */
+        /*      input_after = Console::input_after->R_Str(); */
+
+        while ( SDL_PollEvent(&_event) ) {
+          switch ( _event.type ) {
+            default: break;
+            case SDL_QUIT:
+              return;
+          }
+        }
+      }
+
+      { // refresh screen
+        float _FPS = 0;
+        for ( int i = 0; i != 19; ++ i ) {
+          fps[i+1] = fps[i];
+          _FPS += fps[i+1];
+        }
+        fps[0] = elapsed_dt;
+        _FPS += fps[0];
+
+        if ( fps_display !is null ) {
+          import std.conv : to;
+          fps_display.Set_String( to!string(cast(int)(20000/_FPS)) ~ " FPS");
+        }
+
+        Render(); // render the screen
+      }
+
+      { // sleep until temp dt reaches ms_dt
+        float temp_dt = accumulated_dt;
+        temp_dt = cast(float)(SDL_GetTicks()) - curr_dt;
+        while ( temp_dt < ms_dt ) {
+          SDL_PumpEvents();
+          temp_dt = cast(float)(SDL_GetTicks()) - curr_dt;
+        }
+      }
+
+      // set current frame timemark
+      prev_dt = curr_dt;
+    }
   }
 
 
@@ -241,6 +332,12 @@ public:
       }
     }
     objs_to_rem = [];
+  }
+
+  ~this() {
+    // todo...
+    SDL_DestroyWindow(screen);
+    SDL_Quit();
   }
 
   void Render() {
@@ -321,9 +418,9 @@ public:
 
 
     // ---- console
-    static import AOD.console;
-    if ( AOD.console.console_open ) {
-      foreach ( tz; AOD.console.ConsEng.console_text ) {
+    static import AODCore.console;
+    if ( AODCore.console.console_open ) {
+      foreach ( tz; AODCore.console.ConsEng.console_text ) {
         string t_str = tz.R_Str();
 
         glPushMatrix();
@@ -339,6 +436,6 @@ public:
     glDisableClientState(GL_TEXTURE_2D);
 
 
-    SDL_GL_SwapWindow(Engine.screen);
+    SDL_GL_SwapWindow(screen);
   }
 }

@@ -1,6 +1,6 @@
-module AOD.input;
+module AODCore.input;
 import derelict.sdl2.sdl;
-import Camera = AOD.camera;
+import Camera = AODCore.camera;
 
 // These represent SDL_ScanCodes. These are prefereable
 // to just calling R_LMB() or w/e b/c these are bindeable
@@ -25,7 +25,7 @@ static: public:
     keystate[ Mouse_Bind.Middle ] = R_MMB();
     keystate[ Mouse_Bind.X1     ] = R_MX1();
     keystate[ Mouse_Bind.X2     ] = R_MX2();
-    // Let AOD.D handle mouse wheel
+    // Let AODCore.D handle mouse wheel
   }
 }
 

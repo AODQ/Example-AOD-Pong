@@ -1,12 +1,12 @@
-module AOD.image;
+module AODCore.image;
 
 import derelict.opengl3.gl3;
 import derelict.sdl2.sdl;
 import derelict.devil.il;
 import derelict.devil.ilu;
 //import derelict.devil.ilut;
-import AOD.console;
-import AOD.vector;
+import AODCore.console;
+import AODCore.vector;
 
 // contains information of image
 struct SheetContainer {

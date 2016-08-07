@@ -1,4 +1,4 @@
-module AOD.AOD;
+module AOD;
 
 import derelict.opengl3.gl3;
 import derelict.opengl3.gl;
@@ -6,176 +6,160 @@ import derelict.sdl2.sdl;
 import std.string;
 import std.stdio;
 
-import Camera = AOD.camera;
-import Console = AOD.console;
-import AOD.input;
-import AOD.entity;
-static import AOD.realm;
-import AOD.sound;
-import AOD.text;
-import AOD.vector;
-import AOD.utility;
+static import AODCore.camera;
+static import AODCore.clientvars;
+static import AODCore.realm;
+static import AODCore.text;
+static import AODCore.sound;
+static import AODCore.entity;
+static import AODCore.vector;
+static import AODCore.utility;
+static import AODCore.matrix;
+static import AODCore.camera;
 
-class Engine {
-static:
-  SDL_Window* screen = null;
-  GLuint[] images;
+// --------------------- realm -------------------------------------------------
 
-  AOD.realm.Realm realm = null;
+private AODCore.realm.Realm realm = null;
 
-  uint ms_dt = 0;
-
-  bool started = 0;
-  int start_ticks = 0;
-  Text fps_display;
-  float[20] fps = [ 0 ];
+void Initialize(uint fps, string name, int width, int height, string ico = "")
+in {
+  assert(realm is null);
+} body {
+  if ( name == "" )
+    name = "Art of Dwarficorn";
+  realm = new AODCore.realm.Realm(width, height, fps, name.ptr, ico.ptr);
+}
+void Change_MSDT(Uint32 ms_dt) in { assert(realm !is null); } body {
+  realm.Change_MSDT(ms_dt);
+}
+void Reset() in { assert(realm  is null); } body { /* ... todo ... */ }
+void End()   in { assert(realm !is null); } body {
+  destroy(realm);
+  realm = null;
 }
 
-void Initialize(uint _fps, string window_name, string icon = "") {
-  static import AOD.clientvars;
-  if ( Engine.realm is null ) {
-    if ( window_name == "" )
-      window_name = "Art of Dwarficorn";
-    Engine.realm = new AOD.realm.Realm(AOD.clientvars.screen_width,
-                                       AOD.clientvars.screen_height,
-                                       window_name.ptr, icon.ptr);
-    Engine.ms_dt = _fps;
-  }
-  writeln("Setting positions");
-  Camera.Set_Position(Vector(0, 0));
-  Camera.Set_Size(Vector(cast(float)AOD.clientvars.screen_width,
-                         cast(float)AOD.clientvars.screen_height));
+int  Add(Entity o)    in {assert(realm !is null);} body { return realm.Add(o); }
+void Add(Text t)      in {assert(realm !is null);} body {        realm.Add(t); } 
+void Remove(Entity o) in {assert(realm !is null);} body {     realm.Remove(o); }
+void Remove(Text t)   in {assert(realm !is null);} body {     realm.Remove(t); }
+
+void Set_BG_Colour(GLfloat r, GLfloat g, GLfloat b)
+in {
+  assert(realm !is null);
+} body {
+  realm.Set_BG_Colours(r, g, b);
 }
 
-void Initialize_Console(bool print_debug, SDL_Keycode key, string cons) {
-  if ( print_debug )
-    Console.ConsEng.console_type = Console.TYPE_DEBUG_IN;
-  else
-    Console.ConsEng.console_type = Console.TYPE_DEBUG_OUT;
-  Console.Debug_Output("Created new console");
-  Console.ConsEng.key = key;
-  Console.ConsEng.Construct();
+void Run() in { assert(realm !is null); } body {
+  realm.Run();
 }
 
-void Change_MSDT(Uint32 x) {
-  if ( x > 0 )
-    Engine.ms_dt = x;
-  else
-    Console.Debug_Output("Trying to change the MS DeltaTime to a value <= 0");
+float R_MS()         { return realm.R_MS();   }
+float To_MS(float x) { return realm.To_MS(x); }
+
+int R_Window_Width()  { return realm.R_Width();  }
+int R_Window_Height() { return realm.R_Height(); }
+
+// will add Text to realm & remove old one
+void Set_FPS_Display(AODCore.text.Text fps) in { assert(realm !is null); }
+body { realm.Set_FPS_Display(fps);}
+
+// --------------------- Vector/Matrix/Utility ---------------------------------
+
+alias Vector = AODCore.vector.Vector;
+alias Matrix = AODCore.matrix.Matrix;
+
+class Util {
+public: static:
+  alias R_Rand = AODCore.utility.R_Rand;
+  alias R_Max  = AODCore.utility.R_Max;
+  alias R_Min  = AODCore.utility.R_Min;
+  alias To_Rad = AODCore.utility.To_Rad;
+  alias To_Deg = AODCore.utility.To_Deg;
+
+  alias E         = AODCore.utility.E;
+  alias Log10E    = AODCore.utility.Log10E;
+  alias Log2E     = AODCore.utility.Log2E;
+  alias Pi        = AODCore.utility.Pi;
+  alias Tau       = AODCore.utility.Tau;
+  alias Max_float = AODCore.utility.Max_float;
+  alias Min_float = AODCore.utility.Min_float;
+  alias Epsilon   = AODCore.utility.Epsilon;
 }
 
-void Reset() {
-  /* if ( Engine.realm !is null ) */
-  /*   Engine.realm.Reset(); */
-}
-void End() {
-  Engine.realm = null;
-  SDL_DestroyWindow(Engine.screen);
-  SDL_Quit();
-}
+// --------------------- Camera ------------------------------------------------
 
-Entity[int] obj_list;
-
-
-int Add(Entity o) {
-  static uint id_counter = 0;
-  if ( Engine.realm !is null && o ) {
-    Engine.realm.__Add(o);
-    o.Set_ID(id_counter++);
-    /* obj_list[o.Ret_ID(), o); */
-    return o.Ret_ID();
-  } else {
-    if ( o is null )
-      Console.Debug_Output("Error: Adding null text to realm");
-    return -1;
-  }
+class Camera {
+public: static:
+  alias Set_Position    = AODCore.camera.Set_Position;
+  alias Set_Size        = AODCore.camera.Set_Size;
+  alias R_Size          = AODCore.camera.R_Size;
+  alias R_Position      = AODCore.camera.R_Position;
+  alias R_Origin_Offset = AODCore.camera.R_Origin_Offset;
 }
 
-void Add(Text t) {
-  if ( Engine.realm !is null && t !is null )
-    Engine.realm.__Add(t);
-  else {
-    if ( t is null )
-      Console.Debug_Output("Error: Adding null text to realm");
-  }
+// --------------------- ClientVars --------------------------------------------
+
+class ClientVars {
+public: static:
+  alias Keybind       = AODCore.clientvars.Keybind;
+  alias screen_width  = AODCore.clientvars.screen_width;
+  alias screen_height = AODCore.clientvars.screen_height;
+  alias Load_Config   = AODCore.clientvars.Load_Config;
 }
 
-void Remove(Entity o) {
-  if ( Engine.realm !is null )
-    Engine.realm.__Remove(o);
+// --------------------- Console -----------------------------------------------
+
+class Console {
+public: static:
+  alias Type                    = AODCore.console.Type;
+  alias console_open            = AODCore.console.console_open;
+  alias Set_Open_Console_Key    = AODCore.console.Set_Open_Console_Key;
+  alias Set_Console_History     = AODCore.console.Set_Console_History;
+  alias Set_Console_Output_Type = AODCore.console.Set_Console_Output_Type;
+  alias Initialize              = AODCore.console.Initialize;
+}
+alias Output = AODCore.console.Output;
+
+// --------------------- Entity ------------------------------------------------
+
+alias Entity     = AODCore.entity.Entity;
+alias PolyEntity = AODCore.entity.PolyEnt;
+alias AABBEntity = AODCore.entity.AABBEnt;
+
+// --------------------- Image -------------------------------------------------
+
+alias SheetContainer = AODCore.image.SheetContainer;
+alias SheetRect      = AODCore.image.SheetRect;
+alias Load_Image     = AODCore.image.Load_Image;
+
+// --------------------- Input -------------------------------------------------
+
+class Inp {
+  alias Mouse_Bind = AODCore.input.Mouse_Bind;
+  alias keystate   = AODCore.input.keystate;
+  alias R_LMB      = AODCore.input.R_LMB;
+  alias R_RMB      = AODCore.input.R_RMB;
+  alias R_MMB      = AODCore.input.R_MMB;
+  alias R_MX1      = AODCore.input.R_MX1;
+  alias R_MX2      = AODCore.input.R_MX2;
+  alias R_Mouse_X  = AODCore.input.R_Mouse_X;
+  alias R_Mouse_Y  = AODCore.input.R_Mouse_Y;
 }
 
-void Remove(Text t) {
-  if ( Engine.realm !is null )
-    Engine.realm.__Remove(t);
+// --------------------- Sound -------------------------------------------------
+
+alias Play_Sample = AODCore.sound.Sounds.Play_Sample;
+class Sound {
+  alias Change_Sample_Position = AODCore.sound.Sounds.Change_Sample_Position;
+  alias Clean_Up               = AODCore.sound.Sounds.Clean_Up;
 }
 
-void Set_BG_Colour(GLfloat r, GLfloat g, GLfloat b) {
-  if ( Engine.realm is null ) return;
-  Engine.realm.Set_BG_Colours(r, g, b);
-}
+// --------------------- Text --------------------------------------------------
 
-void Run() {
-  /* writeln("AOD@AOD.d@Run Initializing main loop"); */
-  if ( Engine.realm is null ) return;
-  float prev_dt        = 0, // DT from previous frame
-        curr_dt        = 0, // DT for beginning of current frame
-        elapsed_dt     = 0, // DT elapsed between previous frame and this frame
-        accumulated_dt = 0; // DT needing to be processed
-  Engine.started = 1;
-  Engine.start_ticks = SDL_GetTicks();
-  SDL_Event _event;
-  _event.user.code = 2;
-  _event.user.data1 = null;
-  _event.user.data2 = null;
-  SDL_PushEvent(&_event);
+alias Text = AODCore.text.Text;
 
-  // so I can set up keys and not have to rely that update is ran first
-  /* writeln("AOD@AOD.d@Run pumping events before first update"); */
-  SDL_PumpEvents();
-  MouseEngine.Refresh_Input();
-  SDL_PumpEvents();
-  MouseEngine.Refresh_Input();
-
-  while ( SDL_PollEvent(&_event) ) {
-    switch ( _event.type ) {
-      case SDL_QUIT:
-        return;
-      default: break;
-    }
-  }
-  prev_dt = cast(float)SDL_GetTicks();
-  /* writeln("AOD@AOD.d@Run Now beginning main engine loop"); */
-  while ( true ) {
-    // refresh time handlers
-    curr_dt = cast(float)SDL_GetTicks();
-    elapsed_dt = curr_dt - prev_dt;
-    accumulated_dt += elapsed_dt;
-
-    // refresh calculations
-    while ( accumulated_dt >= Engine.ms_dt ) {
-      // sdl
-      /* writeln("AOD@AOD.d@Run pumping events"); */
-      SDL_PumpEvents();
-      /* writeln("AOD@AOD.d@Run MouseEngine.Refresh_Input()"); */
-      MouseEngine.Refresh_Input();
-
-      // actual update
-      accumulated_dt -= Engine.ms_dt;
-      /* writeln("AOD@AOD.d@Run Engine.realm.Update()"); */
-      Engine.realm.Update();
-
-      string tex;
-      string to_handle;
-      bool alnum;
-      char* chptr = null;
-
-      /* auto input = Console::input->R_Str(), */
-      /*      input_after = Console::input_after->R_Str(); */
-
-      while ( SDL_PollEvent(&_event) ) {
-        switch ( _event.type ) {
-          default: break;
+// ------------------- s c r a p s  --------------------------------------------
 /* case SDL_MOUSEWHEEL: */
 /*   if ( _event.wheel.y > 0 ) // positive away from user */
 /*     Input::keys[ MOUSEBIND::MWHEELUP ] = true; */
@@ -293,45 +277,3 @@ void Run() {
 /*     Update_Console_Input_Position(); */
 /*   } */
 /* break; */
-          case SDL_QUIT:
-            return;
-        }
-      }
-    }
-
-    { // refresh screen
-      float _FPS = 0;
-      for ( int i = 0; i != 19; ++ i ) {
-        Engine.fps[i+1] = Engine.fps[i];
-        _FPS += Engine.fps[i+1];
-      }
-      Engine.fps[0] = elapsed_dt;
-      _FPS += Engine.fps[0];
-
-      if ( Engine.fps_display !is null ) {
-        import std.conv : to;
-        Engine.fps_display.Set_String(
-                            to!string(cast(int)(20000/_FPS)) ~ " FPS");
-      }
-
-      /* Refresh(); */
-      /* writeln("AOD@AOD.d@Run Engine.realm.Render()"); */
-      Engine.realm.Render(); // render the screen
-    }
-
-    { // sleep until temp dt reaches ms_dt
-      float temp_dt = accumulated_dt;
-      temp_dt = cast(float)(SDL_GetTicks()) - curr_dt;
-      while ( temp_dt < Engine.ms_dt ) {
-        SDL_PumpEvents();
-        temp_dt = cast(float)(SDL_GetTicks()) - curr_dt;
-      }
-    }
-
-    // set current frame timemark
-    prev_dt = curr_dt;
-  }
-}
-
-float R_MS()         { return cast(float)Engine.ms_dt; }
-float To_MS(float x) { return (x*Engine.ms_dt)/1000;   }

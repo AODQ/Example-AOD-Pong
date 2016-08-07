@@ -1,15 +1,16 @@
-module AOD.console;
+module AODCore.console;
 
-immutable(int) TYPE_NONE       = 0, /// No console
-               TYPE_DEBUG_IN   = 1, /// AOD generated messages left in
-               TYPE_DEBUG_OUT  = 2; /// AOD generated messaged left out
+enum Type {
+  None      = 0,
+  Debug_In  = 1,
+  Debug_Out = 2
+}
 
-import AOD.AOD;
-import AOD.text;
-import AOD.entity;
-import AOD.input;
-import AOD.clientvars;
-import AOD.vector;
+import AODCore.text;
+import AODCore.entity;
+import AODCore.input;
+import AODCore.clientvars;
+import AODCore.vector;
 import derelict.opengl3.gl3;
 import std.stdio : writeln;
 import derelict.sdl2.sdl;
@@ -42,21 +43,23 @@ static:
     background.Set_Image_Size(Vector(screen_width, 103));
     background.Set_Visible(0);
     background.Set_Position(screen_width/2, 103/2);
-    Add(input);
-    Add(input_after);
-    Add(input_sig);
-    Add(background);
-    Add(cursor);
+    static import AOD;
+    AOD.Add(input);
+    AOD.Add(input_after);
+    AOD.Add(input_sig);
+    AOD.Add(background);
+    AOD.Add(cursor);
   }
   void Deconstruct() {
     console_text = [];
-    Remove(input);
-    Remove(input_after);
-    Remove(cursor);
+    static import AOD;
+    AOD.Remove(input);
+    AOD.Remove(input_after);
+    AOD.Remove(cursor);
   }
 
   void Refresh() {
-    if ( console_type == TYPE_DEBUG_IN || console_type == TYPE_DEBUG_OUT ) {
+    if ( console_type == Type.Debug_In || console_type == Type.Debug_Out ) {
       if ( keystate[ key ] ) {
         console_open ^= 1;
         if ( console_open ) {
@@ -130,3 +133,14 @@ void Debug_Output(string ot) {
   if ( ConsEng.console_type == TYPE_DEBUG_IN )
     Out(ot);
 }
+
+void Initialize(bool print_debug, SDL_Keycode key, string cons) {
+  if ( print_debug )
+    ConsEng.console_type = Type.Debug_In;
+  else
+    ConsEng.console_type = Type.Debug_Out;
+  Debug_Output("Created new console");
+  ConsEng.key = key;
+  ConsEng.Construct();
+}
+
