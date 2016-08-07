@@ -62,7 +62,7 @@ public:
 void Init () {
   writeln("app.d@Init Setting up console");
   AOD.Console.console_open = false;
-  AOD.Console.Set_Console_Output_Type(AOD.console.TYPE_DEBUG_IN);
+  AOD.Console.Set_Console_Output_Type(AOD.Console.Type.Debug_In);
   AOD.AOD.Initialize(16, "CYBER BUTCHER", 640, 480);
   AOD.Camera.Set_Size(AOD.Vector(AOD.R_Window_Width(), AOD.R_Window_Height()));
   AOD.Camera.Set_Position(AOD.Vector(AOD.R_Window_Width()/2,

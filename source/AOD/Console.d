@@ -18,7 +18,7 @@ import std.string;
 
 class ConsEng {
 static:
-  int console_type = 0;
+  Type console_type = Type.None;
   GLuint console_image = 0;
   Text[] console_text;
   Text input, input_after, input_sig;
@@ -95,7 +95,8 @@ static:
     to_console = [];
     // pop back old debugs
     while ( console_text.length > console_history ) {
-      Remove(console_text[console_text.length-1]);
+      static import AOD;
+      AOD.Remove(console_text[console_text.length-1]);
       -- console_text.length;
     }
   }
@@ -111,11 +112,7 @@ void Set_Console_History(int history_limit) {
   ConsEng.console_history = history_limit;
 }
 
-void Set_Console_Output_Type(int otype) in {
-  assert ( otype == TYPE_NONE ||
-           otype == TYPE_DEBUG_IN ||
-           otype == TYPE_DEBUG_OUT );
-} body {
+void Set_Console_Output_Type(Type otype) {
   ConsEng.console_type = otype;
 }
 
@@ -130,7 +127,7 @@ void Output(string ot) {
 
 void Debug_Output(string ot) {
   writeln("AOD SAYS: " ~ ot);
-  if ( ConsEng.console_type == TYPE_DEBUG_IN )
+  if ( ConsEng.console_type == Type.Debug_In )
     Out(ot);
 }
 

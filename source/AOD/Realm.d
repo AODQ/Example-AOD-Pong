@@ -34,7 +34,7 @@ class Realm {
 public:
 
   void Change_MSDT(uint ms_dt_) in {
-    assert(x > 0);
+    assert(ms_dt_ > 0);
   } body {
     ms_dt = ms_dt_;
   }
@@ -64,7 +64,7 @@ public:
     writeln("AOD@Realm.d@Initialize Initializing Art of Dwarficorn engine");
     writeln("AOD@Realm.d@Initialize Loading external libraries");
     
-    void Load_Library(immutable(string) lib, immutable(string) params) {
+    mixin template Load_Library(string lib, string params) {
       try {
         mixin(lib ~ ".load(" ~ params ~ ");");
       } catch ( DerelictException de ) {
@@ -74,16 +74,17 @@ public:
       }
     }
 
-    Load_Library("DerelictGL3"       ,"");
-    Load_Library("DerelictGL"        ,"");
-    Load_Library("DerelictSDL2"      ,"\"SDL2.dll\",SharedLibVersion(2 ,0 ,2)");
-    Load_Library("DerelictIL"        ,"");
-    Load_Library("DerelictILU"       ,"");
-    Load_Library("DerelictILUT"      ,"");
-    Load_Library("DerelictFT"        ,"\"freetype265.dll\"");
-    Load_Library("DerelictAL"        ,"");
-    Load_Library("DerelictVorbis"    ,"\"libvorbis-0.dll\"");
-    Load_Library("DerelictVorbisFile","\"libvorbisfile-3.dll\"");
+    mixin Load_Library!("DerelictGL3"       ,"");
+    mixin Load_Library!("DerelictGL"        ,"");
+    mixin Load_Library!("DerelictSDL2",
+                        "\"SDL2.dll\",SharedLibVersion(2 ,0 ,2)");
+    mixin Load_Library!("DerelictIL"        ,"");
+    mixin Load_Library!("DerelictILU"       ,"");
+    mixin Load_Library!("DerelictILUT"      ,"");
+    mixin Load_Library!("DerelictFT"        ,"\"freetype265.dll\"");
+    mixin Load_Library!("DerelictAL"        ,"");
+    mixin Load_Library!("DerelictVorbis"    ,"\"libvorbis-0.dll\"");
+    mixin Load_Library!("DerelictVorbisFile","\"libvorbisfile-3.dll\"");
     
     writeln("AOD@Realm.d@Initialize Initializing SDL");
     SDL_Init ( SDL_INIT_EVERYTHING );
