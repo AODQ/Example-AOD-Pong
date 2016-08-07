@@ -12,9 +12,10 @@ const(float) E         =  2.718282,
              Min_float = -3.402823E+38,
              Epsilon   =  0.000001;
 
+import std.random;
+private Random gen;
 
 float R_Rand(float bot, float top) {
-  import std.random;
   return uniform(bot, top, gen);
 }
 

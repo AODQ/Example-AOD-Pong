@@ -2,6 +2,9 @@ module AODCore.realm;
 
 import derelict.opengl3.gl3;
 import derelict.opengl3.gl;
+import derelict.openal.al;
+import derelict.vorbis.vorbis;
+import derelict.vorbis.file;
 import derelict.sdl2.sdl;
 import derelict.devil.il;
 import derelict.devil.ilu;
@@ -63,28 +66,27 @@ public:
     import std.stdio;
     writeln("AOD@Realm.d@Initialize Initializing Art of Dwarficorn engine");
     writeln("AOD@Realm.d@Initialize Loading external libraries");
-    
-    mixin template Load_Library(string lib, string params) {
-      try {
-        mixin(lib ~ ".load(" ~ params ~ ");");
-      } catch ( DerelictException de ) {
-        writeln("\n--------------------------------------------------------\n");
-        writeln("Failed to load " ~ lib ~ ": "  ~ to!string(de));
-        writeln("\n--------------------------------------------------------\n");
-      }
-    }
 
-    mixin Load_Library!("DerelictGL3"       ,"");
-    mixin Load_Library!("DerelictGL"        ,"");
-    mixin Load_Library!("DerelictSDL2",
-                        "\"SDL2.dll\",SharedLibVersion(2 ,0 ,2)");
-    mixin Load_Library!("DerelictIL"        ,"");
-    mixin Load_Library!("DerelictILU"       ,"");
-    mixin Load_Library!("DerelictILUT"      ,"");
-    mixin Load_Library!("DerelictFT"        ,"\"freetype265.dll\"");
-    mixin Load_Library!("DerelictAL"        ,"");
-    mixin Load_Library!("DerelictVorbis"    ,"\"libvorbis-0.dll\"");
-    mixin Load_Library!("DerelictVorbisFile","\"libvorbisfile-3.dll\"");
+    template Load_Library(string lib, string params) {
+      const char[] Load_Library =
+        "try { " ~ lib ~ ".load(" ~ params ~ ");" ~
+        "} catch ( DerelictException de ) {" ~
+            "writeln(\"--------------------------------------------------\");"~
+            "writeln(\"Failed to load: " ~ lib ~ ", \" ~ to!string(de));"     ~
+        "}";
+    }
+    
+    mixin(Load_Library!("DerelictGL3"       ,""));
+    mixin(Load_Library!("DerelictGL"        ,""));
+    mixin(Load_Library!("DerelictSDL2",
+                        "\"SDL2.dll\",SharedLibVersion(2 ,0 ,2)"));
+    mixin(Load_Library!("DerelictIL"        ,""));
+    mixin(Load_Library!("DerelictILU"       ,""));
+    mixin(Load_Library!("DerelictILUT"      ,""));
+    mixin(Load_Library!("DerelictFT"        ,"\"freetype265.dll\""));
+    mixin(Load_Library!("DerelictAL"        ,""));
+    mixin(Load_Library!("DerelictVorbis"    ,"\"libvorbis-0.dll\""));
+    mixin(Load_Library!("DerelictVorbisFile","\"libvorbisfile-3.dll\""));
     
     writeln("AOD@Realm.d@Initialize Initializing SDL");
     SDL_Init ( SDL_INIT_EVERYTHING );
@@ -169,11 +171,10 @@ public:
       /* bg_blue  = 0; */
       /* bg_green = 0; */
     }
-    static import AOD.camera;
+    static import AODCore.camera;
     AODCore.camera.Set_Position(Vector(0, 0));
-    AODCore.camera.Set_Size(
-                    Vector(cast(float)AODCore.clientvars.screen_width,
-                           cast(float)AODCore.clientvars.screen_height));
+    AODCore.camera.Set_Size(Vector(cast(float)window_width,
+                                   cast(float)window_height));
     writeln("AOD@Realm.d@Initialize Finalized initializing AOD main core");
   }
 
@@ -181,11 +182,11 @@ public:
     assert(o !is null);
   } body {
     static uint id_count = 0;
-    o.Set_Id(id_count ++);
+    o.Set_ID(id_count ++);
     int l = o.R_Layer();
     if ( objects.length <= l ) objects.length = l+1;
     objects[l] ~= o;
-    return o;
+    return o.Ret_ID();
   }
 
   void Add(Text t) in {

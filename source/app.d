@@ -11,10 +11,9 @@ public:
     Set_Sprite(AOD.Load_Image("assets/AOD.png"));
     Set_Is_Static_Pos(true);
     Set_Visible(true);
-    count = 0;
   }
   override void Update() {
-    Set_Position(R_Mouse_X(0), R_Mouse_Y(0));
+    Set_Position(AOD.Inp.R_Mouse_X(0), AOD.Inp.R_Mouse_Y(0));
     if ( AOD.Util.R_Rand(0.0f, 100.0f) > 75.0f ) {
       auto f = new Flykick();
       f.Set_Position(R_Position());
@@ -63,7 +62,7 @@ void Init () {
   writeln("app.d@Init Setting up console");
   AOD.Console.console_open = false;
   AOD.Console.Set_Console_Output_Type(AOD.Console.Type.Debug_In);
-  AOD.AOD.Initialize(16, "CYBER BUTCHER", 640, 480);
+  AOD.Initialize(16, "CYBER BUTCHER", 640, 480);
   AOD.Camera.Set_Size(AOD.Vector(AOD.R_Window_Width(), AOD.R_Window_Height()));
   AOD.Camera.Set_Position(AOD.Vector(AOD.R_Window_Width()/2,
                                      AOD.R_Window_Height()/2));
@@ -71,9 +70,9 @@ void Init () {
   AOD.Console.Initialize(1, SDL_SCANCODE_GRAVE, "");
   AOD.Set_BG_Colour(.08, .08, .095);
   // --- debug ---
-  AOD.Add(test_obj);
-  AOD.Set_FPS_Display(new AOD.text.Text(20, 20, ""));
-  AOD.Sounds.Play_Sample("assets\\test-song.ogg");
+  AOD.Add(new Test_Object());
+  AOD.Set_FPS_Display(new AOD.Text(20, 20, ""));
+  AOD.Play_Sample("assets\\test-song.ogg");
 }
 
 int main () {
