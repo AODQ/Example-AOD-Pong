@@ -60,8 +60,8 @@ public:
     texture = sc.texture;
     width = sc.width;
     height = sc.height;
-    ul = ul_;
-    lr = lr_;
+    ul = ul_/width;
+    lr = lr_/height;
   }
 }
 
