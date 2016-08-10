@@ -18,6 +18,8 @@ public:
 
     this.ball = ball;
     this.width = width;
+    
+    Set_Sprite(Image_Data.paddle);
 
     Set_Vertices([
       AOD.Vector(-width / 2.0f, -20.0f),

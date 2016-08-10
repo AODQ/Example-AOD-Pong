@@ -56,7 +56,7 @@ public:
       ul_ = relative offset for the upper left coordinate from origin
       lr_ = relative offset of the lower right coordinate from origin
   */
-  this(ref SheetContainer sc, ref Vector ul_, ref Vector lr_) {
+  this(SheetContainer sc, Vector ul_, Vector lr_) {
     texture = sc.texture;
     width = sc.width;
     height = sc.height;

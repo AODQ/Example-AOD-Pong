@@ -67,8 +67,6 @@ struct INI_Item {
   }
 }
 
-// Hashmap representing categories, each category contains an array of INI_Item
-// example: data["keybinds"].key
 /** Hashmap representing categories. Each category contains an array of INI_Item
 Example:
 ---

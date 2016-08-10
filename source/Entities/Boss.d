@@ -9,7 +9,7 @@ public:
 
   this() {
     super();
-    Set_Sprite(Image_Data.boss);
+    /* Set_Sprite(Image_Data.boss); */
     Set_Position(50.0f, 50.0f);
   }
 
