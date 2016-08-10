@@ -25,6 +25,7 @@ public:
       AOD.Vector(width / 2.0f, 20.0f),
       AOD.Vector(-width / 2.0f, 20.0f),
     ]);
+    Set_Sprite(Image_Data.paddle);
     Set_Size(AOD.Vector(width, 20.0f), true);
     Set_Position(AOD.Vector(cast(float) AOD.R_Window_Width() / 2.0f, cast(float) AOD.R_Window_Height() - 50.0f));
     this.ball.Set_Position(this.position - AOD.Vector(0.0f, 10.0f + this.ball.size));
@@ -82,18 +83,23 @@ public:
     }
 
     if ( !launched ) {
-      ball.Set_Position(this.position - AOD.Vector(0.0f, 10.0f + ball.size) + this.velocity + AOD.Vector(ball_offset, 0.0f));
+      ball.Set_Position(position - AOD.Vector(0.0f, 10.0f + ball.size) + velocity + AOD.Vector(ball_offset, 0.0f));
 
       if ( key_launch ) {
         launched = true;
-        ball.direction = (ball.R_Position() - this.position);
+        ball.direction = (ball.R_Position() - position);
       }
     }
 
     if ( Collision(ball).collision ) {
+      //ball.direction = ball.R_Position() - position;
 
-      //this.ball.direction = ball.R_Position() - this.position;
-      AOD.Output("test");
+      AOD.Output("Ball collided with paddle");
+    }
+
+    if ( ball.R_Position().y + ball.size / 2.0f > AOD.R_Window_Height() ) {
+      launched = false;
+      ball_offset = 0.0f;
     }
   }
 }

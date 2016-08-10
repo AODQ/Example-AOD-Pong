@@ -5,7 +5,7 @@ import Data;
 class Ball : AOD.PolyEntity {
 public:
   float size;
-  float speed = 1.0f;
+  float speed = 3.0f;
   AOD.Vector direction = AOD.Vector(0.0f, 0.0f);
 
   this(float size) {
@@ -25,5 +25,13 @@ public:
     direction.Normalize();
 
     velocity = direction * speed;
+
+    if ( position.x - size / 2.0f + velocity.x < 0 || position.x + size / 2.0f + velocity.x > AOD.R_Window_Width() ) {
+      direction.x = -direction.x;
+    }
+
+    if ( position.y - size / 2.0f + velocity.y < 0 ) {
+      direction.y = -direction.y;
+    }
   }
 }
