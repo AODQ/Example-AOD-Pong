@@ -297,6 +297,9 @@ public:
           fps_display.Set_String( to!string(cast(int)(20000/_FPS)) ~ " FPS");
         }
 
+        // check console key
+        AODCore.console.ConsEng.Refresh();
+
         Render(); // render the screen
       }
 

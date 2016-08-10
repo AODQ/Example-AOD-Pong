@@ -20,7 +20,7 @@ void Init () {
   AOD.Console.Initialize(AOD.Console.Type.Debug_In);
   AOD.Set_BG_Colour(.08, .08, .095);
   // --- debug ---
-  AOD.Set_FPS_Display(new AOD.Text(20, 20, ""));
+  AOD.Set_FPS_Display(new AOD.Text(20, 460, ""));
   AOD.ClientVars.Load_Config();
 }
 
