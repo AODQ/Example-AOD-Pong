@@ -166,11 +166,6 @@ Params:
   in {
     assert(index <= 0);
   } body {
-    if ( index <= 0 ) {
-      Debug_Output("Error, image texture not found");
-      return;
-    }
-
     if ( reset_size ) {
       GLuint tex = index;
       glGenTextures(1, &tex);
@@ -203,6 +198,11 @@ Params:
   /** */
   GLuint R_Sprite_Texture() { return image; }
 
+  /** (radians)*/
+  void Add_Rotation(float r) {
+    rotation += r;
+    Refresh_Transform();
+  }
   /** (radians)*/
   void Set_Rotation(float r) {
     rotation = r;
@@ -246,8 +246,7 @@ Params:
   }
 
   /** Sets the UV directly */
-  void Set_UVs(Vector left, Vector right,
-              bool reset_flip = 1) {
+  void Set_UVs(Vector left, Vector right, bool reset_flip = 1) {
     _UV[0] = left.x;
     _UV[1] = right.y;
     _UV[2] = left.x;
@@ -454,7 +453,7 @@ public:
     Returns:
       Result of the collision in respects to this colliding onto the poly
   */
-  Collision_Info Collide(PolyEnt poly, Vector velocity) {
+  Collision_Info Collision(PolyEnt poly, Vector velocity) {
     return PolyPolyColl(this, poly, velocity);
   }
   /** Check collision with another AABBEntity
@@ -464,7 +463,7 @@ public:
     Returns:
       Result of the collision in respects to this colliding onto the AABB
   */
-  Collision_Info Collide(AABBEnt aabb, Vector velocity) {
+  Collision_Info Collision(AABBEnt aabb, Vector velocity) {
     return Collision_Info(); 
   }
 };
@@ -506,7 +505,7 @@ public:
     Returns:
       Result of the collision in respects to this colliding onto the AABB
   */
-  override Collision_Info Collide(AABBEnt aabb, Vector velocity) {
+  Collision_Info Collide(AABBEnt aabb, Vector velocity) {
     return Collision_Info();
   }
   /** Check collision with another PolyEntity
@@ -516,7 +515,7 @@ public:
     Returns:
       Result of the collision in respects to this colliding onto the poly
   */
-  override Collision_Info Collide(PolyEnt poly, Vector velocity) {
+  Collision_Info Collide(PolyEnt poly, Vector velocity) {
     return Collision_Info();
   }
 };
@@ -572,7 +571,7 @@ private Vector Get_Axis(Vector[] vertices, int i) {
   return axis;
 }
 
-private void Project_Poly(ref Vector axis, ref Vector[] poly,
+private void Project_Poly(ref Vector axis, Vector[] poly,
                      ref float min, ref float max) {
   min = axis.Dot_Product(poly[0]);
   max = min;
@@ -645,7 +644,6 @@ private Collision_Info PolyPolyColl(PolyEnt polyA, PolyEnt polyB,
     ci.translation = trans_vec * min_dist;
   return ci;
 }
-
 
 struct Vert_Pair {
   float dist;

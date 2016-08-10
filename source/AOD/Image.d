@@ -56,12 +56,19 @@ public:
       ul_ = relative offset for the upper left coordinate from origin
       lr_ = relative offset of the lower right coordinate from origin
   */
-  this(SheetContainer sc, Vector ul_, Vector lr_) {
+  this(SheetContainer sc, Vector tul, Vector tlr) {
+    ul = tul;
+    lr = tlr;
+    import std.math;
+    width   = cast(int)abs(ul.x - lr.x);
+    height  = cast(int)abs(ul.y - lr.y);
     texture = sc.texture;
-    width = sc.width;
-    height = sc.height;
-    ul = ul_/width;
-    lr = lr_/height;
+    ul.x /= sc.width; lr.y /= sc.height;
+    lr.x /= sc.width; ul.y /= sc.height;
+    import std.stdio;
+    float ty = lr.y;
+    lr.y = 1 - ul.y;
+    ul.y = 1 - ty;
   }
 }
 

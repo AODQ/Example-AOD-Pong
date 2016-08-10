@@ -26,25 +26,18 @@ void Init () {
 
 
 void Game_Init () {
-  static import Data;
-  Data.Image_Data.Initialize();
+  import Data;
+  Image_Data.Initialize();
+  static import Game_Manager;
   import Entity.Asteroid;
-  auto pl = new Asteroid(ast_size.ast_tiny);
-  AOD.Add(pl);
+  Game_Manager.Add(new Asteroid(Asteroid.Size.large));
 
   import Entity.Ball;
-  auto ball = new Ball(10.0f);
-  AOD.Add(ball);
+  auto ball = new Ball(10);
+  Game_Manager.Add(ball);
 
   import Entity.Paddle;
-  auto paddle = new Paddle(100.0f, ball);
-  AOD.Add(paddle);
-  
-  import Entity.Asteroid;
-  auto asteroid = new Asteroid(ast_size.ast_medium);
-  AOD.Add(asteroid);
-  import std.conv : to;
-  AOD.Output(to!string(asteroid.R_Rotation()));
+  Game_Manager.Add(new Paddle(100, ball));
 }
 
 int main () {

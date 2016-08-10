@@ -311,12 +311,10 @@ public:
           temp_dt = cast(float)(SDL_GetTicks()) - curr_dt;
         }
       }
-
       // set current frame timemark
       prev_dt = curr_dt;
     }
   }
-
 
   void Update() {
     // update objects
@@ -324,7 +322,7 @@ public:
     foreach ( a ; l ) {
       a.Update();
       a.Add_Position(a.R_Velocity());
-      a.Add_Torque(a.R_Torque());
+      a.Add_Rotation(a.R_Torque());
     }
 
     // remove objects
@@ -364,46 +362,47 @@ public:
 
     // --- objects
 
-    foreach ( az ; objects )
-    foreach ( lz ; az ) {
-      if ( !lz.R_Is_Visible() ) continue;
-      auto position = lz.R_Position(),
-           size      = lz.R_Size();
-      if ( !lz.R_Is_Static_Pos() ) {
-        position.x -= off_x;
-        position.y -= off_y;
+    for ( int obj_layer = objects.length-1; obj_layer != -1; -- obj_layer )
+      foreach ( lz ; objects[obj_layer] ) {
+        if ( !lz.R_Is_Visible() ) continue;
+        auto position = lz.R_Position(),
+             size      = lz.R_Size();
+        if ( !lz.R_Is_Static_Pos() ) {
+          position.x -= off_x;
+          position.y -= off_y;
+        }
+        if ((position.x + size.x/2 < 0 ||
+             position.x - size.x/2 > Camera.R_Size().x ) ||
+            (position.y + size.y/2 < 0 ||
+             position.y - size.y/2 > Camera.R_Size().y) )
+          continue;
+
+        glPushMatrix();
+        glPushAttrib(GL_CURRENT_BIT);
+          if ( lz.R_Is_Coloured() )
+            glColor4f(lz.R_Red(), lz.R_Green(), lz.R_Blue(), lz.R_Alpha());
+          glBindTexture(GL_TEXTURE_2D, lz.R_Sprite_Texture());
+          auto origin = lz.R_Origin();
+          int fx = lz.R_Flipped_X() ? - 1 :  1 ,
+              fy = lz.R_Flipped_Y() ?   1 :- 1 ;
+          glTranslatef(position.x + origin.x*fx,
+                       position.y + origin.y*fy, 0);
+          import std.conv : to;
+          import std.stdio : writeln;
+          glRotatef((lz.R_Rotation()*180.0)/3.14159f, 0, 0, 1);
+          glTranslatef(-origin.x*fx,
+                       -origin.y*fy, 0);
+          glScalef (lz.R_Img_Size().x, lz.R_Img_Size().y, 1);
+
+          import std.conv : to;
+          glVertexPointer  (2, GL_FLOAT, 0, Entity.Vertices.ptr);
+          glTexCoordPointer(2, GL_FLOAT, 0, lz.R_UV_Array().ptr);
+          glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_BYTE, index.ptr);
+          glLoadIdentity();
+        glPopAttrib();
+        glPopMatrix();
       }
-      if ((position.x + size.x/2 < 0 ||
-           position.x - size.x/2 > Camera.R_Size().x ) ||
-          (position.y + size.y/2 < 0 ||
-           position.y - size.y/2 > Camera.R_Size().y) )
-        continue;
-
-      glPushMatrix();
-      glPushAttrib(GL_CURRENT_BIT);
-        if ( lz.R_Is_Coloured() )
-          glColor4f(lz.R_Red(), lz.R_Green(), lz.R_Blue(), lz.R_Alpha());
-        glBindTexture(GL_TEXTURE_2D, lz.R_Sprite_Texture());
-        auto origin = lz.R_Origin();
-        int fx = lz.R_Flipped_X() ? - 1 :  1 ,
-            fy = lz.R_Flipped_Y() ?   1 :- 1 ;
-        glTranslatef(position.x + origin.x*fx,
-                     position.y + origin.y*fy, 0);
-        import std.conv : to;
-        import std.stdio : writeln;
-        glRotatef((lz.R_Rotation()*180.0)/3.14159f, 0, 0, 1);
-        glTranslatef(-origin.x*fx,
-                     -origin.y*fy, 0);
-        glScalef (lz.R_Img_Size().x, lz.R_Img_Size().y, 1);
-
-        import std.conv : to;
-        glVertexPointer  (2, GL_FLOAT, 0, Entity.Vertices.ptr);
-        glTexCoordPointer(2, GL_FLOAT, 0, lz.R_UV_Array().ptr);
-        glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_BYTE, index.ptr);
-        glLoadIdentity();
-      glPopAttrib();
-      glPopMatrix();
-    }
+    //-- 
 
 
     // ---- texts
