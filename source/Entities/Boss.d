@@ -25,18 +25,18 @@ public:
           case "down":  key_down  = true; break;
           case "jump":  key_jump  = true; break;
           case "prim":  key_prim  = true; break;
+          /* case "crouch" */
         }
       }
     }
 
-    velocity.x *= 0.999f;
+    velocity.x *= 0.899f;
 
     if ( key_left ) {
       Add_Velocity(AOD.Vector(-2.0f, 0.0f));
     }
     if ( key_right ) {
-      Add_Velocity(AOD.Vector(15.0f, 0.0f));
-      Add_Position(AOD.Vector(1.0f, 0.0f));
+      Add_Velocity(AOD.Vector( 2.0f, 0.0f));
     }
 
 

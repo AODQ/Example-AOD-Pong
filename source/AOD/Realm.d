@@ -318,8 +318,11 @@ public:
   void Update() {
     // update objects
     foreach ( l ; objects )
-    foreach ( a ; l )
+    foreach ( a ; l ) {
       a.Update();
+      a.Add_Position(a.R_Velocity());
+      a.Add_Torque(a.R_Torque());
+    }
 
     // remove objects
     foreach ( rem_it; 0 .. objs_to_rem.length ) {

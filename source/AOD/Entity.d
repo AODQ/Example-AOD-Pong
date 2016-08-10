@@ -228,6 +228,9 @@ Params:
   void Set_Torque(float t) {
     rotation_velocity = t;
   }
+  void Add_Torque(float t) {
+    rotation_velocity += t;
+  }
   Vector R_Velocity() const {
     return velocity;
   }
