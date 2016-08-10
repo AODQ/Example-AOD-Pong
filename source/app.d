@@ -31,6 +31,14 @@ void Game_Init () {
   import Entity.Boss;
   auto pl = new Boss();
   AOD.Add(pl);
+
+  import Entity.Ball;
+  auto ball = new Ball(10.0f);
+  AOD.Add(ball);
+
+  import Entity.Paddle;
+  auto paddle = new Paddle(100.0f, ball);
+  AOD.Add(paddle);
 }
 
 int main () {
