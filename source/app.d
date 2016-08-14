@@ -26,6 +26,7 @@ void Init () {
 
 
 void Game_Init () {
+/*
   import Data;
   Image_Data.Initialize();
   static import Game_Manager;
@@ -38,6 +39,9 @@ void Game_Init () {
 
   import Entity.Paddle;
   Game_Manager.Add(new Paddle(100, ball));
+*/
+	import Menu_Manager;
+	Menu_Manager.render();
 }
 
 int main () {

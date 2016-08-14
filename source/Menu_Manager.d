@@ -1,18 +1,19 @@
 module Menu_Manager;
 static import AOD;
-import Menu_Entity;
+import Entity.Menu;
 
-Menu_Entity [][] menus = [[new Menu_Entity(AOD.Vector(100, 100), 200, 50, "play", &play)]];
+MenuEntity [][] menus = [[new MenuEntity(AOD.Vector(100, 100), 200, 50,
+                          "play", &play)]];
 int screen = 0;
 
-void render() {
-	foreach (Menu_Entity m; menus[screen]) {
+void Create() {
+	foreach (MenuEntity m; menus[screen]) {
 		AOD.Add(m);
 		AOD.Add(m.msg);
 	}
 }
 
-void clear() {
+void Destroy() {
 	foreach (m; menus[screen]) {
 		AOD.Remove(m);
 		AOD.Remove(m.msg);
@@ -21,7 +22,7 @@ void clear() {
 
 //Initial menu
 void play() {
-  clear();
+  Destroy();
   import Data;
   Image_Data.Initialize();
   static import Game_Manager;
@@ -42,8 +43,8 @@ void credits() {
 
 void keys() {
 	screen = 1;
-	clear();
-	render();
+	Destroy();
+	Create();
 }
 
 void quit() {

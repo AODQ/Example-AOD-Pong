@@ -100,8 +100,9 @@ public:
       velocity.x *= -1;
     }
 
-    if ( position.y - R_Size().x/2.0f + velocity.y < 0 ||
-         position.y + R_Size().x/2.0f + velocity.y > 400 ) {
+    if ( position.y - R_Size().x/2.0f + velocity.y < 0 &&
+		 position.y - R_Size().x/2.0f > 0||
+         position.y + R_Size().x/2.0f + velocity.y > 420 ) {
       velocity.y *= -1;
     }
   }
