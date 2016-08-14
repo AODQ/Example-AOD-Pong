@@ -365,9 +365,9 @@ Params:
   /** */
   bool R_Flipped_Y()     { return flipped_y;   }
   
-  static import AOD;
   bool Clicked() {
-    return AOD.Input.R_LMB() &&
+	  static import AOD;
+	  return AOD.Input.R_LMB() &&
 		   AOD.Input.R_Mouse_X(0) > position.x - size.x / 2.0f &&
 		   AOD.Input.R_Mouse_X(0) < position.x + size.x / 2.0f &&
 		   AOD.Input.R_Mouse_Y(0) > position.y - size.y / 2.0f &&

@@ -2,8 +2,7 @@ module Menu_Manager;
 static import AOD;
 import Entity.Menu;
 
-MenuEntity [][] menus = [[new MenuEntity(AOD.Vector(100, 100), 200, 50,
-                          "play", &play)]];
+MenuEntity [][] menus;
 int screen = 0;
 
 void Create() {

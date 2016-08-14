@@ -27,7 +27,7 @@ public:
     speed = Default_speed;
     stored_ball = _stored_ball;
     this.width = _width;
-    Set_Sprite(Image_Data.paddle);
+    //Set_Sprite(Image_Data.paddle);
 
     Set_Vertices([
       Vector(-width / 2.0f, -10.0f),
