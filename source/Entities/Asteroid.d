@@ -90,7 +90,7 @@ public:
       case Size.large:  mult =  1; break;
       default: break;
    }
-  Set_Torque(AOD.Util.R_Rand(0.001f, 0.1f));
+  Set_Torque(AOD.Util.R_Rand(-0.01f, 0.1f));
  }
 
   override void Update() {
@@ -102,7 +102,7 @@ public:
 
     if ( position.y - R_Size().x/2.0f + velocity.y < 0 &&
 		 position.y - R_Size().x/2.0f > 0||
-         position.y + R_Size().x/2.0f + velocity.y > 420 ) {
+         position.y + R_Size().x/2.0f + velocity.y > 360 ) {
       velocity.y *= -1;
     }
   }

@@ -41,8 +41,10 @@ void Game_Init () {
   import Entity.Paddle;
   Game_Manager.Add(new Paddle(100, ball));
 */
+  import Data;
+  Image_Data.Initialize();
   import Entity.Menu;
-  Menu_Manager.menus = [[new Entity.Menu.MenuEntity(AOD.Vector(320, 240), 100, 20,
+  Menu_Manager.menus = [[new Entity.Menu.MenuEntity(AOD.Vector(320, 240), 100, 100,
                           "play", &Menu_Manager.play)]];
 	Menu_Manager.Create();
 }

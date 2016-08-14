@@ -8,7 +8,7 @@ public:
 	AOD.Text msg;
 	
 	this( AOD.Vector pos, int x, int y, string text, void function() click ) {
-    Set_Sprite (Image_Data.paddle);
+    Set_Sprite (Image_Data.meteor_large);
     Set_Size(AOD.Vector(x, y), true);
     Set_Position(pos);
     Set_Visible(1);

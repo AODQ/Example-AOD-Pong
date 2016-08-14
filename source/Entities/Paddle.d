@@ -19,6 +19,8 @@ public:
     speed_timer = _speed_timer;
   }
   
+  float R_Width() { return width; }
+  
   float R_Default_Speed() { return Default_speed; }
 
   this(float _width, Ball _stored_ball) {
@@ -43,8 +45,12 @@ public:
                              stored_ball.R_Size().x));
   }
 
-  void Add_Ball(Ball new_ball) in { assert(stored_ball is null); }
+  void Add_Ball(Ball new_ball) //in { assert(stored_ball is null); }
   body {
+    if ( stored_ball !is null ) {
+      stored_ball.direction = (stored_ball.R_Position() - position);
+      stored_ball = null;
+    }
     stored_ball = new_ball;
   }
 

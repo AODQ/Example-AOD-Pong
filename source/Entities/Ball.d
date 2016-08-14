@@ -2,6 +2,7 @@ module Entity.Ball;
 static import AOD;
 static import Game_Manager;
 import Data;
+import std.math;
 
 class Ball : AOD.PolyEntity {
   float speed;
@@ -72,7 +73,9 @@ public:
       auto col = Collision(Game_Manager.paddle, velocity);
       if ( col.will_collide ) {
         Add_Position(col.translation);
-        direction.y *= -1;
+        direction.x = (position.x - Game_Manager.paddle.R_Position.x)
+                      / Game_Manager.paddle.R_Width();
+        direction.y = -sqrt(1-direction.x*direction.x);
         coll_timer = 16;
       }
       foreach ( asteroid; Game_Manager.asteroids ) {

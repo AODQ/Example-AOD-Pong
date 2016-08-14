@@ -22,8 +22,6 @@ void Destroy() {
 //Initial menu
 void play() {
   Destroy();
-  import Data;
-  Image_Data.Initialize();
   static import Game_Manager;
   import Entity.Asteroid;
   Game_Manager.Add(new Asteroid(Asteroid.Size.large));
