@@ -95,6 +95,10 @@ protected:
 
   /** Used to determine if the vertices of an entity need to be restructured */
   bool transformed;
+
+  static import AODCore.shader;
+  /** Current shader to use to render this (null == no shader) */
+  AODCore.shader.Shader shader;
 public:
   /** */
   int R_Layer() { return layer; }
@@ -121,7 +125,6 @@ Params:
     rotation = 0;
     rotation_velocity = 0;
     velocity = Vector(0,0);
-    layer = 0;
     is_coloured = 0;
     static_pos = 0;
     visible = 1;
@@ -164,7 +167,7 @@ Params:
   */
   void Set_Sprite(GLuint index, bool reset_size = 0)
   in {
-    assert(index <= 0);
+    assert(index > 0);
   } body {
     if ( reset_size ) {
       GLuint tex = index;
@@ -197,6 +200,14 @@ Params:
   }
   /** */
   GLuint R_Sprite_Texture() { return image; }
+
+  /** Sets shader to render entity with */
+  void Set_Shader(AODCore.shader.Shader _shader) {
+    shader = _shader;
+  }
+
+  /** */
+  AODCore.shader.Shader R_Shader() { return shader; }
 
   /** (radians)*/
   void Add_Rotation(float r) {
@@ -364,21 +375,17 @@ Params:
   bool R_Flipped_X()     { return flipped_x;   }
   /** */
   bool R_Flipped_Y()     { return flipped_y;   }
-  
-  bool Clicked() {
-	  static import AOD;
-	  return AOD.Input.R_LMB() &&
-		   AOD.Input.R_Mouse_X(0) > position.x - size.x / 2.0f &&
-		   AOD.Input.R_Mouse_X(0) < position.x + size.x / 2.0f &&
-		   AOD.Input.R_Mouse_Y(0) > position.y - size.y / 2.0f &&
-		   AOD.Input.R_Mouse_Y(0) < position.y + size.y / 2.0f;
-  }
-  
+
   /** */
   Type R_Type()     { return type;   }
   /** */
   Matrix R_Matrix() { return matrix; }
   // ---- utility ----
+  /** Called immediately before rendering this entity, used to change GLSL
+      uniform values. Meant to be overriden */
+  void Prerender() {}
+  /** Called once every frame. Velocity and torque will
+        be applied immediately after this call. Meant to be overriden. */
   void Update() {};
   /** Determines if there is a collision between this entity and another
       Returns:
@@ -400,8 +407,8 @@ protected:
   void Build_Transform() {}
 public:
   /** Constructs an entity that has no vertices */
-  this() {
-    super(Type.Polygon);
+  this(int _layer = 0) {
+    super(_layer, Type.Polygon);
     vertices = [];
   }
   /** Constructs an entity
@@ -462,7 +469,9 @@ public:
     Returns:
       Result of the collision in respects to this colliding onto the poly
   */
-  Collision_Info Collision(PolyEnt poly, Vector velocity) {
+  Collision_Info Collision(PolyEnt poly, Vector velocity) in {
+    assert(vertices.length > 0 && poly.R_Vertices().length > 0);
+  } body {
     return PolyPolyColl(this, poly, velocity);
   }
   /** Check collision with another AABBEntity
@@ -581,7 +590,7 @@ private Vector Get_Axis(Vector[] vertices, int i) {
 }
 
 private void Project_Poly(ref Vector axis, Vector[] poly,
-                     ref float min, ref float max) {
+                          ref float min, ref float max) {
   min = axis.Dot_Product(poly[0]);
   max = min;
 

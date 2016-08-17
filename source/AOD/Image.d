@@ -42,7 +42,7 @@ public:
 */
 struct SheetRect {
 public:
-  public SheetContainer sc;
+  SheetContainer sc;
   alias sc this;
   /** */
   Vector ul,
@@ -71,6 +71,7 @@ public:
     ul.y = 1 - ty;
   }
 }
+
 
 import std.string;
 SheetContainer Load_Image(const char* fil) {

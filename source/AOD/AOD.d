@@ -50,6 +50,7 @@ static import AODCore.vector;
 static import AODCore.utility;
 static import AODCore.matrix;
 static import AODCore.camera;
+static import AODCore.shader;
 
 // --------------------- realm -------------------------------------------------
 
@@ -107,6 +108,10 @@ in {
 
 /** Runs the engine (won't return until SDL_Quit is called) */
 void Run() in { assert(realm !is null); } body {
+  // do splash screen
+  /* import AODCore.Splashscreen; */
+  /* AOD.Add(new Splash); */
+  // now run
   realm.Run();
 }
 
@@ -163,6 +168,8 @@ public: static:
   alias INI_Data  = AODCore.utility.INI_Data;
 }
 
+alias Direction = AODCore.utility.Direction;
+
 // --------------------- Entity ------------------------------------------------
 
   /** */
@@ -180,11 +187,23 @@ alias Text = AODCore.text.Text;
 // --------------------- Image -------------------------------------------------
 
   /** */
-alias SheetContainer = AODCore.image.SheetContainer;
+alias SheetContainer   = AODCore.image.SheetContainer;
   /** */
-alias SheetRect      = AODCore.image.SheetRect;
+alias SheetRect        = AODCore.image.SheetRect;
   /** */
-alias Load_Image     = AODCore.image.Load_Image;
+alias Load_Image       = AODCore.image.Load_Image;
+
+// --------------------- Animation ---------------------------------------------
+
+  /** */
+alias Animation        = AODCore.animation.Animation;
+  /** */
+alias Animation_Player = AODCore.animation.Animation_Player;
+
+// --------------------- Shader ------------------------------------------------
+
+ /** */
+alias Shader = AODCore.shader.Shader;
 
 // --------------------- Camera ------------------------------------------------
 

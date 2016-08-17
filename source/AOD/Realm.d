@@ -96,12 +96,13 @@ public:
     writeln("AOD@Realm.d@Initialize Creating SDL Window");
     screen = SDL_CreateWindow(window_name, SDL_WINDOWPOS_UNDEFINED,
                                            SDL_WINDOWPOS_UNDEFINED,
-                                           window_width, window_height,
+                                           window_width*2,
+                                           window_height*2,
                                            SDL_WINDOW_OPENGL |
                                            SDL_WINDOW_SHOWN );
     writeln("Creating OpenGL Context");
-    SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 2);
-    SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 2);
+    SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3);
+    SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 1);
     SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
     SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE,  24);
     SDL_GL_SetAttribute(SDL_GL_ALPHA_SIZE,   8);
@@ -126,7 +127,7 @@ public:
     }
 
     glEnable(GL_TEXTURE_2D);
-    glEnable(GL_BLEND);
+    /* glEnable(GL_BLEND); */
     if ( icon != "" ) {
       writeln("Loading window icon");
       SDL_Surface* ico = SDL_LoadBMP(icon);
@@ -136,7 +137,7 @@ public:
     glClearDepth(1.0f);
     glPolygonMode(GL_FRONT, GL_FILL);
     glShadeModel(GL_FLAT);
-    glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_FASTEST);
+    /* glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_FASTEST); */
     glDepthFunc(GL_LEQUAL);
     glEnable(GL_DEPTH_TEST);
     glEnable(GL_BLEND);
@@ -158,6 +159,7 @@ public:
                                                        window_height));
     
     glOrtho(0, window_width, window_height, 0, 0, 1);
+    glViewport(0, 0, window_width*2, window_height*2);
 
     glDisable(GL_DEPTH_TEST);
     glMatrixMode(GL_MODELVIEW);
@@ -379,9 +381,11 @@ public:
 
         glPushMatrix();
         glPushAttrib(GL_CURRENT_BIT);
+          // set colour/texture
           if ( lz.R_Is_Coloured() )
             glColor4f(lz.R_Red(), lz.R_Green(), lz.R_Blue(), lz.R_Alpha());
           glBindTexture(GL_TEXTURE_2D, lz.R_Sprite_Texture());
+          // set position/rotation/scale
           auto origin = lz.R_Origin();
           int fx = lz.R_Flipped_X() ? - 1 :  1 ,
               fy = lz.R_Flipped_Y() ?   1 :- 1 ;
@@ -390,10 +394,19 @@ public:
           import std.conv : to;
           import std.stdio : writeln;
           glRotatef((lz.R_Rotation()*180.0)/3.14159f, 0, 0, 1);
-          glTranslatef(-origin.x*fx,
-                       -origin.y*fy, 0);
+          glTranslatef(-cast(int)(origin.x*fx),
+                       -cast(int)(origin.y*fy), 0);
           glScalef (lz.R_Img_Size().x, lz.R_Img_Size().y, 1);
 
+          // shader
+          static import AODCore.shader;
+          if ( lz.R_Shader().R_Shader_ID() != 0 ) {
+            lz.R_Shader().Bind();
+            lz.Prerender();
+          } else
+            AODCore.shader.Shader.Unbind();
+
+          // render
           import std.conv : to;
           glVertexPointer  (2, GL_FLOAT, 0, Entity.Vertices.ptr);
           glTexCoordPointer(2, GL_FLOAT, 0, lz.R_UV_Array().ptr);

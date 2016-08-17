@@ -36,6 +36,13 @@ float R_Rand(float bot, float top) {
   return uniform(bot, top, gen);
 }
 
+/** */
+enum Direction {
+  NW,  N, NE,
+   W,      E,
+  SW,  S, SE
+};
+
 /** Returns: Max value between the two parameters */
 T R_Max(T)(T x, T y) { return x > y ? x : y; }
 /** Returns: Min value between the two parameters */
