@@ -2,6 +2,7 @@ import derelict.opengl3.gl3;
 import derelict.sdl2.sdl;
 import std.stdio;
 static import AOD;
+import Menu_Manager;
 
 // This is the "standard" way to initialize the engine. My thought process is
 // to immediately set up the console so we can receive errors as we initialize
@@ -26,6 +27,7 @@ void Init () {
 
 
 void Game_Init () {
+/*
   import Data;
   Image_Data.Initialize();
   static import Game_Manager;
@@ -38,6 +40,13 @@ void Game_Init () {
 
   import Entity.Paddle;
   Game_Manager.Add(new Paddle(100, ball));
+*/
+  import Data;
+  Image_Data.Initialize();
+  import Entity.Menu;
+  Menu_Manager.menus = [[new Entity.Menu.MenuEntity(AOD.Vector(320, 240), 100, 100,
+                          "play", &Menu_Manager.play)]];
+	Menu_Manager.Create();
 }
 
 int main () {

@@ -19,6 +19,8 @@ public:
     speed_timer = _speed_timer;
   }
   
+  float R_Width() { return width; }
+  
   float R_Default_Speed() { return Default_speed; }
 
   this(float _width, Ball _stored_ball) {
@@ -27,7 +29,7 @@ public:
     speed = Default_speed;
     stored_ball = _stored_ball;
     this.width = _width;
-    Set_Sprite(Image_Data.paddle);
+    //Set_Sprite(Image_Data.paddle);
 
     Set_Vertices([
       Vector(-width / 2.0f, -10.0f),
@@ -43,8 +45,12 @@ public:
                              stored_ball.R_Size().x));
   }
 
-  void Add_Ball(Ball new_ball) in { assert(stored_ball is null); }
+  void Add_Ball(Ball new_ball) //in { assert(stored_ball is null); }
   body {
+    if ( stored_ball !is null ) {
+      stored_ball.direction = (stored_ball.R_Position() - position);
+      stored_ball = null;
+    }
     stored_ball = new_ball;
   }
 
