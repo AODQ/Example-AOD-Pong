@@ -156,6 +156,19 @@ Params:
   void Add_Position(Vector v) {
     position += v;
   }
+  /** Returns true if the entity is clicked
+Params:
+    offset = If true the check will be adjust for camera offset (generally set
+               this to false for non-static objects
+  */
+  bool Clicked(bool offset) {
+	  static import AOD;
+	  return AOD.Input.R_LMB() &&
+		   AOD.Input.R_Mouse_X(offset) > position.x - size.x / 2.0f &&
+		   AOD.Input.R_Mouse_X(offset) < position.x + size.x / 2.0f &&
+		   AOD.Input.R_Mouse_Y(offset) > position.y - size.y / 2.0f &&
+		   AOD.Input.R_Mouse_Y(offset) < position.y + size.y / 2.0f;
+  }
   /** */
   Vector R_Position() { return position;  }
 

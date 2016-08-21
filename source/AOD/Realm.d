@@ -96,8 +96,8 @@ public:
     writeln("AOD@Realm.d@Initialize Creating SDL Window");
     screen = SDL_CreateWindow(window_name, SDL_WINDOWPOS_UNDEFINED,
                                            SDL_WINDOWPOS_UNDEFINED,
-                                           window_width*2,
-                                           window_height*2,
+                                           window_width,
+                                           window_height,
                                            SDL_WINDOW_OPENGL |
                                            SDL_WINDOW_SHOWN );
     writeln("Creating OpenGL Context");
@@ -159,7 +159,6 @@ public:
                                                        window_height));
     
     glOrtho(0, window_width, window_height, 0, 0, 1);
-    glViewport(0, 0, window_width*2, window_height*2);
 
     glDisable(GL_DEPTH_TEST);
     glMatrixMode(GL_MODELVIEW);

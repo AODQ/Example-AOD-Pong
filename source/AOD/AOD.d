@@ -162,6 +162,8 @@ public: static:
   alias Min_float = AODCore.utility.Min_float;
   alias Epsilon   = AODCore.utility.Epsilon;
 
+  alias Remove    = AODCore.utility.Remove;
+
   /** */
   alias Load_INI  = AODCore.utility.Load_INI;
   /** */
@@ -283,10 +285,11 @@ class Input {
 
 // --------------------- Sound -------------------------------------------------
 
-alias Play_Sample = AODCore.sound.Sounds.Play_Sample;
+alias Load_Sound = AODCore.sound.Sound.Load_Sound;
+alias Play_Sound = AODCore.sound.Sound.Play_Sound;
 class Sound {
-  alias Change_Sample_Position = AODCore.sound.Sounds.Change_Sample_Position;
-  alias Clean_Up               = AODCore.sound.Sounds.Clean_Up;
+  alias Change_Sample_Position = AODCore.sound.Sound.Change_Sound_Position;
+  alias Clean_Up               = AODCore.sound.Sound.Clean_Up;
 }
 
 

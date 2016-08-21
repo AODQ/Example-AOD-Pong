@@ -51,3 +51,13 @@ public: static:
     ];
   }
 }
+
+class Sound_Data {
+public: static:
+  uint bg_music, sf;
+
+  void Initialize() {
+    bg_music = AOD.Load_Sound("assets/test-song.ogg");
+    sf       = AOD.Load_Sound("assets/40bg.ogg");
+  }
+}

@@ -18,8 +18,11 @@ public:
 	}
 	
 	override void Update() {
-    if (Clicked()) {
+    if (Clicked(0)) {
 			on_click();
+      import Data;
+      AOD.Play_Sound(Sound_Data.bg_music);
+      AOD.Play_Sound(Sound_Data.sf);
 		}
 	}
 	

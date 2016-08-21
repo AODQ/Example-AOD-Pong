@@ -12,21 +12,21 @@ module AODCore.utility;
 import std.string;
 
 /** */
-const(float) E         =  2.718282,
+const(float) E         =  2.718282f,
 /** */
-             Log10E    =  0.4342945,
+             Log10E    =  0.4342945f,
 /** */
-             Log2E     =  1.442695,
+             Log2E     =  1.442695f,
 /** */
-             Pi        =  3.141593,
+             Pi        =  3.141593f,
 /** */
-             Tau       =  6.283185,
-/** */
+             Tau       =  6.283185f,
+/** use float.max instead */
              Max_float =  3.402823E+38,
-/** */
+/** use float.min instead */
              Min_float = -3.402823E+38,
 /** */
-             Epsilon   =  0.000001;
+             Epsilon   =  0.000001f;
 
 import std.random;
 private Random gen;
@@ -47,6 +47,17 @@ enum Direction {
 T R_Max(T)(T x, T y) { return x > y ? x : y; }
 /** Returns: Min value between the two parameters */
 T R_Min(T)(T x, T y) { return x < y ? x : y; }
+
+/** Returns array with indexed element removed */
+T Remove(T)(T array, int index) in {
+  assert(index >= 0 && index < array.length);
+} body {
+  if ( array.length-1 == index ) return array[0 .. index];
+  else {
+    return array[0 .. index] ~
+           array[index .. $];
+  }
+}
 
 import AODCore.vector;
 
