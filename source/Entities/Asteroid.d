@@ -63,7 +63,10 @@ public:
       }
     }
     int sound_index = cast(int)AOD.Util.R_Rand(0, 7);
-    AOD.Play_Sound(Sound_Data.sf[sound_index]);
+    AOD.Play_Sound(Sound_Data.sf[sound_index],
+        -(R_Position.x-AOD.R_Window_Width /2)/10,
+         (R_Position.y-AOD.R_Window_Height/2)/50,
+         (R_Position.y-AOD.R_Window_Height/2)/50);
 		Size temp = R_Size_Decremented(size);
     import std.math;
     foreach ( e; 0 .. R_Meteor_Amt(size) ) {
