@@ -76,7 +76,15 @@ public:
         }
       }
     }
-    
+
+    if ( key_ball_left ) {
+      import Entity.Asteroid;
+      AOD.Add(new Asteroid(Asteroid.Size.large));
+    }
+    if ( key_ball_right ) {
+      int sound_index = cast(int)AOD.Util.R_Rand(0, 7);
+      AOD.Play_Sound(Sound_Data.sf[sound_index]);
+    }
     // positioning
     velocity.x *= 0.6;
 

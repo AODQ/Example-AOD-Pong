@@ -309,6 +309,7 @@ public:
         temp_dt = cast(float)(SDL_GetTicks()) - curr_dt;
         while ( temp_dt < ms_dt ) {
           SDL_PumpEvents();
+          SDL_Delay(1);
           temp_dt = cast(float)(SDL_GetTicks()) - curr_dt;
         }
       }

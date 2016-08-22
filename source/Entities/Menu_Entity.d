@@ -2,6 +2,7 @@ module Entity.Menu;
 static import AOD;
 import Data;
 import std.string;
+import derelict.sdl2.sdl;
 
 class MenuEntity : AOD.Entity {
 public:
@@ -12,17 +13,17 @@ public:
     Set_Size(AOD.Vector(x, y), true);
     Set_Position(pos);
     Set_Visible(1);
-		msg = new AOD.Text((cast(int)(pos.x-x/2.0f+8)),
-                       (cast(int)(pos.y-y/2.0f+8)), text);
+    Set_Colour(0.0, 0.0, 0.0);
+    msg = new AOD.Text(cast(int)(pos.x - 15 ),
+                       cast(int)(pos.y  ), text);
 		on_click = click;
 	}
 	
 	override void Update() {
-    if (Clicked(0)) {
+    if (Clicked(0) || AOD.Input.keystate [ SDL_SCANCODE_SPACE ] ) {
 			on_click();
       import Data;
       AOD.Play_Sound(Sound_Data.bg_music);
-      AOD.Play_Sound(Sound_Data.sf);
 		}
 	}
 	

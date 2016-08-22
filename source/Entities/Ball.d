@@ -82,6 +82,8 @@ public:
         col = Collision(asteroid, velocity);
         if ( col.will_collide ) {
           direction *= -1;
+          direction.x = AOD.Util.R_Rand(-1, 1);
+          direction.y = AOD.Util.R_Rand(-1, 1);
           Game_Manager.Remove(asteroid);
           coll_timer = 16;
           break;

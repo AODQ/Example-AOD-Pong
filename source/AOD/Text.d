@@ -242,13 +242,15 @@ public:
   }
 
   /** */
-  void Set_Position(Vector v)          { position = v;                   }
+  void Set_Position(Vector v) { position = v; }
   /** */
   void Set_Position(float x, float y)  { position.x = x; position.y = y; }
   /** */
   Vector R_Position() { return position; }
   /** Sets message to be rendered */
-  void Set_String(string str_)         { msg = str_;                     }
+  void Set_String(string str_) {
+    msg = str_;
+  }
   /** WIP (disabled(!)) */
   @disable void Set_Colour(int r, int g, int b) {                        }
   /** 

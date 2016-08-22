@@ -32,8 +32,8 @@ public:
 
     auto col = Collision(Game_Manager.paddle, velocity);
     if ( !col.will_collide ) return;
-    AOD.Output("Collision occurred for Upgrade on paddle");
     // activate upgrade
+    return;
     switch ( type ) {
       case Type.new_ball:     Activate_New_Ball();     break;
       case Type.ball_speed:   Activate_Ball_Speed();   break;
@@ -47,7 +47,6 @@ public:
   import std.stdio;
   static void Activate_New_Ball() {
     import Entity.Ball;
-    writeln("new ball");
     if ( Game_Manager.paddle !is null ) {
       auto ball = new Ball(10);
       Game_Manager.Add(ball);
@@ -57,7 +56,6 @@ public:
 
   static void Activate_Ball_Speed() {
     import Entity.Ball;
-    writeln("ball speed");
     foreach ( b; Game_Manager.balls ) {
       b.Set_Ball_Speed(b.R_Default_Speed() * 1.5f, cast(int)AOD.R_MS()*7);
     }
@@ -65,7 +63,6 @@ public:
 
   static void Activate_Larger_Ball() {
     import Entity.Ball;
-    writeln("larger ball");
     foreach ( b; Game_Manager.balls ) {
       b.Set_Ball_Size(b.R_Default_Size() * 1.5f, cast(int)AOD.R_MS()*4);
     }
@@ -73,7 +70,6 @@ public:
 
   static void Activate_Paddle_Speed() {
     import Entity.Paddle;
-    writeln("paddle speed");
     auto p = Game_Manager.paddle;
     if ( p !is null ) {
       p.Set_Speed(p.R_Default_Speed() * 1.5f, cast(int)AOD.R_MS()*7);

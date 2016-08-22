@@ -35,7 +35,6 @@ public:
     Set_Vertices(Construct_Vertices(sz));
 
     import std.stdio;
-    writeln("Velocity: " ~ cast(string)velocity);
 	}
 
 	this(Size sz) {
@@ -63,6 +62,8 @@ public:
         case Size.large  : return 2;
       }
     }
+    int sound_index = cast(int)AOD.Util.R_Rand(0, 7);
+    AOD.Play_Sound(Sound_Data.sf[sound_index]);
 		Size temp = R_Size_Decremented(size);
     import std.math;
     foreach ( e; 0 .. R_Meteor_Amt(size) ) {

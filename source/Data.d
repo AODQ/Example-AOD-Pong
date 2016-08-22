@@ -54,10 +54,19 @@ public: static:
 
 class Sound_Data {
 public: static:
-  uint bg_music, sf;
+  uint bg_music;
+  uint[] sf;
 
   void Initialize() {
-    bg_music = AOD.Load_Sound("assets/test-song.ogg");
-    sf       = AOD.Load_Sound("assets/40bg.ogg");
+    bg_music = AOD.Load_Sound("assets/exult.ogg");
+    sf = [
+      AOD.Load_Sound("assets/hit0.ogg"),
+      AOD.Load_Sound("assets/hit1.ogg"),
+      AOD.Load_Sound("assets/hit2.ogg"),
+      AOD.Load_Sound("assets/hit3.ogg"),
+      AOD.Load_Sound("assets/hit4.ogg"),
+      AOD.Load_Sound("assets/hit5.ogg"),
+      AOD.Load_Sound("assets/hit6.ogg")
+    ];
   }
 }

@@ -30,7 +30,6 @@ import std.conv : to;
 
 class SoundEng {
 static:
-  immutable(int) Buffer_amt = 2048;
   class Sample {
     ALint state;
     bool loop;
@@ -47,6 +46,7 @@ static:
   ALCdevice*  al_device;
   ALCcontext* al_context;
   immutable(int) Buffer_size = 4096;
+  immutable(int) Buffer_amt = 3;
 
   ALfloat[] listener_position    = [0.0,0.0,4.0              ] ;
   ALfloat[] listener_velocity    = [0.0,0.0,0.0              ] ;
@@ -100,7 +100,6 @@ static:
     }
     vorbis_info* p_info;
     OggVorbis_File ogg_file;
-    writeln("Loading song " ~ file_name);
     auto x = ov_open(f, &ogg_file, null, 0);
     if ( x != 0 ) {
       import std.conv : to;
@@ -178,8 +177,7 @@ static:
         break;
       }
     }
-
-    if ( size == 0 ) {
+if ( size == 0 ) {
       return true;
     }
 
@@ -193,8 +191,6 @@ static:
 
 private void Main_Sound_Loop() {
   SoundEng.Sample[] samples;
-  int[] next_slot;
-  int old_slot;
 
   while ( true ) {
     // check for messages
@@ -207,33 +203,32 @@ private void Main_Sound_Loop() {
         switch ( msg ) {
           default: break;
           case ThreadMsg.PlaySample:
-            auto param = params[0];
-            // since the user might play two+ sounds at once the first thing
-            // to do is to get a new slot
-            writeln("loading song: " ~ param ~ " ID "
-                                     ~ to!string(old_slot));
-            auto ns = next_slot.length == 0 ? samples.length+1 :
-                                              next_slot[$-1];
-            if ( next_slot.length != 0 ) -- next_slot.length;
-            writeln("queued id " ~ to!string(ns));
-            send(ownerTid, ThreadMsg.QueueID, ns);
-            // now play the rest
-            auto fname = param;
-            // load song & play
-            auto s  = SoundEng.LoadOGG(param);
-            s.index = old_slot;
-            alias SESam = samples;
-            if ( old_slot == SESam.length ) ++ SESam.length;
-            samples[old_slot] = s;
-            old_slot = ns;
-            writeln("ID: " ~ to!string(old_slot));
-
+            // find empty slot
+            int slot = 0;
+            for ( ; slot < samples.length; ++ slot ) {
+              if ( samples[slot] is null ) break;
+            }
+            writeln("slot: " ~ to!string(slot));
+            if ( slot == samples.length ) ++ samples.length;
+            send(ownerTid, ThreadMsg.QueueID, slot);
+            writeln("ID: " ~ to!string(slot));
+            auto s  = SoundEng.LoadOGG(params[0]);
+            s.index = slot;
+            samples[slot] = s;
             // -- initialize song
             foreach ( i; 0 .. SoundEng.Buffer_amt )
               SoundEng.Stream_Buffer(s, s.buffer_id[i]);
-            alSourceQueueBuffers(s.source_id, 3, s.buffer_id.ptr);
+            alSourceQueueBuffers(s.source_id, s.buffer_id.length,
+                                              s.buffer_id.ptr);
             SoundEng.Check_AL_Errors();
             alSourcei(s.source_id, AL_LOOPING, AL_FALSE);
+            // -- set position
+            immutable(float)[] position_params = [ to!float (params[1]),
+                                                   to!float (params[2]),
+                                                   to!float (params[3]) ];
+            alSourcefv(s.source_id, AL_POSITION, position_params.ptr);
+            SoundEng.Check_AL_Errors();
+            // -- play song
             alSourcePlay(s.source_id);
             SoundEng.Check_AL_Errors();
           break;
@@ -247,15 +242,16 @@ private void Main_Sound_Loop() {
             auto s = samples[index];
             alSourcefv(s.source_id, AL_POSITION, params.ptr);
             if ( SoundEng.Check_AL_Errors() ) {
-              writeln("Couldn't update song's position");
+              writeln("Couldn't update sound's position");
             }
           break;
         }
       }
     );
 
-    for ( int i = 0; i != samples.length; ++ i ) {
+    for ( int i = 0; i < samples.length; ++ i ) {
       auto sound = samples[i];
+      if ( samples[i] is null ) continue;
       int state, processed;
       bool ended = false;
 
@@ -270,11 +266,19 @@ private void Main_Sound_Loop() {
         SoundEng.Check_AL_Errors();
         ended = SoundEng.Stream_Buffer(sound, buffer);
         if ( ended ) {
-          static import AOD;
-          samples = AOD.Util.Remove(samples, i);
+          alSourceStop(sound.source_id);
+          alDeleteSources(1, &sound.source_id);
+          alDeleteBuffers(SoundEng.Buffer_amt, sound.buffer_id.ptr);
+          ov_clear(&sound.ogg_file);
           destroy(samples[i]);
           samples[i] = null;
-          next_slot ~= i;
+          while ( samples.length > 0 && samples[$-1] is null ) {
+            -- samples.length;
+          }
+          static import AOD;
+          writeln("Removed "    ~ to!string(i) ~
+                  ", samples: " ~ to!string(samples));
+          continue;
         }
         alSourceQueueBuffers(sound.source_id, 1, &buffer);
         SoundEng.Check_AL_Errors();
@@ -298,7 +302,7 @@ private enum ThreadMsg {
 class Sound {
 static: private:
   immutable(string)[] sounds;
-  uint next_slot;
+  uint cur_slot;
 static: public:
   /**
     Registers sound to be playable
@@ -321,16 +325,22 @@ static: public:
     Return:
       Index to the given handle
   */
-  uint Play_Sound(uint handle) in {
+  uint Play_Sound(uint handle, float x = 0.0f, float y = 0.0f, float z = 0.0f)
+  in {
     assert(handle >= 0 && handle < sounds.length);
   } body {
     import std.concurrency;
     import std.stdio : writeln;
     import std.conv : to;
-    immutable(string) s = sounds[handle];
-    writeln("Attempting to play sound " ~ s);
-    send(SoundEng.thread_id, ThreadMsg.PlaySample, [s]);
-    return next_slot;
+    immutable(string) s  = sounds[handle];
+    immutable(string) sx = to!string(x);
+    immutable(string) sy = to!string(y);
+    immutable(string) sz = to!string(z);
+    /* writeln("playing sound"); */
+    send(SoundEng.thread_id, ThreadMsg.PlaySample, [s, sx, sy, sz]);
+    Update(5000);
+    /* writeln("Using index: " ~ to!string(handle)); */
+    return cur_slot;
   }
 
   /**
@@ -353,16 +363,18 @@ static: public:
     /* send(SoundEng.thread_id, ThreadMsg,StopAllSounds, []); */
   }
 
-  void Update() {
+  void Update(int nanosecond_duration = 0) {
     import std.concurrency;
     import core.time;
-    receiveTimeout(dur!("nsecs")(0), 
+    receiveTimeout(dur!("nsecs")(nanosecond_duration),
       (ThreadMsg msg, uint index) {
         switch ( msg ) {
           default: break;
           case ThreadMsg.QueueID:
             import std.conv;
-            next_slot = index;
+            cur_slot = index;
+            import std.stdio;
+            writeln("Received slot index: " ~ to!string ( cur_slot ));
           break;
         }
       }
