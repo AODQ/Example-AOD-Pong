@@ -2,6 +2,7 @@
 *.dll
 *.exe
 *.sln
+*.html
 .dub/*
 .vs/*
 docs/*
