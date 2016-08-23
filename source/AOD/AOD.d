@@ -26,12 +26,6 @@ void Init () {
 }
 ---
 */
-/**
-Macros:
-  PARAM = <u>$1</u>
-
-  PARAMDESC = <t style="padding-left:3em">$1</t>
-*/
 module AOD;
 
 import derelict.opengl3.gl3;
@@ -58,11 +52,11 @@ private AODCore.realm.Realm realm = null;
 
 /** Initializes the engine
   Params:
-    msdt   = $(PARAMDESC Amount of milliseconds between each update frame call)
-    name   = $(PARAMDESC Name of the application (for the window title))
-    width  = $(PARAMDESC Window X dimension)
-    height = $(PARAMDESC Window Y dimension)
-    ico    = $(PARAMDESC File location of the icon to use for the application)
+    msdt   = Amount of milliseconds between each update frame call
+    name   = Name of the application (for the window title)
+    width  = Window X dimension
+    height = Window Y dimension
+    ico    = File location of the icon to use for the application
 */
 void Initialize(uint msdt, string name, int width, int height, string ico = "")
 in {
@@ -95,9 +89,9 @@ void Remove(Text t)   in {assert(realm !is null);} body {     realm.Remove(t); }
 
 /** Sets the background colour when rendering
   Params:
-    r = $(PARAMDESC Red)
-    g = $(PARAMDESC Green)
-    b = $(PARAMDESC Blue)
+    r = Red
+    g = Green
+    b = Blue
 */
 void Set_BG_Colour(GLfloat r, GLfloat g, GLfloat b)
 in {
@@ -119,7 +113,7 @@ void Run() in { assert(realm !is null); } body {
 float R_MS()         { return realm.R_MS();   }
 /** Calculates the minimal amount of frames required for the duration to occur
   Params: 
-    x = $(PARAMDESC duration)
+    x = duration
 */
 float To_MS(float x) { return realm.To_MS(x); }
 
@@ -134,6 +128,9 @@ int R_Window_Width()  { return realm.R_Width();  }
 */
 int R_Window_Height() { return realm.R_Height(); }
 
+// --------------------- Menu --------------------------------------------------
+/** */
+alias Menu = AODCore.menu.Menu;
 // --------------------- Vector/Matrix/Utility ---------------------------------
 
 /** */
@@ -300,8 +297,8 @@ class Sound {
 
 /** Sets current FPS Display text and adds it to the engine
   Params:
-    fps_text = $(PARAMDESC A text that the engine will use to calculate the FPS.
-               You have to manually set the position and font yourself)
+    fps_text = A text that the engine will use to calculate the FPS.
+               You have to manually set the position and font yourself
 */
 void Set_FPS_Display(AOD.Text fps_text) in { assert(realm !is null); }
 body { realm.Set_FPS_Display(fps_text);}

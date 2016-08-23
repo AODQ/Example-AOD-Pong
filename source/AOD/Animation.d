@@ -23,12 +23,7 @@ public:
   int frames_per_texture;
   /** */
   Type type;
-  /**
-Parameters:
-   _type               =
-   _textures           = There must be at least two textures
-   _frames_per_texture =
-  */
+  /** Must be at least two textures */
   this(Type _type, SheetRect[] _textures, int _frames_per_texture) {
     type = _type;
     textures = _textures.dup;
@@ -105,10 +100,10 @@ Return:
     return SheetRect();
   }
   /** Sets a new animation
-Parameters:
-  _animation     = new animation
-  force_reset    = if animation already playing, will force variables to reset
-  _override_type = overrides default animation type
+Params:
+  _animation    = new animation
+  force_reset   = if animation already playing, will force variables to reset
+  override_type = overrides default animation type
     */
   void Set(Animation _animation, bool force_reset = false,
                  Animation.Type override_type = Animation.Type.Nil ) {

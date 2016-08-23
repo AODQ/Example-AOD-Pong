@@ -46,59 +46,6 @@ import AODCore.console;
   AABBEntity or PolyEntity
 */
 class Entity {
-private:
-  void Refresh_Transform() {
-    matrix.Compose(position, rotation, scale);
-    transformed = true;
-  }
-public:
-  /** The collision type of entity */
-  enum Type { Circle, AABB, Polygon, Ray, nil };
-protected:
-  /** Current image to render to the screen */
-  GLuint image;
-  /** ID within the AOD engine */
-  int ID;
-  /** Rotation in radians of object (and image) */
-  float rotation;
-  /** The amount added to rotation every update frame */
-  float rotation_velocity;
-  /** Used to keep track of rotation, translation and scaling */
-  Matrix matrix;
-  /** Collision type of entity */
-  Type type;
-  /** */
-  Vector position;
-  /** Amount added to position every update frame */
-  Vector velocity;
-  Vector scale;
-  /** Scale of the object (for collision, does not affect image)*/
-  Vector size;
-  /** Size of image */
-  Vector image_size;
-  /** The origin of which to apply rotation. Origin default is in the middle
-      of the image */
-  Vector rotate_origin;
-  /** The layer (z-index) of which the object is located. Used only to determine
-      which objects get rendered first */
-  int layer;
-  /** The alpha of the image */
-  float alpha;
-  /** Determines if the image is flipped on the x-axis */
-  bool flipped_x;
-  /** Determines if the imagei s flipped on the y-axis */
-  bool flipped_y;
-  /** The UV that determines how the image is rendered */
-  GLfloat[8] _UV;
-  bool is_coloured, visible, static_pos;
-  float red, green, blue;
-
-  /** Used to determine if the vertices of an entity need to be restructured */
-  bool transformed;
-
-  static import AODCore.shader;
-  /** Current shader to use to render this (null == no shader) */
-  AODCore.shader.Shader shader;
 public:
   /** */
   int R_Layer() { return layer; }
@@ -134,6 +81,9 @@ Params:
     scale = Vector( 1, 1 );
     Refresh_Transform();
   }
+  /** Called whenever AOD adds this object to the realm (no reason to have a
+      Removed_From_Realm since doing so calls the destructor) */
+  void Added_To_Realm() { }
   void Set_ID(int id) { ID = id; }
   /** Returns:
       unique ID of Entity */
@@ -159,7 +109,7 @@ Params:
   /** Returns true if the entity is clicked
 Params:
     offset = If true the check will be adjust for camera offset (generally set
-               this to false for non-static objects
+               this to false for non-static objects)
   */
   bool Clicked(bool offset) {
 	  static import AOD;
@@ -379,9 +329,9 @@ Params:
   /** */
   float R_Alpha()        { return alpha;       }
   /** */
-  bool R_Is_Coloured()   { return is_coloured; }
+  bool R_Coloured()      { return is_coloured; }
   /** */
-  bool R_Is_Visible()    { return visible;     }
+  bool R_Visible()       { return visible;     }
   /** */
   bool R_Is_Static_Pos() { return static_pos;  }
   /** */
@@ -407,6 +357,59 @@ Params:
   Collision_Info Collision(Entity o) {
     return Collision_Info();
   }
+private:
+  void Refresh_Transform() {
+    matrix.Compose(position, rotation, scale);
+    transformed = true;
+  }
+public:
+  /** The collision type of entity */
+  enum Type { Circle, AABB, Polygon, Ray, nil };
+protected:
+  /** Current image to render to the screen */
+  GLuint image;
+  /** ID within the AOD engine */
+  int ID;
+  /** Rotation in radians of object (and image) */
+  float rotation;
+  /** The amount added to rotation every update frame */
+  float rotation_velocity;
+  /** Used to keep track of rotation, translation and scaling */
+  Matrix matrix;
+  /** Collision type of entity */
+  Type type;
+  /** */
+  Vector position;
+  /** Amount added to position every update frame */
+  Vector velocity;
+  Vector scale;
+  /** Scale of the object (for collision, does not affect image)*/
+  Vector size;
+  /** Size of image */
+  Vector image_size;
+  /** The origin of which to apply rotation. Origin default is in the middle
+      of the image */
+  Vector rotate_origin;
+  /** The layer (z-index) of which the object is located. Used only to determine
+      which objects get rendered first */
+  int layer;
+  /** The alpha of the image */
+  float alpha;
+  /** Determines if the image is flipped on the x-axis */
+  bool flipped_x;
+  /** Determines if the imagei s flipped on the y-axis */
+  bool flipped_y;
+  /** The UV that determines how the image is rendered */
+  GLfloat[8] _UV;
+  bool is_coloured, visible, static_pos;
+  float red, green, blue;
+
+  /** Used to determine if the vertices of an entity need to be restructured */
+  bool transformed;
+
+  static import AODCore.shader;
+  /** Current shader to use to render this (null == no shader) */
+  AODCore.shader.Shader shader;
 };
 
 // -------------- POLY OBJ -----------------------------------------------------

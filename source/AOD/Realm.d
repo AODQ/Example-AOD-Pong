@@ -1,53 +1,69 @@
 /** Check AOD.d instead, this module is reserved for engine use only */
 module AODCore.realm;
 
-import derelict.opengl3.gl3;
-import derelict.opengl3.gl;
-import derelict.openal.al;
-import derelict.vorbis.vorbis;
-import derelict.vorbis.file;
-import derelict.sdl2.sdl;
+import AODCore.console;
+import AODCore.entity;
+import AODCore.input;
+import AODCore.sound;
+import AODCore.text;
+import Camera = AODCore.camera;
 import derelict.devil.il;
 import derelict.devil.ilu;
 import derelict.devil.ilut;
 import derelict.freetype.ft;
-import AODCore.entity;
-import AODCore.text;
-import AODCore.console;
-import AODCore.input;
-import AODCore.sound;
-import Camera = AODCore.camera;
+import derelict.openal.al;
+import derelict.opengl3.gl;
+import derelict.opengl3.gl3;
+import derelict.sdl2.sdl;
+import derelict.vorbis.file;
+import derelict.vorbis.vorbis;
 
+/** */
 private SDL_Window* screen = null;
 
+/** TODO: make objects/text derive from same object so one can layer them in
+          between */
 class Realm {
+/** objects in realm, index [layer][it]*/
   Entity[][] objects;
+/** text in realm */
   Text[] text;
 
+/** objects to remove at end of each frame */
   Entity[] objs_to_rem;
 
+/** colour to clear buffer with */
   GLfloat bg_red, bg_blue, bg_green;
 
+/** if the realm run loop has started yet */
   bool started;
-  uint start_ticks;
-
+/** width/height of window */
   int width, height;
+/** delta time (in milliseconds) for a frame */
   uint ms_dt;
+/** calculates frames per second */
   float[20] fps = [ 0 ];
+/** Outputs frames_per_second to screen */
   AODCore.text.Text fps_display;
 public:
 
+/** */
   void Change_MSDT(uint ms_dt_) in {
     assert(ms_dt_ > 0);
   } body {
     ms_dt = ms_dt_;
   }
 
+/** */
   int R_Width ()       { return width;                        }
+/** */
   int R_Height()       { return height;                       }
+/** */
   float R_MS  ()       { return cast(float)ms_dt;             }
+/** */
   float To_MS(float x) { return cast(float)(x*ms_dt)/1000.0f; }
 
+/** */
   void Set_FPS_Display(AODCore.text.Text fps) {
     if ( fps_display !is null )
       Remove(fps_display);
@@ -56,6 +72,7 @@ public:
       Add(fps_display);
   }
 
+/** */
   this(int window_width, int window_height, uint ms_dt_,
        immutable(char)* window_name, immutable(char)* icon = "") {
     width  = window_width;
@@ -180,6 +197,7 @@ public:
     writeln("AOD@Realm.d@Initialize Finalized initializing AOD main core");
   }
 
+/** */
   int Add(Entity o) in {
     assert(o !is null);
   } body {
@@ -188,20 +206,24 @@ public:
     int l = o.R_Layer();
     if ( objects.length <= l ) objects.length = l+1;
     objects[l] ~= o;
+    o.Added_To_Realm();
     return o.Ret_ID();
   }
 
+/** */
   void Add(Text t) in {
     assert(t !is null);
   } body {
     text ~= t;
   }
 
+/** */
   void Remove(Entity o) in {
     assert(o !is null);
   } body {
     objs_to_rem ~= o;
   }
+/** */
   void Remove(Text t) in {
     assert(t !is null);
   } body {
@@ -214,21 +236,20 @@ public:
       }
     }
   }
-
+/** */
   void Set_BG_Colours(GLfloat r, GLfloat g, GLfloat b) {
     bg_red = r;
     bg_green = g;
     bg_blue = g;
   }
 
-
+/** */
   void Run() {
     float prev_dt        = 0, // DT from previous frame
           curr_dt        = 0, // DT for beginning of current frame
-          elapsed_dt     = 0, // DT elapsed between previous frame and this frame
+          elapsed_dt     = 0, // DT elapsed between previous and this frame
           accumulated_dt = 0; // DT needing to be processed
     started = 1;
-    start_ticks = SDL_GetTicks();
     SDL_Event _event;
     _event.user.code = 2;
     _event.user.data1 = null;
@@ -317,7 +338,7 @@ public:
       prev_dt = curr_dt;
     }
   }
-
+/** */
   void Update() {
     // update objects
     foreach ( l ; objects )
@@ -349,6 +370,7 @@ public:
     SDL_Quit();
   }
 
+/** */
   void Render() {
     glClear(GL_COLOR_BUFFER_BIT| GL_DEPTH_BUFFER_BIT);
     glClearColor(bg_red,bg_green,bg_blue,0);
@@ -366,7 +388,7 @@ public:
 
     for ( int obj_layer = objects.length-1; obj_layer != -1; -- obj_layer )
       foreach ( lz ; objects[obj_layer] ) {
-        if ( !lz.R_Is_Visible() ) continue;
+        if ( !lz.R_Visible() ) continue;
         auto position = lz.R_Position(),
              size      = lz.R_Size();
         if ( !lz.R_Is_Static_Pos() ) {
@@ -382,7 +404,7 @@ public:
         glPushMatrix();
         glPushAttrib(GL_CURRENT_BIT);
           // set colour/texture
-          if ( lz.R_Is_Coloured() )
+          if ( lz.R_Coloured() )
             glColor4f(lz.R_Red(), lz.R_Green(), lz.R_Blue(), lz.R_Alpha());
           glBindTexture(GL_TEXTURE_2D, lz.R_Sprite_Texture());
           // set position/rotation/scale

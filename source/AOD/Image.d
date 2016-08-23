@@ -33,6 +33,11 @@ public:
     width = z.width;
     height = z.height;
   }
+  /** Casts the sheetcontainer to a sheetrect (of the entire image) */
+  T opCast(T)() if (is(T == SheetRect)) {
+    import AOD : Vector;
+    return SheetRect(this, Vector(0, 0), Vector(width, height));
+  }
 }
 
 /**
@@ -53,8 +58,8 @@ public:
     
     Params:
       sc = SheetContainer to use as image
-      ul_ = relative offset for the upper left coordinate from origin
-      lr_ = relative offset of the lower right coordinate from origin
+      tul = relative offset for the upper left coordinate from origin
+      tlr = relative offset of the lower right coordinate from origin
   */
   this(SheetContainer sc, Vector tul, Vector tlr) {
     ul = tul;

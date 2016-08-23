@@ -6,6 +6,38 @@ enum Layer_Data {
   Paddle   = 50,
   Ball     = 51
 }
+class Menu {
+public: static:
+  AOD.SheetRect background, background_submenu;
+  AOD.SheetRect[] credits;
+  AOD.SheetRect[AOD.Menu.Button.max+1] buttons;
+  string[] text_credits;
+  string[] controls;
+  immutable(int) button_y      = 280,
+                 button_y_it   = 50,
+                 credit_y      = 250,
+                 credit_y_it   = 75,
+                 credit_text_x = 110,
+                 credit_img_x  = 540;
+  void Initialize() {
+    alias SR = AOD.SheetRect;
+    alias SC = AOD.SheetContainer;
+    background = cast(SR)SC("assets/menu/background.png");
+    background_submenu = cast(SR)SC("assets/menu/background-submenu");
+    credits = [cast(SR)SC("assets/menu/credit_aod.png")];
+    buttons = [
+      cast(SR)SC("assets/menu/button_start.png"),
+      cast(SR)SC("assets/menu/button_controls.png"),
+      cast(SR)SC("assets/menu/button_credits.png"),
+      cast(SR)SC("assets/menu/buttons_quit.png"),
+      cast(SR)SC("assets/menu/button_back.png")
+    ];
+    text_credits = ["AOD"];
+    controls = [
+      "up", "down"
+    ];
+  }
+}
 
 class Image_Data {
 public: static:
