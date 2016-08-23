@@ -47,8 +47,6 @@ import AODCore.console;
 */
 class Entity {
 public:
-  /** */
-  int R_Layer() { return layer; }
 
   static immutable(float[8]) Vertices = [
     -0.5f, -0.5f,
@@ -59,8 +57,8 @@ public:
 
   /**
 Params:
-    _layer = $(PARAMDESC Layer that the entity should be rendered (0 is top))
-    _type  = $(PARAMDESC Type of Entity)
+    _layer = Layer that the entity should be rendered (0 is top)
+    _type  = Type of Entity
   */
   this(int _layer = 0, Type _type = Type.nil) {
     layer = _layer;
@@ -88,6 +86,8 @@ Params:
   /** Returns:
       unique ID of Entity */
   int Ret_ID() { return ID; }
+  /** */
+  int R_Layer() { return layer; }
   /** */
   void Set_Position(float x, float y) {
     position = Vector(x, y);
@@ -148,14 +148,24 @@ Params:
     }
     image = index;
   }
-  /** */
-  void Set_Sprite(SheetContainer sc) {
+  /** Sets a sheetcontainer to render this entity
+Params:
+     sc =
+     reset_size = If true, entity size will be set to image_size
+                  (sc.width/height)
+   */
+  void Set_Sprite(SheetContainer sc, bool reset_size = 0) {
     image = sc.texture;
     image_size.x = sc.width;
     image_size.y = sc.height;
+    size = image_size;
   }
-  /** */
-  void Set_Sprite(SheetRect sr) {
+  /** Sets a sheetrect to render this entity
+Params:
+   sr =
+   reset_size = If true, entity size will be set to image_size
+                 (sr.width/height) */
+  void Set_Sprite(SheetRect sr, bool reset_size = 0) {
     image = sr.texture;
     image_size.x = sr.width;
     image_size.y = sr.height;

@@ -23,13 +23,13 @@ public: static:
     alias SR = AOD.SheetRect;
     alias SC = AOD.SheetContainer;
     background = cast(SR)SC("assets/menu/background.png");
-    background_submenu = cast(SR)SC("assets/menu/background-submenu");
+    background_submenu = cast(SR)SC("assets/menu/background-submenu.png");
     credits = [cast(SR)SC("assets/menu/credit_aod.png")];
     buttons = [
       cast(SR)SC("assets/menu/button_start.png"),
       cast(SR)SC("assets/menu/button_controls.png"),
       cast(SR)SC("assets/menu/button_credits.png"),
-      cast(SR)SC("assets/menu/buttons_quit.png"),
+      cast(SR)SC("assets/menu/button_quit.png"),
       cast(SR)SC("assets/menu/button_back.png")
     ];
     text_credits = ["AOD"];
@@ -49,6 +49,7 @@ public: static:
   AOD.SheetRect[4] upgrades;
 
   void Initialize() {
+    Menu.Initialize();
     paddle       = AOD.SheetContainer("assets/paddle.png"   ) ;
     ball         = AOD.SheetContainer("assets/ball.png"     ) ;
     auto meteor  = AOD.SheetContainer("assets/meteor.png"   ) ;

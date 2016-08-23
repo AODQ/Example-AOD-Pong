@@ -1,3 +1,9 @@
+/**
+  Contains basic image handling that the entirety of AOD uses. From here you
+  can either load an image or pass a loaded image, referred to as either
+  a SheetContainer or SheetRect, to various functions. Another way to look at
+  these two image containers is as a spritesheet and individual sprite.
+*/
 module AODCore.image;
 
 import derelict.opengl3.gl3;
@@ -8,9 +14,8 @@ import derelict.devil.ilu;
 import AODCore.console;
 import AODCore.vector;
 
-// contains information of image
 /**
-  Contains information of an image
+  Contains basic information of an image.
 */
 struct SheetContainer {
 public:
@@ -36,14 +41,14 @@ public:
   /** Casts the sheetcontainer to a sheetrect (of the entire image) */
   T opCast(T)() if (is(T == SheetRect)) {
     import AOD : Vector;
-    return SheetRect(this, Vector(0, 0), Vector(width, height));
+    return SheetRect(this, Vector(0.0f, 0.0f), Vector(cast(float)width,
+                                                      cast(float)height));
   }
 }
 
 /**
-  A sheet container that will also contain location of obj inside a sheet,
-  pixel-based coordinates where origin is {0, 0}. Useful for spritesheets,
-  I'm sure there are some other utilities such as image cropping
+  A sheetcontainer that contains the coordinates of a subsection of the image.
+  Useful for spritesheets, image cropping, etc.
 */
 struct SheetRect {
 public:
@@ -58,12 +63,12 @@ public:
     
     Params:
       sc = SheetContainer to use as image
-      tul = relative offset for the upper left coordinate from origin
-      tlr = relative offset of the lower right coordinate from origin
+      _ul = relative offset for the upper left coordinate from origin {0, 0}
+      _lr = relative offset of the lower right coordinate from origin {0, 0}
   */
-  this(SheetContainer sc, Vector tul, Vector tlr) {
-    ul = tul;
-    lr = tlr;
+  this(SheetContainer sc, Vector _ul, Vector _lr) {
+    ul = _ul;
+    lr = _lr;
     import std.math;
     width   = cast(int)abs(ul.x - lr.x);
     height  = cast(int)abs(ul.y - lr.y);

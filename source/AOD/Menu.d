@@ -152,37 +152,34 @@ Params:
        int button_y, int button_y_it, int credit_y, int credit_y_it,
        int credit_text_x, int credit_img_x) {
     Set_Visible(0);
-    // generic template to create images and set according sizes/positions
-    template Create_Menu_Entity(string ent, string it) {
-      const char[] Create_Menu_Entity = ent ~ " = new AOD.Entity; " ~
-        ent ~ ".Set_Sprite( img_" ~ ent ~ " ); " ~
-        ent ~ ".Set_Size(" ~ ent ~ ".R_Img_Size());" ~
-        ent ~ ".Set_Position(button_y + (button_y_it * " ~ it ~ "));";
-    }
     add_on_start = _add_on_start;
     // set up background and buttons
-    background = new AOD.Entity;
-    background.Set_Sprite(img_background);
-    /* background.Set_Size(background.R_Img_Size()); */
+    background = new AOD.Entity(20);
+    background.Set_Sprite(img_background, 1);
     background.Set_Position(AOD.R_Window_Width/2, AOD.R_Window_Height/2);
     AOD.Add(background);
-    background_submenu = new AOD.Entity();
-    background_submenu.Set_Sprite(img_background_submenu);
+    background_submenu = new AOD.Entity(19);
+    background_submenu.Set_Sprite(img_background_submenu, 1);
     background_submenu.Set_Size(background_submenu.R_Img_Size());
     background_submenu.Set_Position(AOD.R_Window_Width/2,AOD.R_Window_Height/2);
     background_submenu.Set_Visible(0);
     AOD.Add(background_submenu);
     import std.stdio;
+    import std.conv : to;
     writeln("Creating menu");
     writeln("BG POSITION: " ~ cast(string)background.R_Position);
-    for ( int i = 0; i != buttons.length; ++ i ) {
+    writeln(to!string(img_background));
+    for ( int i = 0; i != Button.max+1; ++ i ) {
       buttons[i] = new AOD.Entity();
       with ( buttons[i] ) {
-        Set_Sprite(img_buttons[i]);
+        Set_Sprite(img_buttons[i], 1);
+        import std.conv : to;
+        import std.stdio : writeln;
         Set_Size(R_Img_Size);
-        Set_Position(AOD.R_Window_Width/2, button_y * (button_y_it * i));
-      AOD.Add(this);
+        Set_Position(AOD.R_Window_Width/2, button_y + (button_y_it * i));
+        writeln(cast(string)R_Position);
       }
+      AOD.Add(buttons[i]);
     }
     buttons[Button.Back].Set_Position(62, 62);
     buttons[Button.Back].Set_Visible(false);
@@ -198,11 +195,11 @@ Params:
       credits ~= new AOD.Entity();
       // img
       with ( credits[$-1] ) {
-        Set_Sprite(img_credits[i]);
+        Set_Sprite(img_credits[i], 1);
         Set_Position(credit_img_x, cy + cyi/2 + cyi*i);
         Set_Visible(0);
-        AOD.Add(this);
       }
+      AOD.Add(credits[$-1]);
     }
     // misc adjustments
     auto w = AOD.R_Window_Width/2, h = AOD.R_Window_Height/2;
