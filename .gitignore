@@ -4,4 +4,4 @@
 *.sln
 .dub/*
 .vs/*
-.docs/*
+docs/*
