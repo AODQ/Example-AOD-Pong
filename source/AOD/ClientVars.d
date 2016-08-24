@@ -18,7 +18,7 @@ import std.string;
 struct Keybind {
 public:
   /**A valid <a href="https://wiki.libsdl.org/SDL_Scancode">SDL_SCANCODE</a>
-         or AOD.Mouse_Bind*/
+         or AOD.Input.Mouse_Bind*/
   int key;
   /** A console command, in the majority of cases the user will probably expect
       the console command to occur when the 'key' is pressed */
@@ -59,6 +59,13 @@ void Load_Config() {
     }
   }
   R_SDL_Scancode_Conv("", true); // destroy scancode map
+}
+
+/**
+  Saves the user config from keybinds and stores into "config.ini"
+*/
+void Save_Config() {
+  static import AOD;
 }
 
 import AODCore.input;
@@ -296,7 +303,7 @@ private auto R_SDL_Scancode_Conv(string x, bool erase = false,
       "www"                     : SDL_SCANCODE_WWW                ,
       "x"                       : SDL_SCANCODE_X                  ,
       "y"                       : SDL_SCANCODE_Y                  ,
-      "z"                       : SDL_SCANCODE_Z                  
+      "z"                       : SDL_SCANCODE_Z
     ];
   }
   return x in sdl_bind_conv;

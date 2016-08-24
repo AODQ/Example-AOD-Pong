@@ -58,7 +58,7 @@ public:
 
   override void Update() {
     // -- upgrades --
-    if ( speed_timer < 0 && --speed_timer == 0 ) {
+    if ( speed_timer > 0 && --speed_timer == 0 ) {
       speed = Default_speed;
     }
 
@@ -79,14 +79,14 @@ public:
       }
     }
 
-    if ( key_ball_left ) {
-      import Entity.Asteroid;
-      AOD.Add(new Asteroid(Asteroid.Size.large));
-    }
-    if ( key_ball_right ) {
-      int sound_index = cast(int)AOD.Util.R_Rand(0, 7);
-      AOD.Play_Sound(Sound_Data.sf[sound_index]);
-    }
+    /* if ( key_ball_left ) { */
+    /*   import Entity.Asteroid; */
+    /*   AOD.Add(new Asteroid(Asteroid.Size.large)); */
+    /* } */
+    /* if ( key_ball_right ) { */
+    /*   int sound_index = cast(int)AOD.Util.R_Rand(0, 7); */
+    /*   AOD.Play_Sound(Sound_Data.sf[sound_index]); */
+    /* } */
     // positioning
     velocity.x *= 0.6;
 
@@ -103,15 +103,6 @@ public:
       ball_offset += 3.0f;
     }
 
-    // stop paddle at edges
-    if ( position.x - width / 2.0f + velocity.x < 0 ) {
-      position.x = width / 2.0f;
-      velocity.x = 0;
-    }
-    else if ( position.x + width / 2.0f + velocity.x > 640 ) {
-      position.x = cast(float) AOD.R_Window_Width() - width / 2.0f;
-      velocity.x = 0;
-    }
 
     // ball
     if ( ball_offset < -width / 2.0f + ball_size / 2.0f ) {

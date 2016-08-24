@@ -82,9 +82,17 @@ void End()   in { assert(realm !is null); } body {
 /** Adds rbase to the engine to be updated and rendered */
 int  Add   (AODCore.render_base.Render_Base o) in {assert(realm !is null);}
 body { return realm.Add(o);    }
+/** Removes rbase from the engine and deallocates it */
 void Remove(AODCore.render_base.Render_Base o) in {assert(realm !is null);}
 body {        realm.Remove(o); }
-
+/** Removes entities and playing sounds (not loaded sounds or images)
+Params:
+  _rendereable: Adds a rendereable after cleanup is done (cleanup doesn't take
+                 place until after the frame is finished
+*/
+void Clean_Up(AODCore.render_base.Render_Base rendereable = null) in {
+  assert(realm !is null);
+} body { realm.Clean_Up(rendereable); }
 /** Sets the background colour when rendering
   Params:
     r = Red
@@ -109,7 +117,7 @@ void Run() in { assert(realm !is null); } body {
 /** Returns the current MS per frame */
 float R_MS()         { return realm.R_MS();   }
 /** Calculates the minimal amount of frames required for the duration to occur
-  Params: 
+  Params:
     x = duration
 */
 float To_MS(float x) { return realm.To_MS(x); }
@@ -258,39 +266,42 @@ alias Output = AODCore.console.Output;
   /** */
 class Input {
   /** */
-  alias Mouse_Bind = AODCore.input.Mouse_Bind;
+  alias Mouse_Bind         = AODCore.input.Mouse_Bind;
   /** */
-  alias keystate   = AODCore.input.keystate;
+  alias keystate           = AODCore.input.keystate;
   /** */
-  alias R_LMB      = AODCore.input.R_LMB;
+  alias R_LMB              = AODCore.input.R_LMB;
   /** */
-  alias R_RMB      = AODCore.input.R_RMB;
+  alias R_RMB              = AODCore.input.R_RMB;
   /** */
-  alias R_MMB      = AODCore.input.R_MMB;
+  alias R_MMB              = AODCore.input.R_MMB;
   /** */
-  alias R_MX1      = AODCore.input.R_MX1;
+  alias R_MX1              = AODCore.input.R_MX1;
   /** */
-  alias R_MX2      = AODCore.input.R_MX2;
+  alias R_MX2              = AODCore.input.R_MX2;
   /** */
-  alias R_On_LMB      = AODCore.input.R_On_LMB;
+  alias R_On_LMB           = AODCore.input.R_On_LMB;
   /** */
-  alias R_On_RMB      = AODCore.input.R_On_RMB;
+  alias R_On_RMB           = AODCore.input.R_On_RMB;
   /** */
-  alias R_On_MMB      = AODCore.input.R_On_MMB;
+  alias R_On_MMB           = AODCore.input.R_On_MMB;
   /** */
-  alias R_On_MX1      = AODCore.input.R_On_MX1;
+  alias R_On_MX1           = AODCore.input.R_On_MX1;
   /** */
-  alias R_On_MX2      = AODCore.input.R_On_MX2;
+  alias R_On_MX2           = AODCore.input.R_On_MX2;
   /** */
-  alias R_Mouse_X  = AODCore.input.R_Mouse_X;
+  alias R_Mouse_X          = AODCore.input.R_Mouse_X;
   /** */
-  alias R_Mouse_Y  = AODCore.input.R_Mouse_Y;
+  alias R_Mouse_Y          = AODCore.input.R_Mouse_Y;
+  /** */
+  alias Key_To_String = AODCore.input.Key_To_String;
 }
 
 // --------------------- Sound -------------------------------------------------
 
 alias Load_Sound = AODCore.sound.Sound.Load_Sound;
 alias Play_Sound = AODCore.sound.Sound.Play_Sound;
+alias Stop_Sound = AODCore.sound.Sound.Stop_Sound;
 class Sound {
   alias Change_Sample_Position = AODCore.sound.Sound.Change_Sound_Position;
   alias Clean_Up               = AODCore.sound.Sound.Clean_Up;

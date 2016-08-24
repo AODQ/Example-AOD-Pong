@@ -144,7 +144,9 @@ Params:
     image = sc.texture;
     image_size.x = sc.width;
     image_size.y = sc.height;
-    size = image_size;
+    if ( reset_size ) {
+      Set_Size(R_Img_Size);
+    }
   }
   /** Sets a sheetrect to render this entity
 Params:
@@ -156,6 +158,9 @@ Params:
     image_size.x = sr.width;
     image_size.y = sr.height;
     Set_UVs(sr.ul, sr.lr);
+    if ( reset_size ) {
+      Set_Size(R_Img_Size);
+    }
   }
   /** */
   GLuint R_Sprite_Texture() { return image; }
@@ -454,8 +459,8 @@ public:
                     convex and in) counter-clockwise order);
       off       = $(PARAMDESC Sets position of entity)
   */
-  this(Vector[] vertices_, Vector off = Vector( 0, 0 )) {
-    super(Type.Polygon);
+  this(Vector[] vertices_, Vector off = Vector( 0, 0 ), ubyte _layer = 0) {
+    super(_layer, Type.Polygon);
     vertices = vertices_;
     Set_Position(off);
   }
@@ -524,9 +529,12 @@ public:
 
 };
 
-/**
+/** NOT FUNCTIONAL!!!!!!!!
   An entity that supports Axis-Aligned-Bounding-Box collision (a rectangle with
-  no rotation). If rotation is required, use a PolyEntity instead.
+  no rotation). If rotation is required, use a PolyEntity instead, however this
+  does support collision with PolyEnts. (You will effectively save no memory
+  at the moment from using this, but you will save computation when doing
+  AABB-AABB collisions)
 */
 class AABBEnt : PolyEnt {
 public:
@@ -534,8 +542,8 @@ public:
     Params:
       size = $(PARAMDESC Size of the bounding-box)
   */
-  this(Vector size = Vector(0, 0)) {
-    super();
+  this(ubyte _layer = 0, Vector size = Vector(0, 0)) {
+    super(_layer);
     type = Type.AABB;
     Set_Vertices([Vector(-size.x/2.0, -size.y/2.0),
                   Vector(-size.x/2.0,  size.y/2.0),
@@ -547,8 +555,8 @@ public:
       size = $(PARAMDESC Size of the bounding-box)
       pos  = $(PARAMDESC Position of the entity)
   */
-  this(Vector size = Vector( 0,0 ), Vector pos = Vector( 0,0 )) {
-    this(size);
+  this(ubyte _layer, Vector size = Vector( 0,0 ), Vector pos = Vector( 0,0 )) {
+    this(_layer, size);
     position = pos;
   }
 
@@ -562,7 +570,16 @@ public:
       Result of the collision in respects to this colliding onto the AABB
   */
   Collision_Info Collide(AABBEnt aabb, Vector velocity) {
-    return Collision_Info();
+    auto pos  = position + velocity,
+         opos = aabb.R_Position(),
+         siz  = R_Size(),
+         osiz = aabb.R_Size();
+    Collision_Info ci;
+    ci.will_collide = !( pos.x + siz.x < opos.x          &&
+                         pos.x         > opos.x + osiz.x &&
+                         pos.y + siz.y < opos.y          &&
+                         pos.y         > opos.y + osiz.y );
+    return ci;
   }
   /** Check collision with another PolyEntity
     Params:
@@ -592,7 +609,7 @@ public:
   Vector translation;
   /** The axis/projection of the collision */
   Vector projection;
-  /** TBD */
+  /** */
   Vector normal;
   /** The object that was collided with */
   PolyEnt obj;

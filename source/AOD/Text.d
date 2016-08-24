@@ -280,6 +280,8 @@ Params:
   }
   /** */
   static string R_Default_Font() { return default_font; }
+  /** */
+  static int R_Default_Pt_Size() { return default_pt_size; }
 
   override void Update() {}
   override void Post_Update() {}

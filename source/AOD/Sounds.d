@@ -22,7 +22,7 @@ import std.conv : to;
 /*
    Sounds contains an array that allows the programmer to index
    their sounds (so instead of typing in a filename they can type a variable).
-   
+
 
    The Sound generates the handle, and each time a sample is sent to SoundEng
    to play, SoundEng generates a new Sample and returns the engine index
@@ -77,7 +77,7 @@ static:
 
     writeln("Finished with setting up AL");
   }
-  
+
   import std.concurrency : Tid;
 
   private Tid thread_id;
@@ -123,7 +123,7 @@ static:
 
     s.format = p_info.channels == 1 ? AL_FORMAT_MONO16 : AL_FORMAT_STEREO16;
     s.freq = p_info.rate;
-    
+
     s.ogg_file = ogg_file;
     Check_AL_Errors() ;
     return s;
@@ -161,7 +161,7 @@ static:
 
   // returns TRUE if file has finished loading or errored
   bool Stream_Buffer( Sample s, ALuint buffer_id ) {
-    // load buffer 
+    // load buffer
     byte[Buffer_size] buffer;
     int result, section = 0, size = 0;
     while ( size < Buffer_size ) {
@@ -192,6 +192,20 @@ if ( size == 0 ) {
 private void Main_Sound_Loop() {
   SoundEng.Sample[] samples;
 
+  void DestroySample(int index) {
+    auto sound = samples[index];
+    alSourceStop(sound.source_id);
+    alDeleteSources(1, &sound.source_id);
+    alDeleteBuffers(SoundEng.Buffer_amt, sound.buffer_id.ptr);
+    ov_clear(&sound.ogg_file);
+    destroy(samples[index]);
+    samples[index] = null;
+    while ( samples.length > 0 && samples[$-1] is null ) {
+      -- samples.length;
+    }
+    static import AOD;
+  }
+
   while ( true ) {
     // check for messages
     import std.concurrency;
@@ -202,6 +216,17 @@ private void Main_Sound_Loop() {
       (ThreadMsg msg, immutable(string)[] params) {
         switch ( msg ) {
           default: break;
+          case ThreadMsg.StopSample:
+            /* writeln("REMOVING: " ~ params[0]); */
+            int i = to!int(params[0]);
+            if ( i >= 0 && i < samples.length )
+              DestroySample(i);
+          break;
+          case ThreadMsg.StopAllSamples:
+            for ( int i = 0; i != samples.length; ++ i )
+              DestroySample(i);
+            samples = [];
+          break;
           case ThreadMsg.PlaySample:
             // find empty slot
             int slot = 0;
@@ -266,18 +291,7 @@ private void Main_Sound_Loop() {
         SoundEng.Check_AL_Errors();
         ended = SoundEng.Stream_Buffer(sound, buffer);
         if ( ended ) {
-          alSourceStop(sound.source_id);
-          alDeleteSources(1, &sound.source_id);
-          alDeleteBuffers(SoundEng.Buffer_amt, sound.buffer_id.ptr);
-          ov_clear(&sound.ogg_file);
-          destroy(samples[i]);
-          samples[i] = null;
-          while ( samples.length > 0 && samples[$-1] is null ) {
-            -- samples.length;
-          }
-          static import AOD;
-          writeln("Removed "    ~ to!string(i) ~
-                  ", samples: " ~ to!string(samples));
+          DestroySample(i);
           continue;
         }
         alSourceQueueBuffers(sound.source_id, 1, &buffer);
@@ -294,11 +308,12 @@ private void Main_Sound_Loop() {
 private enum ThreadMsg {
   PlaySample, PauseSample, StopSample,
   ChangePosition,
-  StopAllSounds,
+  StopAllSamples,
 
   QueueID
 }
 
+/** */
 class Sound {
 static: private:
   immutable(string)[] sounds;
@@ -344,6 +359,18 @@ static: public:
   }
 
   /**
+    Stops sound from given index
+  */
+  void Stop_Sound(uint index) {
+    import std.concurrency;
+    import std.conv;
+    import std.stdio;
+    /* writeln("STOPPING: " ~ to!string(index)); */
+    immutable(string) s = to!string(index);
+    send(SoundEng.thread_id, ThreadMsg.StopSample, [s]);
+  }
+
+  /**
     Changes the position of the sound from given handle
   */
   void Change_Sound_Position(immutable ( uint  ) handle,
@@ -355,12 +382,12 @@ static: public:
     send(SoundEng.thread_id, ThreadMsg.ChangePosition, [h, x, y, z]);
   }
 
-  /**
+  /** Stops all sounds
   */
   void Clean_Up() {
     import std.concurrency;
-    /* send(SoundEng.thread_id, ThreadMsg.StopSound,     []); */
-    /* send(SoundEng.thread_id, ThreadMsg,StopAllSounds, []); */
+    immutable(string) s = "";
+    send(SoundEng.thread_id, ThreadMsg.StopAllSamples, [s]);
   }
 
   void Update(int nanosecond_duration = 0) {

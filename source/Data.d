@@ -8,6 +8,7 @@ enum Layer_Data {
 }
 class Menu {
 public: static:
+  AOD.SheetRect splashscreen;
   AOD.SheetRect background, background_submenu;
   AOD.SheetRect[] credits;
   AOD.SheetRect[AOD.Menu.Button.max+1] buttons;
@@ -15,17 +16,15 @@ public: static:
   string[] controls;
   immutable(int) button_y      = 280,
                  button_y_it   = 50,
-                 credit_y      = 270,
-                 credit_y_it   = 75,
-                 credit_text_x = 110,
-                 credit_img_x  = 540;
+                 credit_y      = 255,
+                 credit_y_it   = 60,
+                 credit_text_x = 20,
+                 credit_img_x  = 500;
   void Initialize() {
     alias SR = AOD.SheetRect;
     alias SC = AOD.SheetContainer;
     background = cast(SR)SC("assets/menu/background.png");
     background_submenu = cast(SR)SC("assets/menu/background-submenu.png");
-    credits = [cast(SR)SC("assets/menu/credit_aod.png"),
-               cast(SR)SC("assets/menu/credit_aod.png")];
     buttons = [
       cast(SR)SC("assets/menu/button_start.png"),
       cast(SR)SC("assets/menu/button_controls.png"),
@@ -33,12 +32,27 @@ public: static:
       cast(SR)SC("assets/menu/button_quit.png"),
       cast(SR)SC("assets/menu/button_back.png")
     ];
-    text_credits = ["AODQ - Engine, Code",
-                    "Smilecythe - Pixels, Music"];
+    text_credits = [
+                    "AODQ - Engine, Code",
+                    "Nadjatee1996 - Code",
+                    "Smilecythe   - Pixels, Music",
+                    "WEAF         - Code",
+                   ];
     controls = [
       "up", "down"
     ];
   }
+}
+
+auto Construct_New_Menu() {
+  static import Game_Manager;
+  return new AOD.Menu(
+    Data.Menu.background, Data.Menu.background_submenu,
+    Data.Menu.buttons,    Data.Menu.text_credits,
+    new Game_Manager.Gmanage, Data.Menu.button_y, Data.Menu.button_y_it,
+    Data.Menu.credit_y, Data.Menu.credit_y_it, Data.Menu.credit_text_x,
+    Data.Menu.credit_img_x
+  );
 }
 
 class Image_Data {

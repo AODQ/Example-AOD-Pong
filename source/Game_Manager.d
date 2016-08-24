@@ -19,6 +19,22 @@ void Add(T)(T x) {
   AOD.Add(x);
 }
 
+// only purpose is to add things after menu
+class Gmanage : AOD.Entity {
+public:
+  override void Added_To_Realm() {
+    import Entity.Asteroid;
+    Game_Manager.Add(new Asteroid(Asteroid.Size.large));
+
+    import Entity.Ball;
+    auto ball = new Ball(10);
+    Game_Manager.Add(ball);
+
+    import Entity.Paddle;
+    Game_Manager.Add(new Paddle(100, ball));
+  }
+}
+
 void Remove(T)(T x) {
   import std.algorithm : remove;
   template Rem(string container) { const char[] Rem =
@@ -33,4 +49,13 @@ void Remove(T)(T x) {
   static if ( is(T == Upgrade )) { mixin(Rem!("upgrades" )); }
   static if ( is(T == Paddle  )) { paddle = x;               }
   AOD.Remove(x);
+}
+
+void Restart_Game() {
+  paddle    = null;
+  balls     = [];
+  asteroids = [];
+  upgrades  = [];
+  static import Data;
+  AOD.Clean_Up(Data.Construct_New_Menu);
 }

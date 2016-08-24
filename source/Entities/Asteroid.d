@@ -46,6 +46,11 @@ public:
 	}
 
 	~this() {
+	}
+
+  // We need this here otherwise if the game ended and all instances were
+  // removed, then bad stuff happens
+  void Destroy() {
     auto R_Size_Decremented(Size sz) {
       switch ( sz ) {
         default:
@@ -79,13 +84,13 @@ public:
       auto a = new Asteroid(temp, R_Position(), vel);
       Game_Manager.Add(a);
     }
-    if ( AOD.Util.R_Rand(5 * cast(int)log(size), 100) > 0 ) {
+    if ( AOD.Util.R_Rand(5 * cast(int)log(size), 100) > 50 ) {
       import Entity.Upgrade;
       alias Rand = AOD.Util.R_Rand;
       Game_Manager.Add(new Upgrade(position, AOD.Vector(Rand(-3.0f,  3.0f),
                                                         Rand(-8.0f, -2.0f))));
     }
-	}
+  }
 
  void Randomize_Torque() {
    int mult;

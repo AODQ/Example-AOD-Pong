@@ -11,7 +11,7 @@ public:
     Linear,
     /** $ .. 0 */
     Reverse,
-    /** 0 .. $ .. 0 */ 
+    /** 0 .. $ .. 0 */
     Zigzag,
     /** */
     Nil
@@ -51,7 +51,7 @@ public:
   int frames_left;
   /** The current direction of playback, 1 = positive.
       Only applies to Zigzag animation type */
-  bool direction; 
+  bool direction;
   /** Indicates whether the animation has finished playing, if another update
         is called after this is set, it is reset to false */
   bool done;

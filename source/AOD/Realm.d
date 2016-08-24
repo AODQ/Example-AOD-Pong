@@ -29,6 +29,8 @@ class Realm {
   Render_Base[][] objects;
 /** objects to remove at end of each frame */
   Render_Base[] objs_to_rem;
+  bool cleanup_this_frame;
+  Render_Base add_after_cleanup;
 
 /** colour to clear buffer with */
   GLfloat bg_red, bg_blue, bg_green;
@@ -213,6 +215,11 @@ public:
   } body {
     objs_to_rem ~= o;
   }
+/**  */
+  void Clean_Up(Render_Base rendereable) {
+    cleanup_this_frame = true;
+    add_after_cleanup  = rendereable;
+  }
 /** */
   void Set_BG_Colours(GLfloat r, GLfloat g, GLfloat b) {
     bg_red = r;
@@ -338,6 +345,28 @@ public:
       }
     }
     objs_to_rem = [];
+
+    // destroy everything this frame?
+    if ( cleanup_this_frame ) {
+      cleanup_this_frame = false;
+      for ( int i = 0; i != objects.length; ++ i ) {
+        for ( int j = 0; j != objects[i].length; ++ j ) {
+          if ( objects[i][j] != fps_display ) {
+            destroy(objects[i][j]);
+            objects[i][j] = null;
+          }
+        }
+      }
+      objects = [];
+      if ( fps_display ) {
+        Add(fps_display);
+      }
+      if ( add_after_cleanup !is null ) {
+        Add(add_after_cleanup);
+      }
+      import AODCore.sound;
+      Sound.Clean_Up();
+    }
   }
 
   ~this() {

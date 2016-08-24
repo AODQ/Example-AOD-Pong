@@ -18,7 +18,7 @@ public:
     Set_Position(_position);
     Set_Velocity(_velocity);
     type = cast(Type)AOD.Util.R_Rand(0, cast(int)Type.size);
-    Set_Sprite(Image_Data.upgrades[cast(int)type]);
+    Set_Sprite(Image_Data.upgrades[cast(int)type], 1);
     Set_Vertices([
       AOD.Vector(-size.x/2.0f, -size.y/2.0f),
       AOD.Vector( size.x/2.0f, -size.y/2.0f),
@@ -30,10 +30,16 @@ public:
     velocity.y += 0.125;
     velocity.y = AOD.Util.R_Min(velocity.y, 8.0f);
 
+    if ( position.x < 0 || position.x + size.x > AOD.R_Window_Width ) {
+      velocity.x *= -1;
+      if ( position.x < 0 ) ++ position.x;
+      else                  -- position.x;
+    }
+
+    if ( Game_Manager.paddle is null ) return;
     auto col = Collision(Game_Manager.paddle, velocity);
     if ( !col.will_collide ) return;
     // activate upgrade
-    return;
     switch ( type ) {
       case Type.new_ball:     Activate_New_Ball();     break;
       case Type.ball_speed:   Activate_Ball_Speed();   break;
@@ -57,14 +63,14 @@ public:
   static void Activate_Ball_Speed() {
     import Entity.Ball;
     foreach ( b; Game_Manager.balls ) {
-      b.Set_Ball_Speed(b.R_Default_Speed() * 1.5f, cast(int)AOD.R_MS()*7);
+      b.Set_Ball_Speed(b.R_Default_Speed() * 2.5f, cast(int)AOD.R_MS()*30);
     }
   }
 
   static void Activate_Larger_Ball() {
     import Entity.Ball;
     foreach ( b; Game_Manager.balls ) {
-      b.Set_Ball_Size(b.R_Default_Size() * 1.5f, cast(int)AOD.R_MS()*4);
+      b.Set_Ball_Size(b.R_Default_Size() * 4.5f, cast(int)AOD.R_MS()*20);
     }
   }
 
@@ -72,7 +78,7 @@ public:
     import Entity.Paddle;
     auto p = Game_Manager.paddle;
     if ( p !is null ) {
-      p.Set_Speed(p.R_Default_Speed() * 1.5f, cast(int)AOD.R_MS()*7);
+      p.Set_Speed(p.R_Default_Speed() * 3.5f, cast(int)AOD.R_MS()*30);
     }
   }
 }
