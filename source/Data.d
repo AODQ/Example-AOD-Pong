@@ -15,7 +15,7 @@ public: static:
   string[] controls;
   immutable(int) button_y      = 280,
                  button_y_it   = 50,
-                 credit_y      = 250,
+                 credit_y      = 270,
                  credit_y_it   = 75,
                  credit_text_x = 110,
                  credit_img_x  = 540;
@@ -24,7 +24,8 @@ public: static:
     alias SC = AOD.SheetContainer;
     background = cast(SR)SC("assets/menu/background.png");
     background_submenu = cast(SR)SC("assets/menu/background-submenu.png");
-    credits = [cast(SR)SC("assets/menu/credit_aod.png")];
+    credits = [cast(SR)SC("assets/menu/credit_aod.png"),
+               cast(SR)SC("assets/menu/credit_aod.png")];
     buttons = [
       cast(SR)SC("assets/menu/button_start.png"),
       cast(SR)SC("assets/menu/button_controls.png"),
@@ -32,7 +33,8 @@ public: static:
       cast(SR)SC("assets/menu/button_quit.png"),
       cast(SR)SC("assets/menu/button_back.png")
     ];
-    text_credits = ["AOD"];
+    text_credits = ["AODQ - Engine, Code",
+                    "Smilecythe - Pixels, Music"];
     controls = [
       "up", "down"
     ];

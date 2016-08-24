@@ -39,10 +39,11 @@ ubyte* keystate;
 
 class MouseEngine {
 static: private:
-  uint mouse;
+  uint mouse, last_frame_mouse;
   int mouse_x, mouse_y;
 static: public:
   void Refresh_Input() {
+    last_frame_mouse = mouse;
     keystate = cast(ubyte*)(SDL_GetKeyboardState(null));
     mouse = SDL_GetMouseState(&mouse_x, &mouse_y);
     keystate[ Mouse_Bind.Left   ] = R_LMB();
@@ -56,16 +57,39 @@ static: public:
 
 private alias MEngine = MouseEngine;
 
+private uint  MLEFT   = SDL_BUTTON(SDL_BUTTON_LEFT),
+              MRIGHT  = SDL_BUTTON(SDL_BUTTON_RIGHT),
+              MMIDDLE = SDL_BUTTON(SDL_BUTTON_MIDDLE),
+              MX1     = SDL_BUTTON(SDL_BUTTON_X1),
+              MX2     = SDL_BUTTON(SDL_BUTTON_X2);
+
 /** Returns: if the Left Mouse button is pressed */
-bool R_LMB() { return cast(bool)MEngine.mouse&SDL_BUTTON(SDL_BUTTON_LEFT  ); }
+bool R_LMB() { return cast(bool)MEngine.mouse&MLEFT  ; }
 /** Returns: if the Right Mouse button is pressed */
-bool R_RMB() { return cast(bool)MEngine.mouse&SDL_BUTTON(SDL_BUTTON_RIGHT ); }
+bool R_RMB() { return cast(bool)MEngine.mouse&MRIGHT ; }
 /** Returns: if the Middle Mouse button is pressed */
-bool R_MMB() { return cast(bool)MEngine.mouse&SDL_BUTTON(SDL_BUTTON_MIDDLE); }
+bool R_MMB() { return cast(bool)MEngine.mouse&MMIDDLE; }
 /** Returns: if MouseX1 (mouse4) button is pressed */
-bool R_MX1() { return cast(bool)MEngine.mouse&SDL_BUTTON(SDL_BUTTON_X1    ); }
+bool R_MX1() { return cast(bool)MEngine.mouse&MX1    ; }
 /** Returns: if MouseX2 (mouse5) button is pressed */
-bool R_MX2() { return cast(bool)MEngine.mouse&SDL_BUTTON(SDL_BUTTON_X2    ); }
+bool R_MX2() { return cast(bool)MEngine.mouse&MX2    ; }
+
+/** Returns: if the Left Mouse button was clicked on this frame */
+bool R_On_LMB() { return cast(bool)MEngine.mouse            &MLEFT &&
+                        !cast(bool)MEngine.last_frame_mouse&MLEFT; }
+/** Returns: if the Right Mouse button was clicked on this frame */
+bool R_On_RMB() { return cast(bool)MEngine.mouse           &MRIGHT &&
+                        !cast(bool)MEngine.last_frame_mouse&MRIGHT; }
+/** Returns: if the Middle Mouse button was clicked on this frame */
+bool R_On_MMB() { return cast(bool)MEngine.mouse           &MMIDDLE &&
+                        !cast(bool)MEngine.last_frame_mouse&MMIDDLE; }
+/** Returns: if MouseX1 (mouse4) button was clicked on this frame */
+bool R_On_MX1() { return cast(bool)MEngine.mouse           &MX1 &&
+                        !cast(bool)MEngine.last_frame_mouse&MX1; }
+/** Returns: if MouseX2 (mouse5) button was clicked on this frame */
+bool R_On_MX2() { return cast(bool)MEngine.mouse           &MX2 &&
+                        !cast(bool)MEngine.last_frame_mouse&MX2; }
+
 
 /** 
 Params:

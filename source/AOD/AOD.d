@@ -28,23 +28,24 @@ void Init () {
 */
 module AOD;
 
-import derelict.opengl3.gl3;
 import derelict.opengl3.gl;
+import derelict.opengl3.gl3;
 import derelict.sdl2.sdl;
-import std.string;
 import std.stdio;
+import std.string;
 
 static import AODCore.camera;
-static import AODCore.clientvars;
-static import AODCore.realm;
-static import AODCore.text;
-static import AODCore.sound;
-static import AODCore.entity;
-static import AODCore.vector;
-static import AODCore.utility;
-static import AODCore.matrix;
 static import AODCore.camera;
+static import AODCore.clientvars;
+static import AODCore.entity;
+static import AODCore.matrix;
+static import AODCore.realm;
+static import AODCore.render_base;
 static import AODCore.shader;
+static import AODCore.sound;
+static import AODCore.text;
+static import AODCore.utility;
+static import AODCore.vector;
 
 // --------------------- realm -------------------------------------------------
 
@@ -78,14 +79,11 @@ void End()   in { assert(realm !is null); } body {
   realm = null;
 }
 
-/** Adds entity to the engine to be updated and rendered */
-int  Add(Entity o)    in {assert(realm !is null);} body { return realm.Add(o); }
-/** Adds text to the engine to be updated and rendered */
-void Add(Text t)      in {assert(realm !is null);} body {        realm.Add(t); } 
-/** Removes the entity from the engine and deallocates it */
-void Remove(Entity o) in {assert(realm !is null);} body {     realm.Remove(o); }
-/** Removes the text from the engine and deallocates it */
-void Remove(Text t)   in {assert(realm !is null);} body {     realm.Remove(t); }
+/** Adds rbase to the engine to be updated and rendered */
+int  Add   (AODCore.render_base.Render_Base o) in {assert(realm !is null);}
+body { return realm.Add(o);    }
+void Remove(AODCore.render_base.Render_Base o) in {assert(realm !is null);}
+body {        realm.Remove(o); }
 
 /** Sets the background colour when rendering
   Params:
@@ -93,8 +91,7 @@ void Remove(Text t)   in {assert(realm !is null);} body {     realm.Remove(t); }
     g = Green
     b = Blue
 */
-void Set_BG_Colour(GLfloat r, GLfloat g, GLfloat b)
-in {
+void Set_BG_Colour(GLfloat r, GLfloat g, GLfloat b) in {
   assert(realm !is null);
 } body {
   realm.Set_BG_Colours(r, g, b);
@@ -274,6 +271,16 @@ class Input {
   alias R_MX1      = AODCore.input.R_MX1;
   /** */
   alias R_MX2      = AODCore.input.R_MX2;
+  /** */
+  alias R_On_LMB      = AODCore.input.R_On_LMB;
+  /** */
+  alias R_On_RMB      = AODCore.input.R_On_RMB;
+  /** */
+  alias R_On_MMB      = AODCore.input.R_On_MMB;
+  /** */
+  alias R_On_MX1      = AODCore.input.R_On_MX1;
+  /** */
+  alias R_On_MX2      = AODCore.input.R_On_MX2;
   /** */
   alias R_Mouse_X  = AODCore.input.R_Mouse_X;
   /** */

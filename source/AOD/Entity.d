@@ -40,12 +40,16 @@ import AODCore.realm;
 import AODCore.vector;
 import AODCore.image;
 import AODCore.console;
+import AODCore.render_base;
 
 /**
   A basic entity class. If you want collision support you should perhaps use
   AABBEntity or PolyEntity
+BUG:
+  For some reason this does not render unless you inherit Entity and use that inherited
+  class.
 */
-class Entity {
+class Entity : Render_Base {
 public:
 
   static immutable(float[8]) Vertices = [
@@ -60,55 +64,25 @@ Params:
     _layer = Layer that the entity should be rendered (0 is top)
     _type  = Type of Entity
   */
-  this(int _layer = 0, Type _type = Type.nil) {
-    layer = _layer;
+  this(ubyte _layer = 5, Type _type = Type.nil) {
+    super(_layer, Render_Base.Render_Base_Type.Entity);
     type = _type;
     alpha = 1;
     Set_UVs(Vector(0,0), Vector(1,1));
     matrix = Matrix.New();
-    position = Vector(0,0);
     rotation = 0;
     rotation_velocity = 0;
     velocity = Vector(0,0);
     is_coloured = 0;
-    static_pos = 0;
-    visible = 1;
     flipped_x = 0;
     flipped_y = 0;
     rotate_origin = Vector( 0, 0 );
     scale = Vector( 1, 1 );
     Refresh_Transform();
   }
-  /** Called whenever AOD adds this object to the realm (no reason to have a
-      Removed_From_Realm since doing so calls the destructor) */
-  void Added_To_Realm() { }
-  void Set_ID(int id) { ID = id; }
-  /** Returns:
-      unique ID of Entity */
-  int Ret_ID() { return ID; }
-  /** */
-  int R_Layer() { return layer; }
-  /** */
-  void Set_Position(float x, float y) {
-    position = Vector(x, y);
-    Refresh_Transform();
-  }
-  /** */
-  void Set_Position(Vector v) {
-    position = v;
-  }
-  /** */
-  void Add_Position(float x, float y) {
-    position.x += x;
-    position.y += y;
-  }
-  /** */
-  void Add_Position(Vector v) {
-    position += v;
-  }
   /** Returns true if the entity is clicked
 Params:
-    offset = If true the check will be adjust for camera offset (generally set
+    offset = If true the check will be adjusted for camera offset (generally set
                this to false for non-static objects)
   */
   bool Clicked(bool offset) {
@@ -119,8 +93,20 @@ Params:
 		   AOD.Input.R_Mouse_Y(offset) > position.y - size.y / 2.0f &&
 		   AOD.Input.R_Mouse_Y(offset) < position.y + size.y / 2.0f;
   }
-  /** */
-  Vector R_Position() { return position;  }
+
+  /** Returns true if the entity was clickd on this frame
+Params:
+  offset = If true the check will be adjusted for camera offset (generally set this
+              to false for non-static objects)
+  */
+  bool Clicked_On(bool offset) {
+	  static import AOD;
+	  return AOD.Input.R_On_LMB() &&
+		   AOD.Input.R_Mouse_X(offset) > position.x - size.x / 2.0f &&
+		   AOD.Input.R_Mouse_X(offset) < position.x + size.x / 2.0f &&
+		   AOD.Input.R_Mouse_Y(offset) > position.y - size.y / 2.0f &&
+		   AOD.Input.R_Mouse_Y(offset) < position.y + size.y / 2.0f;
+  }
 
   /** Sets current image to render for this entity
     Params:
@@ -289,10 +275,6 @@ Params:
   void Set_Image_Size(Vector vec) {
     image_size = vec;
   }
-  /** Sets if the entity should be rendered or not */
-  void Set_Visible(bool v) {
-    visible = v;
-  }
 
   /** Returns:
         size of the entity itself
@@ -311,11 +293,6 @@ Params:
   }
   /** Cancels manually overriding the colour of the image */
   void Cancel_Colour() { is_coloured = 0; }
-  /** Sets if the position should be static (its position relative to the
-      camera is irrelevant) */
-  void Set_Is_Static_Pos(bool s) {
-    static_pos = s;
-  }
 
   /** Sets the origin of the entity (default is the center of the image size) */
   void Set_Origin(Vector v) {
@@ -341,10 +318,6 @@ Params:
   /** */
   bool R_Coloured()      { return is_coloured; }
   /** */
-  bool R_Visible()       { return visible;     }
-  /** */
-  bool R_Is_Static_Pos() { return static_pos;  }
-  /** */
   bool R_Flipped_X()     { return flipped_x;   }
   /** */
   bool R_Flipped_Y()     { return flipped_y;   }
@@ -357,15 +330,60 @@ Params:
   /** Called immediately before rendering this entity, used to change GLSL
       uniform values. Meant to be overriden */
   void Prerender() {}
-  /** Called once every frame. Velocity and torque will
-        be applied immediately after this call. Meant to be overriden. */
-  void Update() {};
+  override void Update() {};
+  /** Applies velocity/torque to entity (No need to call this) */
+  override void Post_Update() {
+    Add_Position(R_Velocity);
+    Add_Rotation(R_Torque);
+  }
   /** Determines if there is a collision between this entity and another
       Returns:
         Result of the collision in respects to this colliding onto the other
   */
   Collision_Info Collision(Entity o) {
     return Collision_Info();
+  }
+  override void Render() {
+    if ( !R_Visible ) return;
+    auto pos = R_Position,
+         siz = size;
+    import Camera = AODCore.camera;
+    if ((pos.x + size.x/2 < 0 || pos.x - size.x/2 > Camera.R_Size().x ) ||
+        (pos.y + size.y/2 < 0 || pos.y - size.y/2 > Camera.R_Size().y) )
+      return;
+
+    import derelict.opengl3.gl;
+    import derelict.opengl3.gl3;
+    glPushMatrix();
+    glPushAttrib(GL_CURRENT_BIT);
+      // set colour and texture
+      if ( R_Coloured )
+        glColor4f(R_Red, R_Green, R_Blue, R_Alpha);
+      glBindTexture(GL_TEXTURE_2D, R_Sprite_Texture);
+      // position/rotation/scale
+      int fx = R_Flipped_X ? -1 : 1,
+          fy = R_Flipped_Y ?  1 :-1;
+      glTranslatef(pos.x + rotate_origin.x * fx,
+                   pos.y + rotate_origin.y * fy, 0);
+      glRotatef((rotation*180.0f)/3.14159f, 0, 0, 1);
+      glTranslatef(-cast(int)(rotate_origin.x*fx),
+                   -cast(int)(rotate_origin.y*fy), 0);
+      glScalef(R_Img_Size.x, R_Img_Size.y, 1);
+      // shader
+      static import AODCore.shader;
+      if ( R_Shader.R_Shader_ID != 0 ) {
+        R_Shader.Bind();
+        Prerender();
+      } else
+        AODCore.shader.Shader.Unbind();
+      // render
+      static GLubyte[6] index = [ 0,1,2, 1,2,3 ];
+      glVertexPointer  (2, GL_FLOAT, 0, Entity.Vertices.ptr);
+      glTexCoordPointer(2, GL_FLOAT, 0, R_UV_Array.ptr);
+      glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_BYTE, index.ptr);
+      glLoadIdentity();
+    glPopAttrib();
+    glPopMatrix();
   }
 private:
   void Refresh_Transform() {
@@ -378,8 +396,6 @@ public:
 protected:
   /** Current image to render to the screen */
   GLuint image;
-  /** ID within the AOD engine */
-  int ID;
   /** Rotation in radians of object (and image) */
   float rotation;
   /** The amount added to rotation every update frame */
@@ -388,8 +404,6 @@ protected:
   Matrix matrix;
   /** Collision type of entity */
   Type type;
-  /** */
-  Vector position;
   /** Amount added to position every update frame */
   Vector velocity;
   Vector scale;
@@ -400,9 +414,6 @@ protected:
   /** The origin of which to apply rotation. Origin default is in the middle
       of the image */
   Vector rotate_origin;
-  /** The layer (z-index) of which the object is located. Used only to determine
-      which objects get rendered first */
-  int layer;
   /** The alpha of the image */
   float alpha;
   /** Determines if the image is flipped on the x-axis */
@@ -411,7 +422,7 @@ protected:
   bool flipped_y;
   /** The UV that determines how the image is rendered */
   GLfloat[8] _UV;
-  bool is_coloured, visible, static_pos;
+  bool is_coloured;
   float red, green, blue;
 
   /** Used to determine if the vertices of an entity need to be restructured */
@@ -433,7 +444,7 @@ protected:
   void Build_Transform() {}
 public:
   /** Constructs an entity that has no vertices */
-  this(int _layer = 0) {
+  this(ubyte _layer = 0) {
     super(_layer, Type.Polygon);
     vertices = [];
   }
@@ -482,7 +493,7 @@ public:
       foreach ( i; vertices )
         vertices_transform ~= Vector.Transform(R_Matrix(), i);
     }
-    
+
     return vertices_transform;
   }
 
@@ -508,8 +519,9 @@ public:
       Result of the collision in respects to this colliding onto the AABB
   */
   Collision_Info Collision(AABBEnt aabb, Vector velocity) {
-    return Collision_Info(); 
+    return Collision_Info();
   }
+
 };
 
 /**
@@ -718,7 +730,7 @@ static void Order_Vertices(ref Vector[] verts) {
     //                        << i.second.x << " - " << centx << ") = "
     //                        << i.first << '\n';
   }
-  
+
   import std.algorithm;
   sort!((x, y) => x.dist < y.dist)(va);
   // put back in vector

@@ -17,6 +17,7 @@ import derelict.opengl3.gl3;
 import derelict.sdl2.sdl;
 import derelict.vorbis.file;
 import derelict.vorbis.vorbis;
+import AODCore.render_base;
 
 /** */
 private SDL_Window* screen = null;
@@ -25,12 +26,9 @@ private SDL_Window* screen = null;
           between */
 class Realm {
 /** objects in realm, index [layer][it]*/
-  Entity[][] objects;
-/** text in realm */
-  Text[] text;
-
+  Render_Base[][] objects;
 /** objects to remove at end of each frame */
-  Entity[] objs_to_rem;
+  Render_Base[] objs_to_rem;
 
 /** colour to clear buffer with */
   GLfloat bg_red, bg_blue, bg_green;
@@ -46,7 +44,6 @@ class Realm {
 /** Outputs frames_per_second to screen */
   AODCore.text.Text fps_display;
 public:
-
 /** */
   void Change_MSDT(uint ms_dt_) in {
     assert(ms_dt_ > 0);
@@ -79,7 +76,7 @@ public:
     height = window_height;
     ms_dt = ms_dt_;
     Debug_Output("Initializing SDL");
-    import std.conv : to; 
+    import std.conv : to;
     import derelict.util.exception;
     import std.stdio;
     writeln("AOD@Realm.d@Initialize Initializing Art of Dwarficorn engine");
@@ -93,7 +90,7 @@ public:
             "writeln(\"Failed to load: " ~ lib ~ ", \" ~ to!string(de));"     ~
         "}";
     }
-    
+
     mixin(Load_Library!("DerelictGL3"       ,""));
     mixin(Load_Library!("DerelictGL"        ,""));
     mixin(Load_Library!("DerelictSDL2",
@@ -105,7 +102,7 @@ public:
     mixin(Load_Library!("DerelictAL"        ,""));
     mixin(Load_Library!("DerelictVorbis"    ,"\"libvorbis-0.dll\""));
     mixin(Load_Library!("DerelictVorbisFile","\"libvorbisfile-3.dll\""));
-    
+
     writeln("AOD@Realm.d@Initialize Initializing SDL");
     SDL_Init ( SDL_INIT_EVERYTHING );
 
@@ -174,7 +171,7 @@ public:
     import AODCore.vector;
     writeln("window dimensions: " ~ cast(string)Vector(window_width,
                                                        window_height));
-    
+
     glOrtho(0, window_width, window_height, 0, 0, 1);
 
     glDisable(GL_DEPTH_TEST);
@@ -198,7 +195,7 @@ public:
   }
 
 /** */
-  int Add(Entity o) in {
+  int Add(Render_Base o) in {
     assert(o !is null);
   } body {
     static uint id_count = 0;
@@ -207,34 +204,14 @@ public:
     if ( objects.length <= l ) objects.length = l+1;
     objects[l] ~= o;
     o.Added_To_Realm();
-    return o.Ret_ID();
+    return o.R_ID();
   }
 
 /** */
-  void Add(Text t) in {
-    assert(t !is null);
-  } body {
-    text ~= t;
-  }
-
-/** */
-  void Remove(Entity o) in {
+  void Remove(Render_Base o) in {
     assert(o !is null);
   } body {
     objs_to_rem ~= o;
-  }
-/** */
-  void Remove(Text t) in {
-    assert(t !is null);
-  } body {
-    foreach ( i; 0 .. text.length ) {
-      if ( text[i] == t ) {
-        destroy(text[i]);
-        text[i] = null;
-        text = text[0 .. i] ~ text[i+1 .. $];
-        return;
-      }
-    }
   }
 /** */
   void Set_BG_Colours(GLfloat r, GLfloat g, GLfloat b) {
@@ -344,8 +321,7 @@ public:
     foreach ( l ; objects )
     foreach ( a ; l ) {
       a.Update();
-      a.Add_Position(a.R_Velocity());
-      a.Add_Rotation(a.R_Torque());
+      a.Post_Update();
     }
 
     // remove objects
@@ -374,7 +350,7 @@ public:
   void Render() {
     glClear(GL_COLOR_BUFFER_BIT| GL_DEPTH_BUFFER_BIT);
     glClearColor(bg_red,bg_green,bg_blue,0);
-    
+
     glEnableClientState(GL_VERTEX_ARRAY);
     glEnableClientState(GL_TEXTURE_COORD_ARRAY);
     glEnable(GL_TEXTURE_2D);
@@ -384,93 +360,31 @@ public:
 
     static GLubyte[6] index = [ 0,1,2, 1,2,3 ];
 
-    // --- objects
-
-    for ( int obj_layer = objects.length-1; obj_layer != -1; -- obj_layer )
-      foreach ( lz ; objects[obj_layer] ) {
-        if ( !lz.R_Visible() ) continue;
-        auto position = lz.R_Position(),
-             size      = lz.R_Size();
-        if ( !lz.R_Is_Static_Pos() ) {
-          position.x -= off_x;
-          position.y -= off_y;
+    // --- rendereables ---
+    for ( int layer = objects.length-1; layer != -1; -- layer ) {
+      foreach ( obj ; objects[layer] ) {
+        switch ( obj.R_Render_Base_Type ) {
+          case Render_Base.Render_Base_Type.Entity:
+            auto e = cast(Entity)obj;
+            e.Render();
+          break;
+          case Render_Base.Render_Base_Type.Text:
+            auto t = cast(Text)obj;
+            t.Render();
+          break;
+          default:
+            obj.Render();
+          break;
         }
-        if ((position.x + size.x/2 < 0 ||
-             position.x - size.x/2 > Camera.R_Size().x ) ||
-            (position.y + size.y/2 < 0 ||
-             position.y - size.y/2 > Camera.R_Size().y) )
-          continue;
-
-        glPushMatrix();
-        glPushAttrib(GL_CURRENT_BIT);
-          // set colour/texture
-          if ( lz.R_Coloured() )
-            glColor4f(lz.R_Red(), lz.R_Green(), lz.R_Blue(), lz.R_Alpha());
-          glBindTexture(GL_TEXTURE_2D, lz.R_Sprite_Texture());
-          // set position/rotation/scale
-          auto origin = lz.R_Origin();
-          int fx = lz.R_Flipped_X() ? - 1 :  1 ,
-              fy = lz.R_Flipped_Y() ?   1 :- 1 ;
-          glTranslatef(position.x + origin.x*fx,
-                       position.y + origin.y*fy, 0);
-          import std.conv : to;
-          import std.stdio : writeln;
-          glRotatef((lz.R_Rotation()*180.0)/3.14159f, 0, 0, 1);
-          glTranslatef(-cast(int)(origin.x*fx),
-                       -cast(int)(origin.y*fy), 0);
-          glScalef (lz.R_Img_Size().x, lz.R_Img_Size().y, 1);
-
-          // shader
-          static import AODCore.shader;
-          if ( lz.R_Shader().R_Shader_ID() != 0 ) {
-            lz.R_Shader().Bind();
-            lz.Prerender();
-          } else
-            AODCore.shader.Shader.Unbind();
-
-          // render
-          import std.conv : to;
-          glVertexPointer  (2, GL_FLOAT, 0, Entity.Vertices.ptr);
-          glTexCoordPointer(2, GL_FLOAT, 0, lz.R_UV_Array().ptr);
-          glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_BYTE, index.ptr);
-          glLoadIdentity();
-        glPopAttrib();
-        glPopMatrix();
       }
-    //-- 
-
-
-    // ---- texts
-    foreach ( i; 0 .. text.length ) {
-      auto tz = text[i];
-      if ( !tz.R_Visible() ) continue;
-      if ( !tz.R_FT_Font() ) {
-        Debug_Output("Font face uninitialized for " ~ tz.R_Font());
-      }
-    
-      string t_str = tz.R_Str();
-      import std.stdio : writeln;
-      /* writeln("Rendering " ~ t_str ~ " @ " ~ cast(string)tz.R_Position()); */
-
-      glPushMatrix();
-        glTranslatef(tz.R_Position().x, tz.R_Position().y, 0);
-        glListBase(tz.R_FT_Font().R_Character_List());
-        glCallLists(t_str.length, GL_UNSIGNED_BYTE, t_str.ptr);
-      glPopMatrix();
     }
-
 
     // ---- console
     static import AODCore.console;
     if ( AODCore.console.console_open ) {
       foreach ( tz; AODCore.console.ConsEng.console_text ) {
-        string t_str = tz.R_Str();
-
-        glPushMatrix();
-          glTranslatef(tz.R_Position().x, tz.R_Position().y, 0);
-          glListBase(tz.R_FT_Font().R_Character_List());
-          glCallLists(t_str.length, GL_UNSIGNED_BYTE, t_str.ptr);
-        glPopMatrix();
+        import std.stdio;
+        tz.Render();
       }
     }
 

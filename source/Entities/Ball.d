@@ -23,7 +23,7 @@ public:
   }
 
   this(float size) {
-    layer = Layer_Data.Ball;
+    super(Layer_Data.Ball);
     default_size = size;
     Set_Size(AOD.Vector(size, size));
 
@@ -38,6 +38,10 @@ public:
 
     Set_Size(AOD.Vector(size, size), true);
     speed = Default_speed;
+  }
+
+  ~this() {
+    AOD.Output("Removed");
   }
 
   float R_Default_Speed() { return Default_speed; }
@@ -67,19 +71,28 @@ public:
       direction.y = -direction.y;
     }
 
+    if ( position.y - size.x > AOD.R_Window_Height )
+      AOD.Remove(this);
+
     static int coll_timer = 0;
 
+    import std.stdio;
     if ( coll_timer == 0 ) {
       auto col = Collision(Game_Manager.paddle, velocity);
-      if ( col.will_collide ) {
+      if ( col.will_collide && Game_Manager.paddle.R_Stored_Ball !is this ) {
+        writeln("will collide");
         Add_Position(col.translation);
-        direction.x = (position.x - Game_Manager.paddle.R_Position.x)
-                      / Game_Manager.paddle.R_Width();
-        direction.y = -sqrt(1-direction.x*direction.x);
+        direction.x *= -1;
+        /* (position.x - Game_Manager.paddle.R_Position.x) */
+        /*               / Game_Manager.paddle.R_Width(); */
+        direction.y = -1;
+        /* sqrt(1-direction.x*direction.x); */
         coll_timer = 16;
       }
       foreach ( asteroid; Game_Manager.asteroids ) {
         col = Collision(asteroid, velocity);
+        if ( col.will_collide )
+          writeln("will collide");
         if ( col.will_collide ) {
           direction *= -1;
           direction.x = AOD.Util.R_Rand(-1, 1);

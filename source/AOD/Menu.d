@@ -25,6 +25,7 @@ Example:
 module AODCore.menu;
 
 static import AOD;
+import Entity.Menu;
 
 /**
   <b>DIAGRAM</b>
@@ -35,28 +36,28 @@ static import AOD;
 <b>BUTTON</b>
 
 ---
-start    : destroys menu and adds add_on_start to AOD 
-controls : Initiates control window                   
-credits  : Initiates credits window                   
-quit     : Ends program                               
-back     : Goes back to main menu                     
+start    : destroys menu and adds add_on_start to AOD
+controls : Initiates control window
+credits  : Initiates credits window
+quit     : Ends program
+back     : Goes back to main menu
 ---
 
 <b>BUTTON POSITIONING</b> (origin = center of image)
 
 ---
-start    : button_y * button_y_it*0 
-controls : button_y * button_y_it*1 
-credits  : button_y * button_y_it*2 
-quit     : button_y * button_y_it*3 
-back     : <48, 48>                 
+start    : button_y * button_y_it*0
+controls : button_y * button_y_it*1
+credits  : button_y * button_y_it*2
+quit     : button_y * button_y_it*3
+back     : <48, 48>
 ---
 
 <b>TEXT</b>
 
 ---
-general    : font will always be set as def font, origins located at  top-left 
-controls   : an array of strings containing each name of control         
+general    : font will always be set as def font, origins located at  top-left
+controls   : an array of strings containing each name of control
 credits    : an array of strings containing name and role of team members
 ---
 
@@ -64,10 +65,10 @@ credits    : an array of strings containing name and role of team members
 
 ---
 general    : all image origins are the center of the image and use the
-              SheetRect structure                   
-buttons    : start, controls, credits, quit, back  
-background : background, background-submenu        
-credits    : array of each member                  
+              SheetRect structure
+buttons    : start, controls, credits, quit, back
+background : background, background-submenu
+credits    : array of each member
 ---
 
 <b>BACKGROUND</b>
@@ -92,9 +93,9 @@ buttons    : start, controls, credits, quit
 <b>CONTROLS MENU</b>
 
 ---
-button      : back                           
-backgrounds : background, background-submenu 
-text        : controls                       
+button      : back
+backgrounds : background, background-submenu
+text        : controls
 ---
 
   <img src="https://aodq.github.io/files/MENU-controls.png">
@@ -103,12 +104,12 @@ text        : controls
 <b>CREDITS MENU</b>
 
 ---
-buttons     : back                           
-backgrounds : background, background-submenu 
-text        : credits                        
-image       : credits                        
+buttons     : back
+backgrounds : background, background-submenu
+text        : credits
+image       : credits
 ---
- 
+
   <img src="https://aodq.github.io/files/MENU-credits.png">
 */
 class Menu : AOD.Entity {
@@ -154,11 +155,15 @@ Params:
     Set_Visible(0);
     add_on_start = _add_on_start;
     // set up background and buttons
-    background = new AOD.Entity(20);
+    background = new MenuEntity;
     background.Set_Sprite(img_background, 1);
     background.Set_Position(AOD.R_Window_Width/2, AOD.R_Window_Height/2);
     AOD.Add(background);
-    background_submenu = new AOD.Entity(19);
+    import std.conv : to;
+    import std.stdio : writeln;
+    writeln("Creating menu");
+    writeln("BG POSITION: " ~ cast(string)background.R_Position);
+    background_submenu = new MenuEntity;
     background_submenu.Set_Sprite(img_background_submenu, 1);
     background_submenu.Set_Size(background_submenu.R_Img_Size());
     background_submenu.Set_Position(AOD.R_Window_Width/2,AOD.R_Window_Height/2);
@@ -166,11 +171,9 @@ Params:
     AOD.Add(background_submenu);
     import std.stdio;
     import std.conv : to;
-    writeln("Creating menu");
-    writeln("BG POSITION: " ~ cast(string)background.R_Position);
     writeln(to!string(img_background));
     for ( int i = 0; i != Button.max+1; ++ i ) {
-      buttons[i] = new AOD.Entity();
+      buttons[i] = new MenuEntity;
       with ( buttons[i] ) {
         Set_Sprite(img_buttons[i], 1);
         import std.conv : to;
@@ -183,15 +186,16 @@ Params:
     }
     buttons[Button.Back].Set_Position(62, 62);
     buttons[Button.Back].Set_Visible(false);
-    
+
     // set up credits
     for ( int i = 0; i != text_credits.length; ++ i ) {
       auto cy  = credit_y,
            cyi = credit_y_it;
       // text
-      /* credit_texts = new AOD.Text(credit_text_x, */
-      /*                             cy + cyi*i, text_credits[i]); */
-      /* credit_texts.Set_Visible(0); */
+      credit_texts ~= new AOD.Text(credit_text_x,
+                                   cy + cyi*i, text_credits[i]);
+      credit_texts[$-1].Set_Visible(0);
+      AOD.Add(credit_texts[$-1]);
       credits ~= new AOD.Entity();
       // img
       with ( credits[$-1] ) {
@@ -221,7 +225,7 @@ Params:
 
   // since an entity can be clickeable even though it is not visible
   private bool Clicked(AOD.Entity e) {
-    return e.R_Visible && e.Clicked(0);
+    return e.R_Visible && e.Clicked_On(0);
   }
 
   private void Set_Controls_Visibility(bool visible) {
@@ -237,21 +241,28 @@ Params:
   }
 
   override void Update() {
+    import std.stdio : writeln;
     if ( Clicked( buttons[Button.Start] ) ) {
-      AOD.Remove(this);
+      writeln("CLICKED START");
+      /* AOD.Remove(this); */
       return;
     }
     if ( Clicked( buttons[Button.Credits] ) ) {
+      writeln("CLICKED CREDITS");
       Flip_Menu();
       foreach ( c; credit_texts )
         c.Set_Visible(true);
       return;
     }
     if ( Clicked( buttons[Button.Controls] ) ) {
+      writeln("CLICKED CONTROLS");
       Flip_Menu();
       Set_Controls_Visibility(false);
     }
     if ( Clicked( buttons[Button.Back] ) ) {
+      writeln("CLICKED BACK");
+      Set_Controls_Visibility(false);
+      Set_Credits_Visibility(false);
       Flip_Menu();
     }
   }

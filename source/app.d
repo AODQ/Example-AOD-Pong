@@ -17,7 +17,7 @@ void Init () {
   AOD.Camera.Set_Size(AOD.Vector(AOD.R_Window_Width(), AOD.R_Window_Height()));
   AOD.Camera.Set_Position(AOD.Vector(AOD.R_Window_Width() /2,
                                      AOD.R_Window_Height()/2));
-  AOD.Text.Set_Default_Font("assets/DejaVuSansMono.ttf", 13);
+  AOD.Text.Set_Default_Font("assets/DejaVuSansMono.ttf", 20);
   AOD.Console.Initialize(AOD.Console.Type.Debug_In);
   AOD.Set_BG_Colour(.08, .08, .095);
   // --- debug ---
@@ -44,7 +44,7 @@ void Game_Init () {
   static import Data;
   Data.Image_Data.Initialize();
   Data.Sound_Data.Initialize();
-  /* import Entity.Menu; */
+  import Entity.Menu;
   /* Menu_Manager.menus = [[new Entity.Menu.MenuEntity(AOD.Vector(320, 240), */
   /*                         100, 100, "play", &Menu_Manager.play)]]; */
 	/* Menu_Manager.Create(); */

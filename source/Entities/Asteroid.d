@@ -8,12 +8,14 @@ class Asteroid : AOD.PolyEntity {
 public:
   enum Size { nil = 0, tiny = 8, small = 16, medium = 32, large = 64 }
 	this(Size sz, AOD.Vector pos, AOD.Vector vel) {
+    super(Layer_Data.Asteroid);
     import std.conv : to;
     size = sz;
 
-    layer = Layer_Data.Asteroid;
 		Set_Velocity(vel);
 		Set_Position(pos);
+    import std.stdio : writeln;
+    writeln("Position: " ~ cast(string)pos);
     Set_Size(sz, sz);
 		switch (sz) {
       case Size.tiny:
@@ -42,7 +44,7 @@ public:
         AOD.Vector(AOD.Util.R_Rand(1, 1.5) * (AOD.Util.R_Rand(0, 2) > 1?1:-1),
                    AOD.Util.R_Rand(1, 1.5) * (AOD.Util.R_Rand(0, 2) > 1?1:-1)));
 	}
-	
+
 	~this() {
     auto R_Size_Decremented(Size sz) {
       switch ( sz ) {
@@ -116,9 +118,8 @@ public:
             AOD.Vector(-s/2.0f,  s/2.0f),
             AOD.Vector( s/2.0f,  s/2.0f),
             AOD.Vector( s/2.0f, -s/2.0f)];
-
   }
-	
+
 private:
 	Size size;
 }

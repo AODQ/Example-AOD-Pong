@@ -18,14 +18,16 @@ public:
     speed = _speed;
     speed_timer = _speed_timer;
   }
-  
+
   float R_Width() { return width; }
-  
+
   float R_Default_Speed() { return Default_speed; }
 
+  Ball R_Stored_Ball() { return stored_ball; }
+
+
   this(float _width, Ball _stored_ball) {
-    super();
-    layer = Layer_Data.Paddle;
+    super(Layer_Data.Paddle);
     speed = Default_speed;
     stored_ball = _stored_ball;
     this.width = _width;

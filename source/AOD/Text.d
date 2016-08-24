@@ -7,23 +7,18 @@ Example:
   AOD.Add(new Text("Hello, World!", AOD.R_Window_Width()/2, 40));
 ---
 */
-/**
-Macros:
-  PARAM = <u>$1</u>
-
-  PARAMDESC = <t style="padding-left:3em">$1</t>
-*/
 module AODCore.text;
 
+
+
+import AODCore.console;
+import AODCore.render_base;
 import AODCore.utility;
 import AODCore.vector;
-import AODCore.console;
-
-import derelict.opengl3.gl3;
-import derelict.opengl3.gl;
-import derelict.sdl2.sdl;
 import derelict.freetype.ft;
-
+import derelict.opengl3.gl;
+import derelict.opengl3.gl3;
+import derelict.sdl2.sdl;
 import std.string;
 import std.typecons : tuple;
 
@@ -186,7 +181,7 @@ private TextEng.Font Load_Font(string fil, int siz) {
   <br>
   Unlike Entity, this should probably never be inherited from
 */
-class Text {
+class Text : Render_Base {
   Vector position;
   string msg, font_name;
   int pt_size;
@@ -194,7 +189,6 @@ class Text {
   TextEng.Font ft_font;
 
   bool uses_default_font;
-  bool visible;
 
   static string default_font;
   static int default_pt_size;
@@ -222,42 +216,31 @@ class Text {
 public:
   /**
     Params:
-      pos_x = $(PARAMDESC Position of the text on the x-axis)
-      pos_y = $(PARAMDESC Position of the text on the y-axis)
-      str_  = $(PARAMDESC message to the rendered to the screen)
+      pos_x = Position of the text on the x-axis
+      pos_y = Position of the text on the y-axis
+      str_  = message to the rendered to the screen
   */
-  this(int pos_x, int pos_y, string str_) {
-    position = Vector(pos_x, pos_y);
-    Redefault(str_);
+  this(int pos_x, int pos_y, string str_, ubyte _layer = 4) {
+    this(Vector(pos_x, pos_y), str_, _layer);
   }
 
   /**
     Params:
-      pos  = $(PARAMDESC Position of the text)
-      str_ = $(PARAMDESC message to be rendered to the screen)
+      pos  = Position of the text
+      str_ = message to be rendered to the screen
   */
-  this(Vector pos, string str_) {
-    position = Vector(pos);
+  this(Vector pos, string str_, ubyte _layer = 4) {
+    super(_layer, Render_Base.Render_Base_Type.Text);
+    position = pos;
+    static_position = true;
     Redefault(str_);
   }
-
-  /** */
-  void Set_Position(Vector v) { position = v; }
-  /** */
-  void Set_Position(float x, float y)  { position.x = x; position.y = y; }
-  /** */
-  Vector R_Position() { return position; }
   /** Sets message to be rendered */
   void Set_String(string str_) {
     msg = str_;
   }
   /** WIP (disabled(!)) */
-  @disable void Set_Colour(int r, int g, int b) {                        }
-  /** 
-    Params:
-      t = $(PARAMDESC Determines if the text should be rendered to the screen)
-  */
-  void Set_Visible(bool t)             { visible = t;                    }
+  @disable void Set_Colour(int r, int g, int b) { }
   /** Sets font to default font */
   void Set_To_Default() {
     uses_default_font = 1;
@@ -284,12 +267,11 @@ public:
   /** Returns: The message rendered to screen */
   string R_Str() { return msg; }
   /** */
-  bool R_Visible() { return visible; }
 
   /*
 Params:
-  str     = $(PARAMDESC File of the font to be used)
-  pt_size = $(PARAMDESC point size of the font)
+  str     = File of the font to be used
+  pt_size = point size of the font
   */
   static void Set_Default_Font(string str, int pt_siz) {
     Load_Font(str, pt_siz);
@@ -298,6 +280,19 @@ Params:
   }
   /** */
   static string R_Default_Font() { return default_font; }
+
+  override void Update() {}
+  override void Post_Update() {}
+  override void Render() {
+    Vector pos = R_Position(true); 
+    if ( R_Visible && R_FT_Font ) {
+      glPushMatrix();
+        glTranslatef(position.x, position.y, 0);
+        glListBase(ft_font.R_Character_List);
+        glCallLists(msg.length, GL_UNSIGNED_BYTE, msg.ptr);
+      glPopMatrix();
+    }
+  }
 }
 
 

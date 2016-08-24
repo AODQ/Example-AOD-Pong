@@ -1,5 +1,5 @@
 /**
-Macros:
+macros:
   PARAM = <u>$1</u>
 
   PARAMDESC = <t style="padding-left:3em">$1</t>
