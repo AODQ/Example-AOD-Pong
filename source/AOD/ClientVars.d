@@ -5,12 +5,6 @@
   can do is completely up to the application writer. In the future audio and
   display settings will be stored here.
 */
-/**
-Macros:
-  PARAM = <u>$1</u>
-
-  PARAMDESC = <t style="padding-left:3em">$1</t>
-*/
 module AODCore.clientvars;
 import std.string;
 

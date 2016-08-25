@@ -216,9 +216,10 @@ class Text : Render_Base {
 public:
   /**
     Params:
-      pos_x = Position of the text on the x-axis
-      pos_y = Position of the text on the y-axis
-      str_  = message to the rendered to the screen
+      pos_x  = Position of the text on the x-axis
+      pos_y  = Position of the text on the y-axis
+      str_   = message to the rendered to the screen
+      _layer = layer
   */
   this(int pos_x, int pos_y, string str_, ubyte _layer = 4) {
     this(Vector(pos_x, pos_y), str_, _layer);
@@ -226,8 +227,9 @@ public:
 
   /**
     Params:
-      pos  = Position of the text
-      str_ = message to be rendered to the screen
+      pos    = Position of the text
+      str_   = message to be rendered to the screen
+      _layer = layer
   */
   this(Vector pos, string str_, ubyte _layer = 4) {
     super(_layer, Render_Base.Render_Base_Type.Text);

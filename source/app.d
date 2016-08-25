@@ -29,6 +29,7 @@ void Init () {
 void Game_Init () {
 /*
 */
+  AOD.Sound.Clean_Up();
   static import Data;
   Data.Image_Data.Initialize();
   Data.Sound_Data.Initialize();

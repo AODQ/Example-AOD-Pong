@@ -2,12 +2,6 @@
   Just general utility that is useful in AOD. Was much more useful in C++, now
   in D most of these are not necessary
 */
-/**
-Macros:
-  PARAM = <u>$1</u>
-
-  PARAMDESC = <t style="padding-left:3em">$1</t>
-*/
 module AODCore.utility;
 import std.string;
 

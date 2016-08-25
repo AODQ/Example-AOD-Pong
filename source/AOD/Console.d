@@ -1,12 +1,6 @@
 /**
   Gives a form of communication between the user and the program.
 */
-/**
-Macros:
-  PARAM = <u>$1</u>
-
-  PARAMDESC = <t style="padding-left:3em">$1</t>
-*/
 module AODCore.console;
 import AODCore.text;
 import AODCore.entity;
@@ -22,8 +16,8 @@ import std.string;
     meaning that if you dislike the Console you do not need to
     use it)
 params:
-  console_type = $(PARAMDESC Sets the console_type (see Type))
-  key          = $(PARAMDESC Sets key for which console will open to)
+  console_type = Sets the console_type (see Type)
+  key          = Sets key for which console will open to
 */
 void Initialize(Type console_type, SDL_Keycode key = SDL_SCANCODE_GRAVE) {
   ConsEng.console_type = console_type;
@@ -34,7 +28,7 @@ void Initialize(Type console_type, SDL_Keycode key = SDL_SCANCODE_GRAVE) {
 
 /** Outputs a message to the console
 Params:
-  msg = $(PARAMDESC A message that has no new lines)
+  msg = A message that has no new lines
 */
 void Output(string msg) {
   writeln(msg);

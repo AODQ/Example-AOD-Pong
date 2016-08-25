@@ -24,12 +24,6 @@ Example:
 ---
 */
 
-/**
-Macros:
-  PARAM = <u>$1</u>
-
-  PARAMDESC = <t style="padding-left:3em">$1</t>
-*/
 module AODCore.entity;
 
 import derelict.opengl3.gl3;
@@ -110,9 +104,9 @@ Params:
 
   /** Sets current image to render for this entity
     Params:
-      index = $(PARAMDESC GL Image to render)
-      reset_size = $(PARAMDESC If the size of this entity (and image) should
-                     be resized to index' size)
+      index = GL Image to render
+      reset_size = If the size of this entity (and image) should be resized
+                      to index' size
   */
   void Set_Sprite(GLuint index, bool reset_size = 0)
   in {
@@ -237,8 +231,8 @@ Params:
   }
   /** Sets UV to passed in paremeters
     Params:
-      left  = $(PARAMDESC [ UV[2], UV[3] ])
-      right = $(PARAMDESC [ UV[4], UV[5] ])
+      left  = [ UV[2], UV[3] ]
+      right = [ UV[4], UV[5] ]
   */
   void R_UVs(ref Vector left, ref Vector right) {
     left.x  = _UV[2];
@@ -263,8 +257,8 @@ Params:
 
   /** Sets the size of the entity
     Params:
-      vec         = $(PARAMDESC Size of the entity (in pixels))
-      scale_image = $(PARAMDESC If the size should scale the image as well)
+      vec         = Size of the entity (in pixels)
+      scale_image = If the size should scale the image as well
   */
   void Set_Size(Vector vec, bool scale_image = 0) {
     size = vec;
@@ -455,9 +449,10 @@ public:
   }
   /** Constructs an entity
     Params:
-      vertices_ = $(PARAMDESC Vertices to construct polygon with (must be
-                    convex and in) counter-clockwise order);
-      off       = $(PARAMDESC Sets position of entity)
+      vertices_ = Vertices to construct polygon with (must be
+                   convex and in counter-clockwise order)
+      off       = Sets position of entity
+      _layer    = layer
   */
   this(Vector[] vertices_, Vector off = Vector( 0, 0 ), ubyte _layer = 0) {
     super(_layer, Type.Polygon);
@@ -469,10 +464,9 @@ public:
   // will override previous vectors
   /** Resets vertices of entity
     Params:
-      vertices_ = $(PARAMDESC Vertices to construct polygon with
-                    (must be convex))
-      reorder   = $(PARAMDESC If set, the vertices will be ordered as CCW
-                    (if set to) 0 then vertices_ MUST be in CCW order)
+      vertices_ =  Vertices to construct polygon with (must be convex)
+      reorder   =  If set, the vertices will be ordered as CCW (if set to) 0
+                      then vertices_ MUST be in CCW order
   */
   void Set_Vertices(Vector[] vertices_, bool reorder = 1) {
     vertices = vertices_;
@@ -506,8 +500,8 @@ public:
 
   /** Check collision with another PolyEntity
     Params:
-      poly     = $(PARAMDESC Another PolyEntity)
-      velocity = $(PARAMDESC Velocity for which to check collision)
+      poly     = Another PolyEntity
+      velocity = Velocity for which to check collision
     Returns:
       Result of the collision in respects to this colliding onto the poly
   */
@@ -518,8 +512,8 @@ public:
   }
   /** Check collision with another AABBEntity
     Params:
-      aabb     = $(PARAMDESC Another AABBEntity)
-      velocity = $(PARAMDESC Velocity for which to check collision)
+      aabb     = Another AABBEntit
+      velocity = Velocity for which to check collisio
     Returns:
       Result of the collision in respects to this colliding onto the AABB
   */
@@ -540,7 +534,8 @@ class AABBEnt : PolyEnt {
 public:
   /**
     Params:
-      size = $(PARAMDESC Size of the bounding-box)
+      _layer =
+      size   = Size of the bounding-box
   */
   this(ubyte _layer = 0, Vector size = Vector(0, 0)) {
     super(_layer);
@@ -552,8 +547,9 @@ public:
   }
   /**
     Params:
-      size = $(PARAMDESC Size of the bounding-box)
-      pos  = $(PARAMDESC Position of the entity)
+     _layer =
+      size  = Size of the bounding-box
+      pos   = Position of the entity
   */
   this(ubyte _layer, Vector size = Vector( 0,0 ), Vector pos = Vector( 0,0 )) {
     this(_layer, size);
@@ -564,8 +560,8 @@ public:
 
   /** Check collision with another AABBEntity
     Params:
-      aabb     = $(PARAMDESC Another AABBEntity)
-      velocity = $(PARAMDESC Velocity for which to check collision)
+      aabb     = Another AABBEntity
+      velocity = Velocity for which to check collision
     Returns:
       Result of the collision in respects to this colliding onto the AABB
   */
@@ -583,8 +579,8 @@ public:
   }
   /** Check collision with another PolyEntity
     Params:
-      poly     = $(PARAMDESC Another PolyEntity)
-      velocity = $(PARAMDESC Velocity for which to check collision)
+      poly     = Another PolyEntity
+      velocity = Velocity for which to check collision
     Returns:
       Result of the collision in respects to this colliding onto the poly
   */
@@ -616,7 +612,7 @@ public:
   /**
     basic form of Collision_Info
     Params:
-      c = $(PARAMDESC If there was a collision)
+      c = If there was a collision
   */
   this(bool c) {
     collision = c;
@@ -624,9 +620,9 @@ public:
   }
   /**
     Params:
-      t  = $(PARAMDESC Translation of the collision)
-      c  = $(PARAMDESC If there was a collision)
-      wc = $(PARAMDESC If there will be a collision)
+      t  = Translation of the collision
+      c  = If there was a collision
+      wc = If there will be a collision
   */
   this(ref Vector t, bool c, bool wc) {
     collision = c;

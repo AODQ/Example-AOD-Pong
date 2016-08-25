@@ -193,18 +193,21 @@ if ( size == 0 ) {
 private void Main_Sound_Loop() {
   SoundEng.Sample[] samples;
 
-  void DestroySample(int index) {
+  void DestroySample(int index, bool deprecate_samples = true) {
+    if ( index < 0 || index >= samples.length ) return;
     auto sound = samples[index];
+    if ( sound is null ) return;
     alSourceStop(sound.source_id);
     alDeleteSources(1, &sound.source_id);
     alDeleteBuffers(SoundEng.Buffer_amt, sound.buffer_id.ptr);
     ov_clear(&sound.ogg_file);
     destroy(samples[index]);
     samples[index] = null;
-    while ( samples.length > 0 && samples[$-1] is null ) {
-      -- samples.length;
+    if ( deprecate_samples ) {
+      while ( samples.length > 0 && samples[$-1] is null ) {
+        -- samples.length;
+      }
     }
-    static import AOD;
   }
 
   while ( true ) {
@@ -220,12 +223,13 @@ private void Main_Sound_Loop() {
           case ThreadMsg.StopSample:
             /* writeln("REMOVING: " ~ params[0]); */
             int i = to!int(params[0]);
-            if ( i >= 0 && i < samples.length )
+            if ( i >= 0 && i < samples.length && samples[i] !is null )
               DestroySample(i);
           break;
           case ThreadMsg.StopAllSamples:
             for ( int i = 0; i != samples.length; ++ i )
-              DestroySample(i);
+              if ( samples[i] !is null )
+                DestroySample(i, false);
             samples = [];
           break;
           case ThreadMsg.PlaySample:

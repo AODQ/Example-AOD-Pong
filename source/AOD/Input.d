@@ -1,12 +1,6 @@
 /**
   Describes the input of the current state of the Engine
 */
-/**
-Macros:
-  PARAM = <u>$1</u>
-
-  PARAMDESC = <t style="padding-left:3em">$1</t>
-*/
 module AODCore.input;
 import derelict.sdl2.sdl;
 import Camera = AODCore.camera;
@@ -91,8 +85,7 @@ bool R_On_MX2() { return cast(bool)MEngine.mouse           &MX2 &&
                         !cast(bool)MEngine.last_frame_mouse&MX2; }
 /**
 Params:
-  camoffset = $(PARAMDESC Whether to offset the position of
-                the mouse with the camera)
+  camoffset = Whether to offset the position of the mouse with the camera
 Returns:
   The position of the mouse on the x-axis
 */
@@ -102,8 +95,7 @@ float R_Mouse_X(bool camoffset) {
 }
 /**
 Params:
-  camoffset = $(PARAMDESC Whether to offset the position of
-                the mouse with the camera)
+  camoffset = Whether to offset the position of the mouse with the camera
 Returns:
   The position of the mouse on the y-axis
 */

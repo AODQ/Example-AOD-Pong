@@ -87,8 +87,8 @@ void Remove(AODCore.render_base.Render_Base o) in {assert(realm !is null);}
 body {        realm.Remove(o); }
 /** Removes entities and playing sounds (not loaded sounds or images)
 Params:
-  _rendereable: Adds a rendereable after cleanup is done (cleanup doesn't take
-                 place until after the frame is finished
+  rendereable = Adds a rendereable after cleanup is done (cleanup doesn't take
+                 place until after the frame is finished)
 */
 void Clean_Up(AODCore.render_base.Render_Base rendereable = null) in {
   assert(realm !is null);

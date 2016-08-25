@@ -30,7 +30,7 @@ public:
     texture = t;
     width = w;
     height = h;
-  } 
+  }
   /** */
   this(string filename) {
     auto z = Load_Image(filename);
@@ -60,7 +60,7 @@ public:
          lr;
   /**
     Creates sheet rect
-    
+
     Params:
       sc = SheetContainer to use as image
       _ul = relative offset for the upper left coordinate from origin {0, 0}
@@ -117,7 +117,7 @@ SheetContainer Load_Image(const char* fil) {
     // set texture interpolation method
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-      
+
     width  = ilGetInteger(IL_IMAGE_WIDTH);
     height = ilGetInteger(IL_IMAGE_HEIGHT);
 
