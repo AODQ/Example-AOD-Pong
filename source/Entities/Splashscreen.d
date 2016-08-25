@@ -46,14 +46,35 @@ public:
   }
 
   uint stage = 0, stage_it = 0;
+  bool fadeblack = false;
   override void Update() {
+    if ( fadeblack ) {
+      float dt = 0.01;
+      time += dt;
+      /// ----- debug ----
+      import std.stdio : writeln;
+      import std.conv : to;
+      writeln(to!string(time));
+      /// ----- debug ----
+      if ( time >= 1.00f ) {
+        AOD.Set_BG_Colour(.08, .08, .095);
+        AOD.Stop_Sound(music);
+        AOD.Remove(this);
+        AOD.Set_FPS_Display(new AOD.Text(20, 460, ""));
+        if ( add_after_done !is null )
+          AOD.Add(add_after_done);
+      } else {
+        AOD.Set_BG_Colour(1 - 0.92*time, 1 - 0.92*time, 1 - 0.905*time);
+      }
+      return;
+    }
     import std.math;
     import std.conv;
     import std.stdio;
     // -- frames --
     ++ time;
     Set_Visible(true);
-    if ( ++ pop <= 1550.0/AOD.R_MS() )
+    if ( ++ pop <= 1400.0/AOD.R_MS() )
       Set_Visible(false);
     if ( ind < img_fade.length )
       Set_Sprite(img_fade[ind]);
@@ -63,21 +84,12 @@ public:
       if ( stage == 0 ) {
         if ( ++ stage_it >= (50.0f/AOD.R_MS) ) {
           stage_it = 0;
-          /// ----- debug ----
-          import std.stdio : writeln;
-          import std.conv : to;
-          writeln("inc: " ~ to!string(ind));
-          /// ----- debug ----
           if ( ++ ind >= img_fade.length ) {
             stage = 1;
             ind = cast(uint)img_fade.length - 1;
           }
         }
       } else if ( stage == 1 ) {
-        /// ----- debug ----
-        import std.stdio : writeln;
-        import std.conv : to;
-        /// ----- debug ----
         if ( time >= 4100.0/AOD.R_MS() ) {
           stage = 2;
           stage_it = 0;
@@ -103,11 +115,6 @@ public:
         if ( ++ stage_it >= (50.0f/AOD.R_MS) ) {
           if ( ++time >= 8 ) {
             stage = 5;
-            /// ----- debug ----
-            import std.stdio : writeln;
-            import std.conv : to;
-            writeln("ASDFASDF");
-            /// ----- debug ----
             ind = cast(uint)img_fade.length - 1;
           } else {
             stage_it = 0;
@@ -121,14 +128,19 @@ public:
     timer = pow(timer, 1.0020f);
     Set_Colour(1, 1, 1, 1 - timer/timer_start);
     import derelict.sdl2.sdl;
+    if ( timer >= timer_start*0.4f ) {
+      import std.math;
+      float t = abs(((timer_start*0.4f) - timer)/((timer_start*0.4f)))*2;
+      if ( t <= 5.0f ) {
+        ind = cast(uint)(4 - t);
+        if ( ind > 3 ) ind = 3;
+        if ( ind < 0 ) ind = 0;
+      }
+    }
     if ( timer >= timer_start*1.5f || AOD.Input.R_LMB()||
          AOD.Input.keystate[SDL_SCANCODE_SPACE]) {
-      AOD.Set_BG_Colour(.08, .08, .095);
-      AOD.Stop_Sound(music);
-      AOD.Remove(this);
-      AOD.Set_FPS_Display(new AOD.Text(20, 460, ""));
-      if ( add_after_done !is null )
-        AOD.Add(add_after_done);
+      fadeblack = true;
+      time = 0;
       return;
     }
   }
