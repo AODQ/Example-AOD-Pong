@@ -91,7 +91,7 @@ Return:
         break;
       }
     }
-    return index;
+    return cast(int)index;
   }
   /** Returns current texture based off the index */
   SheetRect R_Current_Texture() {

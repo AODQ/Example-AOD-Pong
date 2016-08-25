@@ -165,8 +165,8 @@ static:
     byte[Buffer_size] buffer;
     int result, section = 0, size = 0;
     while ( size < Buffer_size ) {
-      result = ov_read(&s.ogg_file, buffer.ptr + size,
-                          cast(int)(Buffer_size) - cast(int)size,
+      result = ov_read(&s.ogg_file, buffer.ptr + cast(int)(size),
+                          cast(int)(Buffer_size) - cast(int)( size ),
                        0, 2, 1, &section);
 
       if ( result > 0 ) size += result;
@@ -333,7 +333,7 @@ static: public:
       return 0;
     }
     sounds ~= file_name;
-    return sounds.length-1;
+    return cast(uint)(sounds.length)-1;
   }
 
   /**
