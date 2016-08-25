@@ -5,11 +5,9 @@ static import AOD;
 
 class Splash : AOD.Entity {
   float timer, timer_start, pop, time;
-  enum IType {
-    Fade, Pixel1, Pixel2, Pixel3
-  };
   AOD.SheetContainer[][] img;
-  uint[IType.max+1] img_start, img_stages;
+  uint[] img_start, img_stages;
+  uint start_fade, end_fade;
   AOD.SheetContainer reg;
   uint music;
   AOD.Entity add_after_done;
@@ -20,41 +18,69 @@ public:
     super();
     auto commands = AOD.ClientVars.commands;
     img = [
-       [ AOD.SheetContainer("assets/menu/anim1/frame1.png"  ) ,
-         AOD.SheetContainer("assets/menu/anim1/frame2.png"  ) ,
-         AOD.SheetContainer("assets/menu/anim1/frame3.png"  ) ,
-         AOD.SheetContainer("assets/menu/anim1/frame4.png"  ) ],
-       [ AOD.SheetContainer("assets/menu/anim2/frame1.png"  ) ,
-         AOD.SheetContainer("assets/menu/anim2/frame2.png"  ) ,
-         AOD.SheetContainer("assets/menu/anim2/frame3.png"  ) ,
-         AOD.SheetContainer("assets/menu/anim2/frame4.png"  ) ,
-         AOD.SheetContainer("assets/menu/anim2/frame5.png"  ) ,
-         AOD.SheetContainer("assets/menu/anim2/frame6.png"  ) ,
-         AOD.SheetContainer("assets/menu/anim2/frame7.png"  ) ,
-         AOD.SheetContainer("assets/menu/anim2/frame8.png"  ) ,
-         AOD.SheetContainer("assets/menu/anim2/frame9.png"  ) ,
-         AOD.SheetContainer("assets/menu/anim2/frame10.png" ) ,
-         AOD.SheetContainer("assets/menu/anim2/frame11.png" ) ,
-         AOD.SheetContainer("assets/menu/anim2/frame12.png" ) ,
-         AOD.SheetContainer("assets/menu/anim2/frame13.png" ) ],
-       [ AOD.SheetContainer("assets/menu/anim4/frame1.png"  ) ,
-         AOD.SheetContainer("assets/menu/anim4/frame2.png"  ) ,
-         AOD.SheetContainer("assets/menu/anim4/frame3.png"  ) ,
-         AOD.SheetContainer("assets/menu/anim4/frame4.png"  ) ],
-       [ AOD.SheetContainer("assets/menu/anim5/frame1.png"  ) ,
-         AOD.SheetContainer("assets/menu/anim5/frame2.png"  ) ,
-         AOD.SheetContainer("assets/menu/anim5/frame3.png"  ) ,
-         AOD.SheetContainer("assets/menu/anim5/frame4.png"  ) ]
+       [ AOD.SheetContainer("assets/splash/anim1/frame1.png"  ) ,
+         AOD.SheetContainer("assets/splash/anim1/frame2.png"  ) ,
+         AOD.SheetContainer("assets/splash/anim1/frame3.png"  ) ,
+         AOD.SheetContainer("assets/splash/anim1/frame4.png"  ) ], // ANIM 1
+       [ AOD.SheetContainer("assets/splash/anim5/frame1.png"  ) ,
+         AOD.SheetContainer("assets/splash/anim5/frame2.png"  ) ,
+         AOD.SheetContainer("assets/splash/anim5/frame3.png"  ) ,
+         AOD.SheetContainer("assets/splash/anim5/frame4.png"  ) ], // ANIM 5
+       [ AOD.SheetContainer("assets/splash/anim4/frame1.png"  ) ,
+         AOD.SheetContainer("assets/splash/anim4/frame2.png"  ) ,
+         AOD.SheetContainer("assets/splash/anim4/frame3.png"  ) ,
+         AOD.SheetContainer("assets/splash/anim4/frame4.png"  ) ], // ANIM 4
+       [ AOD.SheetContainer("assets/splash/anim2/frame1.png"  ) ,
+         AOD.SheetContainer("assets/splash/anim2/frame2.png"  ) ,
+         AOD.SheetContainer("assets/splash/anim2/frame3.png"  ) ,
+         AOD.SheetContainer("assets/splash/anim2/frame4.png"  ) ,
+         AOD.SheetContainer("assets/splash/anim2/frame5.png"  ) ,
+         AOD.SheetContainer("assets/splash/anim2/frame6.png"  ) ,
+         AOD.SheetContainer("assets/splash/anim2/frame7.png"  ) ,
+         AOD.SheetContainer("assets/splash/anim2/frame8.png"  ) ,
+         AOD.SheetContainer("assets/splash/anim2/frame9.png"  ) ,
+         AOD.SheetContainer("assets/splash/anim2/frame10.png"  ) ,
+         AOD.SheetContainer("assets/splash/anim2/frame11.png"  ) ,
+         AOD.SheetContainer("assets/splash/anim2/frame12.png"  ) ,
+         AOD.SheetContainer("assets/splash/anim2/frame13.png"  ) ], // ANIM 2
+       [ AOD.SheetContainer("assets/splash/anim3/frame1.png"  ) ,
+         AOD.SheetContainer("assets/splash/anim3/frame2.png"  ) ,
+         AOD.SheetContainer("assets/splash/anim3/frame3.png"  ) ], // ANIM 3
+       [ AOD.SheetContainer("assets/splash/anim4/frame2.png"  ) ,
+         AOD.SheetContainer("assets/splash/anim4/frame3.png"  ) ,
+         AOD.SheetContainer("assets/splash/anim4/frame4.png"  ) ], // ANIM 4 2-4
+       [ AOD.SheetContainer("assets/splash/anim5/frame3.png"  ) ,
+         AOD.SheetContainer("assets/splash/anim5/frame2.png"  ) ], // ANIM 5 3-2
+       [ AOD.SheetContainer("assets/splash/anim6/frame1.png"  ) ,
+         AOD.SheetContainer("assets/splash/anim6/frame2.png"  ) ,
+         AOD.SheetContainer("assets/splash/anim6/frame3.png"  ) ,
+         AOD.SheetContainer("assets/splash/anim6/frame4.png"  ) ,
+         AOD.SheetContainer("assets/splash/anim6/frame5.png"  ) ,
+         AOD.SheetContainer("assets/splash/anim6/frame6.png"  ) ], // ANIM 6
+       [ AOD.SheetContainer("assets/splash/anim1/frame4.png"  ) ,
+         AOD.SheetContainer("assets/splash/anim1/frame3.png"  ) ,
+         AOD.SheetContainer("assets/splash/anim1/frame2.png"  ) ,
+         AOD.SheetContainer("assets/splash/anim1/frame1.png"  ) ], // ANIM 1
     ];
-    img_start = [ 0, 0, 0, 0 ];
-    img_stages = [ 0, 0, 0, 0 ];
+    img_start  = [ 0, 0, 0, 0, 0, 0, 0, 0, 0 ];
+    img_stages = [ 0, 0, 0, 0, 0, 0, 0, 0, 0 ];
     uint cnt = 0;
     foreach ( c; commands ) {
+      // -- DEBUG START
+      import std.stdio : writeln;
+      import std.conv : to;
+      writeln("VAL: " ~ c.value ~ ", key: " ~ to!string(c.key));
+      if ( c.key == "STARTFADE" ) {
+        start_fade = cast(uint)(to!float(c.value)/AOD.R_MS());
+        continue;
+      } else if ( c.key == "ENDFADE" ) {
+        end_fade  = cast(uint)(to!float(c.value)/AOD.R_MS());
+        continue;
+      }
       import std.conv : to;
       import std.stdio;
       img_start[c.key[4] - '1'] = cast(uint)(to!float(c.value)/AOD.R_MS());
       img_stages[c.key[4] - '1'] = cnt;
-      writeln("VAL: " ~ c.value ~ ", key: " ~ to!string(c.key[4] - '1'));
       ++ cnt;
     }
     foreach ( s; img_start ) {
@@ -98,6 +124,10 @@ public:
     import std.math;
     import std.conv;
     import std.stdio;
+    // -- fade --
+    if ( time >= start_fade ) {
+      Set_Colour(1, 1, 1, 1 - 1/((end_fade - start_fade)/(time - start_fade)));
+    }
     // -- frames --
     ++ time;
     Set_Visible(true);
@@ -110,45 +140,42 @@ public:
       Set_Visible(true);
       if ( stage < img_start.length && time >= img_start[stage] ) {
         writeln(" ( " ~ to!string(img_ind) ~ " ) ");
-        if ( ++ stage_it >= 100.0f/AOD.R_MS() ) {
+        if ( ++ stage_it >= 50.0f/AOD.R_MS() ) {
           stage_it = 0;
           if ( ++ ind >= img[stage].length + 1 ) {
             img_ind = -1;
             ind = 0;
+            ++ stage;
+            if ( stage < img_stages.length )
+              img_stage = img_stages[stage];
+            else {
+              img_ind = 3;
+              img_stage = 0;
+            }
             // -- DEBUG START
             import std.stdio : writeln;
             import std.conv : to;
             writeln("STAGE: " ~ to!string(stage));
             // -- DEBUG END
-            ++ stage;
-            img_stage = img_stages[stage];
           } else
             img_ind = ind-1;
           writeln(" ( " ~ to!string(img_ind) ~ " ) ");
         }
       } else {
-        img_ind = -1;
+        if ( stage == img_start.length ) {
+          img_ind = 0;
+          img_stage = 0;
+        } else
+          img_ind = -1;
       }
     }
-    // -- fade --
-    timer = pow(timer, 1.0020f);
-    Set_Colour(1, 1, 1, 1 - timer/timer_start);
     import derelict.sdl2.sdl;
-    if ( timer >= timer_start*0.2f ) {
-      import std.math;
-      float t = abs(((timer_start*0.2f) - timer)/((timer_start*0.2f)))*2;
-      if ( t <= 5.0f ) {
-        img_stage = 0;
-        img_ind = cast(uint)(4 - t);
-        if ( img_ind > 3 ) img_ind = 3;
-        if ( img_ind < 0 ) img_ind = 3;
-      }
-    }
-    if ( timer >= timer_start*1.5f || AOD.Input.R_LMB()||
+    if ( time >= end_fade+(400.0f/AOD.R_MS()) ||
          AOD.Input.keystate[SDL_SCANCODE_SPACE]) {
+      writeln("FADING");
       fadeblack = true;
+      Set_Visible(false);
       time = 0;
-      return;
     }
   }
 }
