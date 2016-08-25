@@ -114,7 +114,12 @@ INI_Data Load_INI(string filename) in {
     if ( current_line    == ""  ) continue; // empty line
     if ( current_line[0] == ';' ) continue; // comment
     if ( current_line[0] == '[' && current_line[$-1] == ']' ) { // section
-      current_section = current_line[1 .. $-2].strip();
+      current_section = current_line[1 .. $-1].strip();
+      /// ----- debug ----
+      import std.stdio : writeln;
+      import std.conv : to;
+      writeln("CURRENT SECTION: " ~ to!string(current_section));
+      /// ----- debug ----
       continue;
     }
     // regular item assignment

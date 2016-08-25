@@ -236,6 +236,10 @@ public: static:
   /** */
   alias keybinds      = AODCore.clientvars.keybinds;
   /** */
+  alias Command       = AODCore.clientvars.Command;
+  /** */
+  alias commands      = AODCore.clientvars.commands;
+  /** */
   alias Load_Config   = AODCore.clientvars.Load_Config;
 }
 

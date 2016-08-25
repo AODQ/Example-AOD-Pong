@@ -19,6 +19,15 @@ public:
   string command;
 }
 
+/** A debug command. Just copies directly from the INI command header to
+    the struct
+*/
+struct Command {
+public:
+  string key, /// left-hand argument
+         value; /// right-hand argument
+}
+
 /**
   How you wish to use this is entirely up to you. For the majority of cases
   I'd expect the entire array to be iterated and if a key was pressed then the
@@ -28,6 +37,10 @@ public:
   if a key is pressed then the command will be executed.
 */
 Keybind[] keybinds;
+/**
+  Just stored commands. What you do with this is up to you
+*/
+Command[] commands;
 
 import derelict.sdl2.sdl;
 
@@ -40,7 +53,7 @@ void Load_Config() {
   keybinds = [];
   R_SDL_Scancode_Conv("", false, true); // reconstruct the scancode map
   auto ini_file = AOD.Util.Load_INI("config.ini");
-  auto binds = "keybind" in ini_file;
+  auto binds = "keybinds" in ini_file;
   if ( binds !is null ) {
     foreach ( item; (*binds) ) {
       auto b = R_SDL_Scancode_Conv(item.key);
@@ -50,6 +63,12 @@ void Load_Config() {
         import AODCore.console;
         Debug_Output("Could not parse keybind '" ~ item.key ~ "'");
       }
+    }
+  }
+  auto coms = "command" in ini_file;
+  if ( coms !is null ) {
+    foreach ( item; (*coms) ) {
+      commands ~= Command(item.key, item.value);
     }
   }
   R_SDL_Scancode_Conv("", true); // destroy scancode map
