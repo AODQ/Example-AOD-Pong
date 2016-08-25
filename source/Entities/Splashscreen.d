@@ -13,7 +13,11 @@ public:
   this(AOD.Entity _add_after_done) {
     add_after_done = _add_after_done;
     super();
-    img_fg ~= AOD.SheetContainer("assets/menu/intro.png");
+    img_fg ~= AOD.SheetContainer("assets/menu/intro.png"),
+              AOD.SheetContainer("assets/menu/intro.png"),
+              AOD.SheetContainer("assets/menu/intro.png"),
+              AOD.SheetContainer("assets/menu/intro.png");
+
     Set_Sprite(img_fg[0]);
     Set_Position(AOD.R_Window_Width/2, AOD.R_Window_Height/2);
     Set_Colour(1, 1, 1, 1.0);
