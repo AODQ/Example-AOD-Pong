@@ -21,15 +21,19 @@ public:
        [ AOD.SheetContainer("assets/splash/anim1/frame1.png"  ) ,
          AOD.SheetContainer("assets/splash/anim1/frame2.png"  ) ,
          AOD.SheetContainer("assets/splash/anim1/frame3.png"  ) ,
-         AOD.SheetContainer("assets/splash/anim1/frame4.png"  ) ], // ANIM 1
+         AOD.SheetContainer("assets/splash/anim1/frame4.png"  ) ], // STEP 1
+       [ AOD.SheetContainer("assets/splash/anim7/frame1.png"  ) ,
+         AOD.SheetContainer("assets/splash/anim7/frame2.png"  ) ,
+         AOD.SheetContainer("assets/splash/anim7/frame3.png"  ) ,
+         AOD.SheetContainer("assets/splash/anim7/frame4.png"  ) ], // STEP 2
        [ AOD.SheetContainer("assets/splash/anim5/frame1.png"  ) ,
          AOD.SheetContainer("assets/splash/anim5/frame2.png"  ) ,
          AOD.SheetContainer("assets/splash/anim5/frame3.png"  ) ,
-         AOD.SheetContainer("assets/splash/anim5/frame4.png"  ) ], // ANIM 5
+         AOD.SheetContainer("assets/splash/anim5/frame4.png"  ) ], // STEP 3
        [ AOD.SheetContainer("assets/splash/anim4/frame1.png"  ) ,
          AOD.SheetContainer("assets/splash/anim4/frame2.png"  ) ,
          AOD.SheetContainer("assets/splash/anim4/frame3.png"  ) ,
-         AOD.SheetContainer("assets/splash/anim4/frame4.png"  ) ], // ANIM 4
+         AOD.SheetContainer("assets/splash/anim4/frame4.png"  ) ], // STEP 4
        [ AOD.SheetContainer("assets/splash/anim2/frame1.png"  ) ,
          AOD.SheetContainer("assets/splash/anim2/frame2.png"  ) ,
          AOD.SheetContainer("assets/splash/anim2/frame3.png"  ) ,
@@ -42,7 +46,11 @@ public:
          AOD.SheetContainer("assets/splash/anim2/frame10.png"  ) ,
          AOD.SheetContainer("assets/splash/anim2/frame11.png"  ) ,
          AOD.SheetContainer("assets/splash/anim2/frame12.png"  ) ,
-         AOD.SheetContainer("assets/splash/anim2/frame13.png"  ) ], // ANIM 2
+         AOD.SheetContainer("assets/splash/anim2/frame13.png"  ) ], // STEP 5
+       [ AOD.SheetContainer("assets/splash/anim8/frame1.png"  ) ,
+         AOD.SheetContainer("assets/splash/anim8/frame2.png"  ) ,
+         AOD.SheetContainer("assets/splash/anim8/frame3.png"  ) ,
+         AOD.SheetContainer("assets/splash/anim8/frame4.png"  ) ], // STEP 6
        [ AOD.SheetContainer("assets/splash/anim3/frame1.png"  ) ,
          AOD.SheetContainer("assets/splash/anim3/frame2.png"  ) ,
          AOD.SheetContainer("assets/splash/anim3/frame3.png"  ) ], // ANIM 3
@@ -62,8 +70,8 @@ public:
          AOD.SheetContainer("assets/splash/anim1/frame2.png"  ) ,
          AOD.SheetContainer("assets/splash/anim1/frame1.png"  ) ], // ANIM 1
     ];
-    img_start  = [ 0, 0, 0, 0, 0, 0, 0, 0, 0 ];
-    img_stages = [ 0, 0, 0, 0, 0, 0, 0, 0, 0 ];
+    img_start  = [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ];
+    img_stages = [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ];
     uint cnt = 0;
     foreach ( c; commands ) {
       // -- DEBUG START
@@ -130,7 +138,6 @@ public:
     }
     // -- frames --
     ++ time;
-    Set_Visible(true);
     if ( img_ind == -1 )
       Set_Sprite(img[0][3]);
     else
