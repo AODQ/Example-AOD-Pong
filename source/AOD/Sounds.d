@@ -165,7 +165,8 @@ static:
     byte[Buffer_size] buffer;
     int result, section = 0, size = 0;
     while ( size < Buffer_size ) {
-      result = ov_read(&s.ogg_file, buffer.ptr + size, Buffer_size - size,
+      result = ov_read(&s.ogg_file, buffer.ptr + size,
+                          cast(int)(Buffer_size) - cast(int)size,
                        0, 2, 1, &section);
 
       if ( result > 0 ) size += result;

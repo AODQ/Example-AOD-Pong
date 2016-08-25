@@ -46,7 +46,7 @@ public:
   /** Animation to 'play' */
   Animation animation;
   /** Current texture index of the animation */
-  int index;
+  size_t index;
   /** Frames left before index is incremented */
   int frames_left;
   /** The current direction of playback, 1 = positive.

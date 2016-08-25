@@ -148,7 +148,7 @@ static class TextEng {
       FT_Done_Face(face);
     }
     ~this() {
-      glDeleteTextures(128, char_texture.ptr); 
+      glDeleteTextures(128, char_texture.ptr);
     }
 
     FT_Face R_Face()           { return face;            }
@@ -286,12 +286,12 @@ Params:
   override void Update() {}
   override void Post_Update() {}
   override void Render() {
-    Vector pos = R_Position(true); 
+    Vector pos = R_Position(true);
     if ( R_Visible && R_FT_Font ) {
       glPushMatrix();
         glTranslatef(position.x, position.y, 0);
         glListBase(ft_font.R_Character_List);
-        glCallLists(msg.length, GL_UNSIGNED_BYTE, msg.ptr);
+        glCallLists(cast(int)msg.length, GL_UNSIGNED_BYTE, msg.ptr);
       glPopMatrix();
     }
   }

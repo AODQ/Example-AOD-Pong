@@ -393,7 +393,7 @@ public:
     static GLubyte[6] index = [ 0,1,2, 1,2,3 ];
 
     // --- rendereables ---
-    for ( int layer = objects.length-1; layer != -1; -- layer ) {
+    for ( size_t layer = objects.length-1; layer != -1; -- layer ) {
       foreach ( obj ; objects[layer] ) {
         switch ( obj.R_Render_Base_Type ) {
           case Render_Base.Render_Base_Type.Entity:
