@@ -163,6 +163,7 @@ public:
         }
       } else {
         if ( stage == img_start.length ) {
+          Set_Visible(false);
           img_ind = 0;
           img_stage = 0;
         } else
