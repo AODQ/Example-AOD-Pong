@@ -12,13 +12,13 @@ public:
   this(AOD.Entity _add_after_done) {
     add_after_done = _add_after_done;
     super();
-    img_fg = AOD.SheetContainer("assets\\menu\\intro.png");
+    img_fg = AOD.SheetContainer("assets/menu/intro.png");
     Set_Sprite(img_fg);
     Set_Position(AOD.R_Window_Width/2, AOD.R_Window_Height/2);
     Set_Colour(1, 1, 1, 1.0);
     timer_start = (12500.0f/AOD.R_MS());
     timer = 8.5f;
-    uint tid = AOD.Load_Sound("assets\\menu\\Smilecythe- BulkherPlatoon.ogg");
+    uint tid = AOD.Load_Sound("assets/menu/Smilecythe- BulkherPlatoon.ogg");
     music = AOD.Play_Sound(tid);
   }
 
