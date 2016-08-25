@@ -73,6 +73,15 @@ public:
 /** */
   this(int window_width, int window_height, uint ms_dt_,
        immutable(char)* window_name, immutable(char)* icon = "") {
+    static import AODCore.utility;
+    AODCore.utility.Seed_Random();
+    // -- DEBUG START
+    import std.stdio : writeln;
+    import std.conv : to;
+    writeln("S: " ~ to!string(AODCore.utility.R_Rand(0.0f, 100.0f)));
+    writeln("S: " ~ to!string(AODCore.utility.R_Rand(0.0f, 100.0f)));
+    writeln("S: " ~ to!string(AODCore.utility.R_Rand(0.0f, 100.0f)));
+    // -- DEBUG END
     width  = window_width;
     height = window_height;
     ms_dt = ms_dt_;

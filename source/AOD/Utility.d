@@ -23,7 +23,13 @@ const(float) E         =  2.718282f,
              Epsilon   =  0.000001f;
 
 import std.random;
-private Random gen;
+private Mt19937 gen;
+
+void Seed_Random() {
+  import std.algorithm.iteration : map;
+  import std.range : repeat;
+  gen.seed(map!((a) => unpredictableSeed)(repeat(0)));
+}
 
 /** Returns: A random float bot .. top*/
 float R_Rand(float bot, float top) {
