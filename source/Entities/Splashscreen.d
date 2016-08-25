@@ -5,7 +5,9 @@ static import AOD;
 
 class Splash : AOD.Entity {
   float timer, timer_start, pop;
-  AOD.SheetContainer[] img_fg;
+  AOD.SheetContainer[] img_fade,
+                       img_pixl;
+  AOD.SheetContainer reg;
   uint music;
   AOD.Entity add_after_done;
   uint ind = 0;
@@ -13,11 +15,24 @@ public:
   this(AOD.Entity _add_after_done) {
     add_after_done = _add_after_done;
     super();
-    img_fg ~= AOD.SheetContainer("assets/menu/intro.png"),
-              AOD.SheetContainer("assets/menu/intro.png"),
-              AOD.SheetContainer("assets/menu/intro.png"),
-              AOD.SheetContainer("assets/menu/intro.png");
-    Set_Sprite(img_fg[0]);
+    img_fade = [ AOD.SheetContainer("assets/menu/anim1/frame1.png"),
+                 AOD.SheetContainer("assets/menu/anim1/frame2.png"),
+                 AOD.SheetContainer("assets/menu/anim1/frame3.png"),
+                 AOD.SheetContainer("assets/menu/anim1/frame4.png") ];
+    img_pixl = [ AOD.SheetContainer("assets/menu/anim2/frame1.png"),
+                 AOD.SheetContainer("assets/menu/anim2/frame2.png"),
+                 AOD.SheetContainer("assets/menu/anim2/frame3.png"),
+                 AOD.SheetContainer("assets/menu/anim2/frame4.png"),
+                 AOD.SheetContainer("assets/menu/anim2/frame5.png"),
+                 AOD.SheetContainer("assets/menu/anim2/frame6.png"),
+                 AOD.SheetContainer("assets/menu/anim2/frame7.png"),
+                 AOD.SheetContainer("assets/menu/anim2/frame8.png"),
+                 AOD.SheetContainer("assets/menu/anim2/frame9.png"),
+                 AOD.SheetContainer("assets/menu/anim2/frame10.png"),
+                 AOD.SheetContainer("assets/menu/anim2/frame11.png"),
+                 AOD.SheetContainer("assets/menu/anim2/frame12.png"),
+                 AOD.SheetContainer("assets/menu/anim2/frame13.png") ];
+    Set_Sprite(img_fade[0]);
     Set_Position(AOD.R_Window_Width/2, AOD.R_Window_Height/2);
     Set_Colour(1, 1, 1, 1.0);
     timer_start = (12500.0f/AOD.R_MS());
@@ -37,8 +52,8 @@ public:
     if ( ++ pop <= 1550.0/AOD.R_MS() )
       Set_Visible(false);
     Set_Colour(1, 1, 1, 1 - timer/timer_start);
-    Set_Sprite(img_fg[ind]);
-    if ( ++ ind >= img_fg.length ) ind = 0;
+    Set_Sprite(img_fade[ind]);
+    if ( ++ ind >= img_fade.length ) ind = 0;
     import derelict.sdl2.sdl;
     if ( timer >= timer_start*1.5f || AOD.Input.R_LMB()||
          AOD.Input.keystate[SDL_SCANCODE_SPACE]) {
