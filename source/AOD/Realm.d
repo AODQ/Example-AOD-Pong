@@ -95,15 +95,25 @@ public:
 
     mixin(Load_Library!("DerelictGL3"       ,""));
     mixin(Load_Library!("DerelictGL"        ,""));
-    mixin(Load_Library!("DerelictSDL2",
-                        "\"SDL2.dll\",SharedLibVersion(2 ,0 ,2)"));
+    version(linux) {
+      mixin(Load_Library!("DerelictSDL2", "SharedLibVersion(2, 0, 2)"));
+    } else {
+      mixin(Load_Library!("DerelictSDL2",
+                          "\"SDL2.dll\",SharedLibVersion(2 ,0 ,2)"));
+    }
     mixin(Load_Library!("DerelictIL"        ,""));
     mixin(Load_Library!("DerelictILU"       ,""));
     mixin(Load_Library!("DerelictILUT"      ,""));
-    mixin(Load_Library!("DerelictFT"        ,"\"freetype265.dll\""));
     mixin(Load_Library!("DerelictAL"        ,""));
-    mixin(Load_Library!("DerelictVorbis"    ,"\"libvorbis-0.dll\""));
-    mixin(Load_Library!("DerelictVorbisFile","\"libvorbisfile-3.dll\""));
+    version (linux) {
+      mixin(Load_Library!("DerelictFT"        , ""));
+      mixin(Load_Library!("DerelictVorbis"    , ""));
+      mixin(Load_Library!("DerelictVorbisFile", ""));
+    } else {
+      mixin(Load_Library!("DerelictFT"        ,"\"freetype265.dll\""));
+      mixin(Load_Library!("DerelictVorbis"    ,"\"libvorbis-0.dll\""));
+      mixin(Load_Library!("DerelictVorbisFile","\"libvorbisfile-3.dll\""));
+    }
 
     writeln("AOD@Realm.d@Initialize Initializing SDL");
     SDL_Init ( SDL_INIT_EVERYTHING );
