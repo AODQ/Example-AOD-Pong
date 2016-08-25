@@ -39,9 +39,6 @@ import AODCore.render_base;
 /**
   A basic entity class. If you want collision support you should perhaps use
   AABBEntity or PolyEntity
-BUG:
-  For some reason this does not render unless you inherit Entity and use that inherited
-  class.
 */
 class Entity : Render_Base {
 public:

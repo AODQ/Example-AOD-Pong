@@ -1,11 +1,11 @@
-/**
-  The base of rendering, I suppose if you wanted to create your own entity,
-  text, etc for some reason you could use this.
-*/
 module AODCore.render_base;
 
 import AODCore.vector;
 
+/**
+  The base of rendering, I suppose if you wanted to create your own entity,
+  text, etc for some reason you could use this.
+*/
 class Render_Base {
 public:
   this(ubyte _layer = 5, Render_Base_Type _render_type = Render_Base_Type.nil) {
@@ -16,7 +16,7 @@ public:
     position = Vector(0, 0);
   }
   /** Type of render_base (only really useful for telling if it is native to
-      the AOD engine */
+      the AOD engine) */
   enum Render_Base_Type {
     /** Not a type recognized by AOD */
     nil,
@@ -45,8 +45,7 @@ public:
   }
   /** Returns current position
   Params:
-    apply_static = If true, overrides true on static_position
-    apply_static = If both this and static_position is false, will modify
+    apply_static = If this or static_position is false, will modify
             returned position based off the camera
   */
   Vector R_Position(bool apply_static = false) {
