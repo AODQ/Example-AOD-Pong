@@ -147,6 +147,9 @@ public:
     if ( icon != "" ) {
       writeln("Loading window icon");
       SDL_Surface* ico = SDL_LoadBMP(icon);
+      if ( ico == null ) {
+        writeln("Error loading BMP :/");
+      }
       SDL_SetWindowIcon(screen, ico);
     }
 

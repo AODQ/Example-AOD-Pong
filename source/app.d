@@ -13,7 +13,7 @@ void Init () {
   writeln("app.d@Init Setting up console");
   AOD.Console.console_open = false;
   AOD.Console.Set_Console_Output_Type(AOD.Console.Type.Debug_In);
-  AOD.Initialize(16, "CYBER BUTCHER", 800, 600);
+  AOD.Initialize(16, "LUDUM DARE PREP", 800, 600, "assets/credit_aod.bmp");
   AOD.Camera.Set_Size(AOD.Vector(AOD.R_Window_Width(), AOD.R_Window_Height()));
   AOD.Camera.Set_Position(AOD.Vector(AOD.R_Window_Width() /2,
                                      AOD.R_Window_Height()/2));

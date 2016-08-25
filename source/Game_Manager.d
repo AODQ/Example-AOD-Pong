@@ -32,6 +32,8 @@ public:
 
     import Entity.Paddle;
     Game_Manager.Add(new Paddle(100, ball));
+    import Data;
+    AOD.Play_Sound(Sound_Data.bg_music);
   }
 }
 

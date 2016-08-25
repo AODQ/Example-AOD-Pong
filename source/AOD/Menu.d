@@ -284,5 +284,9 @@ Params:
       Set_Credits_Visibility(false);
       Flip_Menu();
     }
+    if ( Clicked( buttons[Button.Quit] ) ) {
+      import std.c.stdlib;
+      exit(0);
+    }
   }
 }
