@@ -17,7 +17,6 @@ public:
               AOD.SheetContainer("assets/menu/intro.png"),
               AOD.SheetContainer("assets/menu/intro.png"),
               AOD.SheetContainer("assets/menu/intro.png");
-
     Set_Sprite(img_fg[0]);
     Set_Position(AOD.R_Window_Width/2, AOD.R_Window_Height/2);
     Set_Colour(1, 1, 1, 1.0);
@@ -27,6 +26,7 @@ public:
     ind = 0;
     uint tid = AOD.Load_Sound("assets/menu/Smilecythe- BulkherPlatoon.ogg");
     music = AOD.Play_Sound(tid);
+    Set_Visible(false);
   }
 
   override void Update() {
@@ -35,9 +35,8 @@ public:
     import std.stdio;
     timer = pow(timer, 1.0020f);
     if ( ++ pop <= 1550.0/AOD.R_MS() )
-      Set_Colour(1, 1, 1, 0);
-    else
-      Set_Colour(1, 1, 1, 1 - timer/timer_start);
+      Set_Visible(false);
+    Set_Colour(1, 1, 1, 1 - timer/timer_start);
     Set_Sprite(img_fg[ind]);
     if ( ++ ind >= img_fg.length ) ind = 0;
     import derelict.sdl2.sdl;
