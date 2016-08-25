@@ -167,7 +167,7 @@ static:
     while ( size < Buffer_size ) {
       int bs = cast(int)(Buffer_size - size);
       auto bfs = buffer.ptr + cast(int)(size);
-      result = ov_read(&s.ogg_file, bfs, cast(int)(bs), cast(int)(0),
+      result = cast(int)ov_read(&s.ogg_file, bfs, cast(int)(bs), cast(int)(0),
                         cast(int)(2), cast(int)(1), &section);
 
       if ( result > 0 ) size += result;
