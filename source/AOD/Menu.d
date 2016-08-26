@@ -1,9 +1,8 @@
 /**
   Menu -- Not very useful for many things outside of prototypes. But also
-          showcases how you could use AOD. It is only optional however you can
-          create your own menu and pass it to AOD.Realm if you so desire. As of
-          now it does not support customizing controls but that can be done so
-          using the INI file anyways
+          showcases how you could use AOD.
+          As of now it does not support customizing controls but that can be
+          done so using the INI file anyways
 
 Example:
 ---

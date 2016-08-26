@@ -15,9 +15,9 @@ void Init () {
   AOD.Console.console_open = false;
   AOD.Console.Set_Console_Output_Type(AOD.Console.Type.Debug_In);
   import std.conv : to;
-  AOD.Initialize(16, "LUDUM DARE PREP",
-      to!int(AOD.ClientVars.commands["resolution_x"]),
-      to!int(AOD.ClientVars.commands["resolution_y"]),
+  AOD.Initialize(16, "LUDUM DARE PREP", 800, 600,
+      /* to!int(AOD.ClientVars.commands["resolution_x"]), */
+      /* to!int(AOD.ClientVars.commands["resolution_y"]), */
       "assets/credit_aod.bmp");
   AOD.Camera.Set_Size(AOD.Vector(AOD.R_Window_Width(), AOD.R_Window_Height()));
   AOD.Camera.Set_Position(AOD.Vector(AOD.R_Window_Width() /2,

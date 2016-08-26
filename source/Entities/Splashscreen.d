@@ -80,6 +80,29 @@ public:
     img_stages = [ 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 ];
     start_fade = cast(uint)(7200.0f/AOD.R_MS());
     end_fade   = cast(uint)(7500.0f/AOD.R_MS());
+    foreach ( c; commands.byKeyValue() ) {
+      // -- DEBUG START
+      import std.stdio : writeln;
+      import std.conv : to;
+      writeln("VAL: " ~ c.value ~ ", key: " ~ to!string(c.key));
+      if ( c.key == "STARTFADE" ) {
+        start_fade = cast(uint)(to!float(c.value)/AOD.R_MS());
+        continue;
+      } else if ( c.key == "ENDFADE" ) {
+        end_fade  = cast(uint)(to!float(c.value)/AOD.R_MS());
+        continue;
+      }
+      import std.conv : to;
+      import std.stdio;
+      img_start[c.key[4] - '1'] = cast(uint)(to!float(c.value)/AOD.R_MS());
+    }
+    foreach ( s; img_start ) {
+      /// ----- debug ----
+      import std.stdio : writeln;
+      import std.conv : to;
+      writeln("TIMES: " ~ to!string(s));
+      /// ----- debug ----
+    }
     /* foreach ( s; img_start ) { */
     /*   /// ----- debug ---- */
     /*   import std.stdio : writeln; */
