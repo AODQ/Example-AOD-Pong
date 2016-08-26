@@ -273,6 +273,8 @@ public:
     while ( SDL_PollEvent(&_event) ) {
       switch ( _event.type ) {
         case SDL_QUIT:
+          import AODCore.sound;
+          Sound.End();
           return;
         default: break;
       }

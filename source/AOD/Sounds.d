@@ -232,6 +232,14 @@ private void Main_Sound_Loop() {
                 DestroySample(i, false);
             samples = [];
           break;
+          case ThreadMsg.End:
+            alcCloseDevice(SoundEng.al_device);
+            // -- DEBUG START
+            import std.stdio : writeln;
+            import std.conv : to;
+            writeln("ALC device closed");
+            // -- DEBUG END
+            return;
           case ThreadMsg.PlaySample:
             // find empty slot
             int slot = 0;
@@ -313,7 +321,7 @@ private void Main_Sound_Loop() {
 private enum ThreadMsg {
   PlaySample, PauseSample, StopSample,
   ChangePosition,
-  StopAllSamples,
+  StopAllSamples, End,
 
   QueueID
 }
@@ -393,6 +401,14 @@ static: public:
     import std.concurrency;
     immutable(string) s = "";
     send(SoundEng.thread_id, ThreadMsg.StopAllSamples, [s]);
+  }
+
+  /** clens up and closes ALC Device
+  */
+  void End() {
+    Clean_Up();
+    import std.concurrency;
+    send(SoundEng.thread_id, ThreadMsg.End);
   }
 
   void Update(int nanosecond_duration = 0) {
