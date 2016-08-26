@@ -156,23 +156,23 @@ Params:
     background = new AOD.Entity;
     background.Set_Sprite(img_background, 1);
     background.Set_Position(AOD.R_Window_Width/2, AOD.R_Window_Height/2);
-    import std.conv : to;
-    import std.stdio : writeln;
-    writeln("Creating menu");
-    writeln("BG POSITION: " ~ cast(string)background.R_Position);
+    /* import std.conv : to; */
+    /* import std.stdio : writeln; */
+    /* writeln("Creating menu"); */
+    /* writeln("BG POSITION: " ~ cast(string)background.R_Position); */
     background_submenu = new AOD.Entity;
     background_submenu.Set_Sprite(img_background_submenu, 1);
     background_submenu.Set_Size(background_submenu.R_Img_Size());
     background_submenu.Set_Position(AOD.R_Window_Width/2,AOD.R_Window_Height/2);
     background_submenu.Set_Visible(0);
     import std.stdio;
-    import std.conv : to;
-    writeln(to!string(img_background));
+    /* import std.conv : to; */
+    /* writeln(to!string(img_background)); */
     for ( int i = 0; i != Button.max+1; ++ i ) {
       buttons[i] = new AOD.Entity(3);
       with ( buttons[i] ) {
         Set_Sprite(img_buttons[i], 1);
-        writeln("BT: " ~ to!string(img_buttons[i]));
+        /* writeln("BT: " ~ to!string(img_buttons[i])); */
         Set_Position(AOD.R_Window_Width/2, button_y + (button_y_it * i));
       }
     }
@@ -256,7 +256,6 @@ Params:
   }
 
   override void Update() {
-    import std.stdio : writeln;
     import derelict.sdl2.sdl;
     if ( Clicked( buttons[Button.Start]) ||
          AOD.Input.keystate [SDL_SCANCODE_SPACE] ) {
