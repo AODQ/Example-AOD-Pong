@@ -80,13 +80,13 @@ public:
     img_stages = [ 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 ];
     start_fade = cast(uint)(7200.0f/AOD.R_MS());
     end_fade   = cast(uint)(7500.0f/AOD.R_MS());
-    foreach ( s; img_start ) {
-      /// ----- debug ----
-      import std.stdio : writeln;
-      import std.conv : to;
-      writeln("TIMES: " ~ to!string(s));
-      /// ----- debug ----
-    }
+    /* foreach ( s; img_start ) { */
+    /*   /// ----- debug ---- */
+    /*   import std.stdio : writeln; */
+    /*   import std.conv : to; */
+    /*   writeln("TIMES: " ~ to!string(s)); */
+    /*   /// ----- debug ---- */
+    /* } */
     Set_Sprite(img[1][1]);
     Set_Position(AOD.R_Window_Width/2, AOD.R_Window_Height/2);
     Set_Colour(1, 1, 1, 1.0);
@@ -132,14 +132,14 @@ public:
     else
       Set_Sprite(img[img_stage][img_ind]);
     // -- DEBUG START
-    import std.stdio : writeln;
-    import std.conv : to;
+    /* import std.stdio : writeln; */
+    /* import std.conv : to; */
     // -- DEBUG END
     Set_Visible(false);
     if ( stage > 0 || (stage == 0 && time >= img_start[0]) ) {
       Set_Visible(true);
       if ( stage < img_start.length && time >= img_start[stage] ) {
-        writeln(" ( " ~ to!string(img_ind) ~ " ) ");
+        /* writeln(" ( " ~ to!string(img_ind) ~ " ) "); */
         if ( ++ stage_it >= 50.0f/AOD.R_MS() ) {
           stage_it = 0;
           if ( ++ ind >= img[stage].length + 1 ) {
@@ -153,13 +153,13 @@ public:
               img_stage = 0;
             }
             // -- DEBUG START
-            import std.stdio : writeln;
-            import std.conv : to;
-            writeln("STAGE: " ~ to!string(stage));
+            /* import std.stdio : writeln; */
+            /* import std.conv : to; */
+            /* writeln("STAGE: " ~ to!string(stage)); */
             // -- DEBUG END
           } else
             img_ind = ind-1;
-          writeln(" ( " ~ to!string(img_ind) ~ " ) ");
+          /* writeln(" ( " ~ to!string(img_ind) ~ " ) "); */
         }
       } else {
         if ( stage == img_start.length ) {
@@ -173,7 +173,7 @@ public:
     import derelict.sdl2.sdl;
     if ( time >= end_fade+(400.0f/AOD.R_MS()) ||
          AOD.Input.keystate[SDL_SCANCODE_SPACE]) {
-      writeln("FADING");
+      /* writeln("FADING"); */
       fadeblack = true;
       Set_Visible(false);
       time = 0;

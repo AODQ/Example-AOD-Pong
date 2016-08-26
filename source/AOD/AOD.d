@@ -75,7 +75,7 @@ void Change_MSDT(Uint32 ms_dt) in { assert(realm !is null); } body {
 @disable void Reset() in { assert(realm  is null); } body { /* ... todo ... */ }
 /** Ends the engine and deallocates all resources */
 void End()   in { assert(realm !is null); } body {
-  destroy(realm);
+  realm.End();
   realm = null;
 }
 

@@ -52,7 +52,7 @@ static class TextEng {
         return;
       }
       int comp = FT_New_Face(FTLib, file.ptr, 0, &face);
-      if ( comp ) {
+      if ( !comp ) {
         Debug_Output("Could not load font " ~ file ~ ": " ~
           R_FT_Error_String(comp) ~ '\n');
         return;

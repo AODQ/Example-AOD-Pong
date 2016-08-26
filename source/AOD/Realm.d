@@ -36,6 +36,8 @@ class Realm {
 
 /** if the realm run loop has started yet */
   bool started;
+/** */
+  bool ended;
 /** width/height of window */
   int width, height;
 /** delta time (in milliseconds) for a frame */
@@ -84,6 +86,7 @@ public:
     // -- DEBUG END
     width  = window_width;
     height = window_height;
+    ended = 0;
     ms_dt = ms_dt_;
     Debug_Output("Initializing SDL");
     import std.conv : to;
@@ -134,7 +137,7 @@ public:
                                            window_height,
                                            SDL_WINDOW_OPENGL |
                                            SDL_WINDOW_SHOWN );
-    writeln("Creating OpenGL Context");
+    writeln("AOD@Realm.d@Creating OpenGL Context");
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3);
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 0);
     SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
@@ -150,7 +153,8 @@ public:
       throw new Exception("Error SDL_GL_CreateContext: "
                           ~ to!string(SDL_GetError()));
     }
-    writeln("OpenGL version: " ~ to!string(glGetString(GL_VERSION)));
+    writeln("AOD@Realm.d@OpenGL version: " ~
+             to!string(glGetString(GL_VERSION)));
 
     try {
       DerelictGL3.reload();
@@ -164,10 +168,10 @@ public:
     glEnable(GL_TEXTURE_2D);
     /* glEnable(GL_BLEND); */
     if ( icon != "" ) {
-      writeln("Loading window icon");
+      writeln("AOD@Realm.d@Loading window icon");
       SDL_Surface* ico = SDL_LoadBMP(icon);
       if ( ico == null ) {
-        writeln("Error loading BMP :/");
+        writeln("AOD@Realm.d@Error loading icon BMP");
       }
       SDL_SetWindowIcon(screen, ico);
     }
@@ -184,7 +188,6 @@ public:
     glMatrixMode(GL_PROJECTION);
     glEnable(GL_ALPHA);
 
-    writeln("glLoadIdentity");
     glLoadIdentity();
 
     ilInit();
@@ -193,7 +196,7 @@ public:
     if ( !ilutRenderer(ILUT_OPENGL) )
       writeln("Error setting ilut Renderer to ILUT_OPENGL");
     import AODCore.vector;
-    writeln("window dimensions: " ~ cast(string)Vector(window_width,
+    writeln("AOD@Realm.d@window dimensions: " ~ cast(string)Vector(window_width,
                                                        window_height));
 
     glOrtho(0, window_width, window_height, 0, 0, 1);
@@ -202,10 +205,10 @@ public:
     glDisable(GL_DEPTH_TEST);
     glMatrixMode(GL_MODELVIEW);
     { // others
-      writeln("Initializing sounds core");
-      Debug_Output("Initializing Sounds Core");
+      writeln("AOD@Realm.d@Initializing sounds core");
+      writeln("Initializing Sounds Core");
       SoundEng.Set_Up();
-      Debug_Output("Initializing Font Core");
+      writeln("Initializing Font Core");
       TextEng.Font.Init();
       /* objs_to_rem = []; */
       /* bg_red   = 0; */
@@ -231,7 +234,13 @@ public:
     o.Added_To_Realm();
     return o.R_ID();
   }
-
+/** */
+  void End() {
+    Clean_Up(null);
+    import AODCore.sound;
+    Sound.End();
+    ended = true;
+  }
 /** */
   void Remove(Render_Base o) in {
     assert(o !is null);
@@ -273,9 +282,9 @@ public:
     while ( SDL_PollEvent(&_event) ) {
       switch ( _event.type ) {
         case SDL_QUIT:
-          import AODCore.sound;
-          Sound.End();
-          return;
+          if ( !ended )
+            End();
+        break;
         default: break;
       }
     }
@@ -296,6 +305,7 @@ public:
         // actual update
         accumulated_dt -= ms_dt;
         Update();
+        if ( ended ) break;
 
         string tex;
         string to_handle;
@@ -309,9 +319,16 @@ public:
           switch ( _event.type ) {
             default: break;
             case SDL_QUIT:
-              return;
+              if ( !ended )
+                End();
+            return;
           }
         }
+      }
+
+      if ( ended ) {
+        destroy(this);
+        return;
       }
 
       { // refresh screen

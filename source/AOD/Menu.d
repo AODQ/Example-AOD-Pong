@@ -258,7 +258,8 @@ Params:
   override void Update() {
     import std.stdio : writeln;
     import derelict.sdl2.sdl;
-    if ( Clicked( buttons[Button.Start]) || AOD.Input.keystate [SDL_SCANCODE_SPACE] ) {
+    if ( Clicked( buttons[Button.Start]) ||
+         AOD.Input.keystate [SDL_SCANCODE_SPACE] ) {
       if ( add_on_start !is null )
         AOD.Add(add_on_start);
       foreach ( b; buttons )
@@ -288,8 +289,7 @@ Params:
       Flip_Menu();
     }
     if ( Clicked( buttons[Button.Quit] ) ) {
-      import std.c.stdlib;
-      exit(0);
+      AOD.End();
     }
   }
 }
