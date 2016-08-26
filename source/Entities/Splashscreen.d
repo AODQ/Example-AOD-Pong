@@ -48,7 +48,7 @@ public:
          AOD.SheetContainer("assets/splash/anim2/frame12.png"  ) ,
          AOD.SheetContainer("assets/splash/anim2/frame13.png"  ) ,
          AOD.SheetContainer("assets/splash/anim2/frame14.png"  ) ,
-         AOD.SheetContainer("assets/splash/anim2/frame15.png"  ) , // STEP 5
+         AOD.SheetContainer("assets/splash/anim2/frame15.png"  ) ], // STEP 5
        [ AOD.SheetContainer("assets/splash/anim8/frame1.png"  ) ,
          AOD.SheetContainer("assets/splash/anim8/frame2.png"  ) ,
          AOD.SheetContainer("assets/splash/anim8/frame3.png"  ) ,
