@@ -6,3 +6,4 @@
 .dub/*
 .vs/*
 docs/*
+release/*

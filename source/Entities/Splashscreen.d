@@ -46,7 +46,9 @@ public:
          AOD.SheetContainer("assets/splash/anim2/frame10.png"  ) ,
          AOD.SheetContainer("assets/splash/anim2/frame11.png"  ) ,
          AOD.SheetContainer("assets/splash/anim2/frame12.png"  ) ,
-         AOD.SheetContainer("assets/splash/anim2/frame13.png"  ) ], // STEP 5
+         AOD.SheetContainer("assets/splash/anim2/frame13.png"  ) ,
+         AOD.SheetContainer("assets/splash/anim2/frame14.png"  ) ,
+         AOD.SheetContainer("assets/splash/anim2/frame15.png"  ) , // STEP 5
        [ AOD.SheetContainer("assets/splash/anim8/frame1.png"  ) ,
          AOD.SheetContainer("assets/splash/anim8/frame2.png"  ) ,
          AOD.SheetContainer("assets/splash/anim8/frame3.png"  ) ,
@@ -70,27 +72,14 @@ public:
          AOD.SheetContainer("assets/splash/anim1/frame2.png"  ) ,
          AOD.SheetContainer("assets/splash/anim1/frame1.png"  ) ], // ANIM 1
     ];
-    img_start  = [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ];
-    img_stages = [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ];
-    uint cnt = 0;
-    foreach ( c; commands ) {
-      // -- DEBUG START
-      import std.stdio : writeln;
-      import std.conv : to;
-      writeln("VAL: " ~ c.value ~ ", key: " ~ to!string(c.key));
-      if ( c.key == "STARTFADE" ) {
-        start_fade = cast(uint)(to!float(c.value)/AOD.R_MS());
-        continue;
-      } else if ( c.key == "ENDFADE" ) {
-        end_fade  = cast(uint)(to!float(c.value)/AOD.R_MS());
-        continue;
-      }
-      import std.conv : to;
-      import std.stdio;
-      img_start[c.key[4] - '1'] = cast(uint)(to!float(c.value)/AOD.R_MS());
-      img_stages[c.key[4] - '1'] = cnt;
-      ++ cnt;
-    }
+
+    img_start  = [ 1580, 2300, 2700, 2900, 3800, 4580, 5340, 5670,
+                   5900, 6080, 6780 ];
+    for ( int i = 0; i != img_start.length; ++ i )
+      img_start[i] = cast(uint)(img_start[i]/AOD.R_MS());
+    img_stages = [ 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 ];
+    start_fade = cast(uint)(7200.0f/AOD.R_MS());
+    end_fade   = cast(uint)(7500.0f/AOD.R_MS());
     foreach ( s; img_start ) {
       /// ----- debug ----
       import std.stdio : writeln;
@@ -115,7 +104,7 @@ public:
   bool fadeblack = false;
   override void Update() {
     if ( fadeblack ) {
-      float dt = 0.01;
+      float dt = 0.005;
       time += dt;
       if ( time >= 1.00f ) {
         AOD.Set_BG_Colour(.08, .08, .095);
@@ -142,6 +131,10 @@ public:
       Set_Sprite(img[0][3]);
     else
       Set_Sprite(img[img_stage][img_ind]);
+    // -- DEBUG START
+    import std.stdio : writeln;
+    import std.conv : to;
+    // -- DEBUG END
     Set_Visible(false);
     if ( stage > 0 || (stage == 0 && time >= img_start[0]) ) {
       Set_Visible(true);

@@ -228,6 +228,8 @@ Params:
   }
 
   ~this() {
+    import Entity.Splashscreen;
+    AOD.Add(new Splash(null));
   }
 
   private void Flip_Menu() {
@@ -255,7 +257,8 @@ Params:
 
   override void Update() {
     import std.stdio : writeln;
-    if ( Clicked( buttons[Button.Start] ) ) {
+    import derelict.sdl2.sdl;
+    if ( Clicked( buttons[Button.Start]) || AOD.Input.keystate [SDL_SCANCODE_SPACE] ) {
       if ( add_on_start !is null )
         AOD.Add(add_on_start);
       foreach ( b; buttons )

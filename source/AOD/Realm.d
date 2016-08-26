@@ -197,6 +197,7 @@ public:
                                                        window_height));
 
     glOrtho(0, window_width, window_height, 0, 0, 1);
+    glViewport(0, 0, window_width, window_height);
 
     glDisable(GL_DEPTH_TEST);
     glMatrixMode(GL_MODELVIEW);

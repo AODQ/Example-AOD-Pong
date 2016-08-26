@@ -19,15 +19,6 @@ public:
   string command;
 }
 
-/** A debug command. Just copies directly from the INI command header to
-    the struct
-*/
-struct Command {
-public:
-  string key, /// left-hand argument
-         value; /// right-hand argument
-}
-
 /**
   How you wish to use this is entirely up to you. For the majority of cases
   I'd expect the entire array to be iterated and if a key was pressed then the
@@ -38,9 +29,9 @@ public:
 */
 Keybind[] keybinds;
 /**
-  Just stored commands. What you do with this is up to you
+  Just stored commands. What you do with this is up to you.
 */
-Command[] commands;
+string[string] commands;
 
 import derelict.sdl2.sdl;
 
@@ -68,7 +59,12 @@ void Load_Config() {
   auto coms = "command" in ini_file;
   if ( coms !is null ) {
     foreach ( item; (*coms) ) {
-      commands ~= Command(item.key, item.value);
+      commands[item.key] = item.value;
+      // -- DEBUG START
+      import std.stdio : writeln;
+      import std.conv : to;
+      writeln(item.key ~ " -- " ~ item.value);
+      // -- DEBUG END
     }
   }
   R_SDL_Scancode_Conv("", true); // destroy scancode map
